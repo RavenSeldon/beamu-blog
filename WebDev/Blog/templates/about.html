@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}About Me - My Cosmic-Neural Blog{% endblock %}
+{% block content %}
+<h1>About Me</h1>
+<div class="about-me">
+    <img src="{{ url_for('static', filename='images/your_photo.jpg') }}" alt="Your Photo" class="profile-pic">
+    <p>
+        Hi, I'm [Your Name], a curious explorer of the universe and the mind.<br>
+        I love coding, neuroscience, astronomy, and sharing my thoughts.<br>
+        This blog is my journey through the stars and synapses.
+    </p>
+</div>
+{% endblock %}

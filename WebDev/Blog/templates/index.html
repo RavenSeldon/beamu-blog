@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Home - My Cosmic-Neural Blog{% endblock %}
+{% block content %}
+<div class="hero">
+  <div class="hero-content">
+    <h1>My Cosmic-Neural Blog</h1>
+    <p>Exploring the parallels between the cosmos and the mind.</p>
+    <a href="#posts" class="hero-btn">Start Exploring</a>
+  </div>
+</div>
+{% if posts is none %}
+  <p>No posts yet.</p>
+{% else %}
+  <section id="posts" class="posts">
+      <!-- Posts will be loaded here by JS infinite scroll -->
+  </section>
+  <div id="loader" class="loader"></div>
+{% endif %}
+{% endblock %}

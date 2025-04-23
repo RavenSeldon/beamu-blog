@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Photo Album - My Cosmic-Neural Blog{% endblock %}
+{% block content %}
+<h1>Photo Album</h1>
+<div class="photo-grid">
+    {% for photo in photos %}
+    <div class="photo-card">
+        <img src="{{ url_for('static', filename='images/' ~ photo.filename) }}" alt="Photo">
+        <p>{{ photo.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

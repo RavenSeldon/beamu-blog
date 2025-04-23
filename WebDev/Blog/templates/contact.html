@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Contact - My Cosmic-Neural Blog{% endblock %}
+{% block content %}
+<h1>Contact Me</h1>
+<form method="post" class="contact-form">
+    <label>Name: <input type="text" name="name" required></label><br>
+    <label>Email: <input type="email" name="email" required></label><br>
+    <label>Message:<br>
+        <textarea name="message" rows="6" required></textarea>
+    </label><br>
+    <button type="submit">Send</button>
+</form>
+{% endblock %}
