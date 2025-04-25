@@ -48,4 +48,3 @@ static/images/*/
 !static/images/placeholder.jpg
 static/min/
 asset_map.py
-/migrations/versions/
