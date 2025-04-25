@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Admin Login{% endblock %}
+{% block content %}
+<section class="contact-wrap">
+  <header class="contact-head">
+    <h1>Log In</h1>
+  </header>
+  <!-- full-width form -->
+  <form method="post" action="{{ url_for('login') }}" class="contact-form">
+    {{ form.hidden_tag() }}
+    <label>
+      <span>{{ form.username.label }}</span>
+        {{ form.username(placeholder="Username") }}
+        {% for error in form.username.errors %}
+        <span class="err" style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </label>
+
+    <label>
+      <span>{{ form.password.label }}</span>
+        {{ form.password(placeholder="Password", autofocus=True) }}
+        {% for error in form.password.errors %}
+        <span class="err" style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </label>
+
+    <div class="remember">{{ form.remember() }} {{ form.remember.label }}</div>
+
+    <button class="send-btn" type="submit">
+      <i class="fa-solid fa-right-to-bracket"></i>{{ form.submit.label.text }}
+    </button>
+  </form>
+</section>
+{% endblock %}

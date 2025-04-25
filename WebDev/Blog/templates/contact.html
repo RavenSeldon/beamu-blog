@@ -1,13 +1,41 @@
 {% extends "base.html" %}
-{% block title %}Contact - My Cosmic-Neural Blog{% endblock %}
+{% block title %}Contact - Ben Amuwo{% endblock %}
 {% block content %}
-<h1>Contact Me</h1>
-<form method="post" class="contact-form">
-    <label>Name: <input type="text" name="name" required></label><br>
-    <label>Email: <input type="email" name="email" required></label><br>
-    <label>Message:<br>
-        <textarea name="message" rows="6" required></textarea>
-    </label><br>
-    <button type="submit">Send</button>
-</form>
+<section class="contact-wrap">
+  <header class="contact-head">
+    <h1>Contact Me</h1>
+    <p>If anything here sparks a thought, a question, or even a joke,
+        let me know &mdash; I reply within 48 hours.</p>
+  </header>
+
+  <!-- slim icon row -->
+  <ul class="contact-icons">
+    <li><a href="#" aria-label="GitHub"><i class="fa-brands fa-github"></i></a></li>
+    <li><a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a></li>
+    <li><a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a></li>
+  </ul>
+
+  <!-- full-width form -->
+  <form method="post" action="{{ url_for('contact') }}" class="contact-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>
+      <span>Name</span>
+      <input type="text" name="name" required placeholder="What should I call you?">
+    </label>
+
+    <label>
+      <span>Email</span>
+      <input type="email" name="email" required placeholder="How should I reach you?">
+    </label>
+
+    <label class="full">
+      <span>Message</span>
+      <textarea name="message" rows="6" required placeholder="Let it Rip."></textarea>
+    </label>
+
+    <button type="submit" class="send-btn">
+      <i class="fa-solid fa-paper-plane"></i> Send
+    </button>
+  </form>
+</section>
 {% endblock %}

@@ -1,7 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Flask
+instance/
+.webassets-cache
+app.db
+
+# Virtual Environment
+venv/
+ENV/
+
+# Environment Variables
 .env
 .flaskenv
-venv/.idea/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
+
+# Database
+*.db
+*.sqlite
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Image uploads and generated files
+static/images/*/
+!static/images/placeholder.jpg
+static/min/
+asset_map.py

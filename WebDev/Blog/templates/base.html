@@ -3,13 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark-light">
     <title>{% block title %}Neural Cosmic{% endblock %}</title>
+    <!-- Use minified CSS in production -->
+    {% if config.ENV == 'production' %}
+    <link rel="stylesheet" href="{{ asset_url('css/style.css') }}">
+    {% else %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    {% endif %}
+    <!-- Icons & Variable Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wdth,wght@100..125,200..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Megrim&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- Playfair Display variable -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:opsz,wght@10..48,400..800&display=swap" rel="stylesheet">
     {% block extra_css %}{% endblock %}
+
+    <script>
+         // Only set the flag AFTER successful redirection
+        if(!localStorage.getItem('seenLoader')){
+            // first visit → jump to loader
+            window.location.replace("/loading");
+            // Don't set seenLoader here - let loader.js do it
+        }
+    </script>
 </head>
 <body>
     <!-- Neural Cosmic Background Canvas -->
@@ -18,13 +37,14 @@
     <!-- Sidebar Navigation -->
     <div id="sidebar" class="sidebar">
         <nav>
-            <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a>
-            <a href="{{ url_for('about') }}"><i class="fas fa-user"></i> About</a>
-            <a href="{{ url_for('projects') }}"><i class="fas fa-project-diagram"></i> Projects</a>
-            <a href="{{ url_for('photo_album') }}"><i class="fas fa-images"></i> Gallery</a>
-            <a href="{{ url_for('contact') }}"><i class="fas fa-envelope"></i> Contact</a>
+            <a href="{{ url_for('index') }}"><i class="fa-solid fa-meteor"></i> Home</a>
+            <a href="{{ url_for('about') }}"><i class="fa-solid fa-brain"></i> About</a>
+            <a href="{{ url_for('projects') }}"><i class="fa-solid fa-sun"></i> Projects</a>
+            <a href="{{ url_for('photo_album') }}"><i class="fa-solid fa-photo-film"></i> Gallery</a>
+            <a href="{{ url_for('contact') }}"><i class="fa-solid fa-paper-plane"></i> Contact</a>
             {% if current_user.is_authenticated %}
-            <a href="{{ url_for('new_post') }}"><i class="fas fa-edit"></i> New Post</a>
+            <a href="{{ url_for('new_post') }}"><i class="fa-solid fa-rocket"></i> New Post</a>
+            <a href="{{ url_for('new_project') }}"><i class="fa-solid fa-shuttle-space"></i> New Project</a>
             <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
             {% endif %}
         </nav>
@@ -32,7 +52,7 @@
 
     <!-- Sidebar Toggle Button -->
     <button id="sidebar-toggle" aria-label="Toggle Sidebar Navigation">
-        <i class="fas fa-bars"></i>
+        <i class="fa-solid fa-bars"></i>
     </button>
 
     <!-- Main Content -->
@@ -54,10 +74,18 @@
     <footer>
         <p>&copy; {{ datetime.now(timezone.utc).strftime('%Y') }} Neural Cosmic. All rights reserved.</p>
         <div class="social-links">
-            <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+            <a href="#" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+        <div class="animation-controls">
+            <button id="animation-toggle" class="animation-toggle" type="button" role="switch" aria-checked="true" aria-label="Pause background animation" title="Pause background animation">
+                <i id="animation-toggle-icon" class="fa-solid fa-pause"></i>
+            </button>
+            <div id="performance-notice" class="performance-notice">
+                <p>Animations reduced to improve performance on your device.</p>
+                <button id="dismiss-notice">Got it</button>
+            </div>
         </div>
     </footer>
 
@@ -67,7 +95,64 @@
     </div>
 
     <!-- Scripts -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+    // Detect device performance
+    function detectLowPerformanceDevice() {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const cpuCores = navigator.hardwareConcurrency || 2;
+
+        // If device is mobile or has 2 or fewer CPU cores, consider it low performance
+        if (isMobile || cpuCores <= 2) {
+            // Only show notice if animations are enabled
+            if (localStorage.getItem('animationsEnabled') !== 'false') {
+                // Show performance notice after a delay
+                setTimeout(() => {
+                    const notice = document.getElementById('performance-notice');
+                    if (notice) notice.classList.add('show');
+
+                    // Add dismiss button functionality
+                    const dismissBtn = document.getElementById('dismiss-notice');
+                    if (dismissBtn) {
+                        dismissBtn.addEventListener('click', () => {
+                            notice.classList.remove('show');
+                            localStorage.setItem('noticeDismissed', 'true');
+                        });
+                    }
+                }, 5000);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    // Execute detection on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        const isLowPerformance = detectLowPerformanceDevice();
+
+        // If low performance and first visit, suggest disabling animations
+        if (isLowPerformance && !localStorage.getItem('noticeDismissed')) {
+            // Don't show immediate suggestions on first visit to avoid overwhelming users
+            localStorage.setItem('suggestReducedAnimations', 'true');
+        }
+    });
+    </script>
+    <!-- Scripts - Use minified JS in production -->
+    {% if request.path != '/loading' %}
+        {% if config.ENV == 'production' %}
+        <script src="{{ asset_url('js/main.js') }}"></script>
+        {% else %}
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+        {% endif %}
+    {% endif %}
+
+    {% if request.path == '/loading' %}
+        {% if config.ENV == 'production' %}
+        <script src="{{ asset_url('js/loader.js') }}"></script>
+        {% else %}
+        <script src="{{ url_for('static', filename='js/loader.js') }}"></script>
+        {% endif %}
+    {% endif %}
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

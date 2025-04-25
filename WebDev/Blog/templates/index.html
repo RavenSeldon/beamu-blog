@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Home - My Cosmic-Neural Blog{% endblock %}
+{% block title %}Home - the Neurascape{% endblock %}
 {% block content %}
-<div class="hero">
+<header class="hero" role="banner">
   <div class="hero-content">
-    <h1>My Cosmic-Neural Blog</h1>
-    <p>Exploring the parallels between the cosmos and the mind.</p>
+    <h1 class="hero-title">Welcome to the Neurascape</h1>
+    <p class="hero-tagline">Hello to all. </p>
     <a href="#posts" class="hero-btn">Start Exploring</a>
   </div>
-</div>
+</header>
 {% if posts is none %}
   <p>No posts yet.</p>
 {% else %}

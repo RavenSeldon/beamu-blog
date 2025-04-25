@@ -5,7 +5,11 @@
 <div class="photo-grid">
     {% for photo in photos %}
     <div class="photo-card">
-        <img src="{{ url_for('static', filename='images/' ~ photo.filename) }}" alt="Photo">
+        {% if USING_SPACES %}
+        <img src="{{ SPACES_URL }}/large/{{ photo.filename }}" alt="{{ photo.description }}">
+        {% else %}
+        <img src="{{ url_for('static', filename='images/large/' + photo.filename) }}" alt="{{ photo.description }}">
+        {% endif %}
         <p>{{ photo.description }}</p>
     </div>
     {% endfor %}

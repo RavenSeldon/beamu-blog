@@ -1,42 +1,52 @@
 {% extends "base.html" %}
-{% block title %}Write a new post – the Neurascape{% endblock %}
+{% block title %}Create a new project – the Neurascape{% endblock %}
 
 {% block content %}
 <section class="newpost-wrap">
-  <h1><i class="fa-solid fa-pen-nib"></i> New Post</h1>
+  <h1><i class="fa-solid fa-diagram-project"></i> New Project</h1>
 
   <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <label>
       <span>Title</span>
-      <input type="text" name="title" maxlength="120" placeholder="Give it a cosmic title…" required>
+      <input type="text"
+             name="title"
+             maxlength="120"
+             placeholder="e.g. LEO-Tracker"
+             required>
     </label>
 
     <label class="full">
-      <span>Content <small>(Markdown OK)</small></span>
-      <textarea name="content" rows="12" maxlength="20000"
-                placeholder="Speak forth"
-                data-count></textarea>
-      <div class="char-count"><span>0</span>/20 000</div>
+      <span>Description</span>
+      <textarea name="description"
+                rows="8"
+                maxlength="5000"
+                placeholder="What does this project do?"></textarea>
     </label>
 
-    <div class="flex-grow">
-      <label class="file-input has-preview">
-        <i class="fa-solid fa-image"></i> Image
+    <div class="flex-row">
+     <label class="file-input has-preview">
+        <i class="fa-solid fa-image"></i> Cover Image
         <input id="post-image" type="file" name="image" accept="image/*">
         <span class="file-name">No file chosen...</span>
         <img class="preview" style="display:none;" alt="Image preview" src="">
       </label>
+      </label>
+
+      <label class="flex-grow">
+        <span>GitHub URL <small>(optional)</small></span>
+        <input type="url"
+               name="github_link"
+               placeholder="https://github.com/user/repo">
+      </label>
     </div>
 
     <button type="submit" class="send-btn">
-      <i class="fa-solid fa-rocket"></i> Publish
+      <i class="fa-solid fa-plane-up"></i> Create Project
     </button>
   </form>
 </section>
-
 {% endblock %}
-
 {% block extra_js %}
 <script>
 /* live character counter */

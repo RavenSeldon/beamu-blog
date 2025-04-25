@@ -4,30 +4,36 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1d77107-d0eb-4acf-9ec5-e2003d64247e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/PythonProject.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/.env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/.flaskenv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/static/css/style.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/static/js/main.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/404.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/about.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/base.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/contact.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/loading.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/new_post" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/new_post.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/photo_album.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/projects.html" afterDir="false" />
+    <list default="true" id="c1d77107-d0eb-4acf-9ec5-e2003d64247e" name="Changes" comment="Personal Blog First Commit - 23.04.25">
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/Procfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/build.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/create_db_dir.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/forms.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/init_db.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/static/img/brain_mri.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/static/js/loader.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/500.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/new_project.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/templates/post.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/utils/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/utils/image_utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WebDev/Blog/utils/minify_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/.env" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/static/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/static/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/static/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/static/js/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/contact.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/contact.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/loading.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/loading.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/new_post" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/new_post.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/new_post.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/photo_album.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/photo_album.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,30 +44,49 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3
-}]]></component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;RavenSeldon&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/RavenSeldon/beamu-blog.git&quot;,
+    &quot;accountId&quot;: &quot;a65852d8-74f4-4162-9730-9be1e5d120ba&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2vnNikvxHc4asTKrXfqActqHDrY" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "settings.editor.selected.configurable": "project.propVCSSupport.CommitDialog"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/WebDev/Blog/utils" />
+      <recent name="$PROJECT_DIR$/WebDev/Blog/static/img" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -78,6 +103,19 @@
       <option name="presentableId" value="Default" />
       <updated>1744777007820</updated>
     </task>
+    <task id="LOCAL-00001" summary="Personal Blog First Commit - 23.04.25">
+      <option name="closed" value="true" />
+      <created>1745424843324</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1745424843324</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Personal Blog First Commit - 23.04.25" />
+    <option name="LAST_COMMIT_MESSAGE" value="Personal Blog First Commit - 23.04.25" />
   </component>
 </project>

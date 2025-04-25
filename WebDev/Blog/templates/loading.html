@@ -4,46 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading...</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        :root{
+            --loader-blue: #4fd3ff;
+            --loader-bg: #050518;
+        }
         body, html {
             height: 100%;
             margin: 0;
             overflow: hidden;
-            background: var(--bg-dark);
-        }
-
-        #loading-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            background: var(--loader-bg);
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            z-index: 9999;
-            background: var(--bg-dark);
+            justify-content: center;
         }
 
-        .brain-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
+        .loader-wrap {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:1.5rem;
+            opacity:1;
+            transition:opacity .8s ease;
         }
-
-        .loading-text {
-            font-size: 1.5rem;
-            color: var(--primary);
-            font-weight: 500;
-            letter-spacing: 2px;
-            margin-top: 2rem;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: pulse 2s infinite;
+        canvas#brain-scan {
+            width:320px;
+            max-width:80vw;
+            aspect-ratio:1/1;
+            filter:drop-shadow(0 0 12px rgba(79,211,255,.3));
+        }
+        .bar {
+            width:320px;max-width:80vw;
+            height:6px;border-radius:3px;
+            background:rgba(255,255,255,.08);
+            overflow:hidden;
+        }
+        .fill {
+            width:0;height:100%;
+            background:linear-gradient(90deg,var(--loader-blue),#0ff);
+            box-shadow:0 0 8px var(--loader-blue);
+            transition:width .12s linear;
+        }
+        .percent{
+            font-family:var(--font-sans);
+            margin-top:.5rem;
+            letter-spacing:2px;
+            font-size:1rem;
+            color:var(--loader-blue);
         }
 
         .logo {
@@ -71,22 +80,15 @@
     </style>
 </head>
 <body>
-    <div id="loading-container">
-        <div class="brain-container">
-            <canvas id="brain-loading-canvas" width="300" height="300"></canvas>
-            <div class="neural-particles"></div>
-        </div>
-        <div class="loading-text">INITIALIZING...</div>
+    <div id="loader" class="loader-wrap">
+      <canvas id="brain-scan" width="512" height="512"
+            aria-label="MRI loading animation"></canvas>
+      <div class="bar"><div class="fill"></div></div>
+      <div class="percent">0%</div>
     </div>
 
     <canvas id="bg-canvas"></canvas>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script>
-        // Redirect to home page after loading completes
-        setTimeout(() => {
-            window.location.href = "{{ url_for('index') }}";
-        }, 8000); // Adjust timing as needed
-    </script>
+    <script src="{{ url_for('static', filename='js/loader.js') }}"></script>
 </body>
 </html>
