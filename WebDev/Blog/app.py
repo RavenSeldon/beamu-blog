@@ -81,7 +81,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 class User(UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(64), unique=True, nullable=False)
-    password_hash: so.Mapped[str] = so.mapped_column(sa.String(128), nullable=False)
+    password_hash: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
