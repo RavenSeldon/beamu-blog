@@ -18,14 +18,14 @@
             <img src="{{ SPACES_URL }}/medium/{{ project.image_filename }}"
                  srcset="{{ get_srcset(project.image_filename) }}"
                  sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
-                 alt="{{ photo.description }}"
+                 alt="{{ project.title }}"
                  class="post-feature-img"
                  loading="eager">
             {% else %}
             <img src="{{ url_for('static', filename='images/medium/' + project.image_filename) }}"
                  srcset="{{ get_srcset(project.image_filename) }}"
                  sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
-                 alt="{{ post.title }}"
+                 alt="{{ project.title }}"
                  class="post-feature-img"
                  loading="eager"> <!-- Load eagerly for above-the-fold image -->
             {% endif %}
