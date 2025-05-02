@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="c1d77107-d0eb-4acf-9ec5-e2003d64247e" name="Changes" comment="Post Launch Build (bug fixes, update database relationships, about me page, modifying home page with images) 25-04-2025">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebDev/Blog/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebDev/Blog/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/about.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -165,7 +165,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746195398352</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Post Launch Build (bug fixes, update database relationships, about me page, modifying home page with images) 25-04-2025">
+      <option name="closed" value="true" />
+      <created>1746210947076</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1746210947076</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

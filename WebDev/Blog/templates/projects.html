@@ -5,18 +5,42 @@
 <div class="projects-list">
     {% for project in projects %}
     <div class="project-card">
-        {% if project.image_filename %}
-        <img src="{{ url_for('static', filename='images/' ~ project.image_filename) }}" alt="Project image">
-        {% endif %}
         <header class="post-header">
-        <h1 class="post-title">{{ project.title }}</h1>
-        <div class="post-meta">
-            <span class="post-date">{{ project.date_posted.strftime('%B %d, %Y') }}</span>
+            <h1 class="post-title">{{ project.title }}</h1>
+            <div class="post-meta">
+                <span class="post-date">{{ project.date_posted.strftime('%B %d, %Y') }}</span>
+            </div>
+        </header>
+        {% if project.image_filename %}
+        <div class="post-image">
+            <!-- Responsive image with srcset -->
+            {% if USING_SPACES %}
+            <img src="{{ SPACES_URL }}/medium/{{ project.image_filename }}"
+                 srcset="{{ get_srcset(project.image_filename) }}"
+                 sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
+                 alt="{{ photo.description }}"
+                 class="post-feature-img"
+                 loading="eager">
+            {% else %}
+            <img src="{{ url_for('static', filename='images/medium/' + project.image_filename) }}"
+                 srcset="{{ get_srcset(project.image_filename) }}"
+                 sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
+                 alt="{{ post.title }}"
+                 class="post-feature-img"
+                 loading="eager"> <!-- Load eagerly for above-the-fold image -->
+            {% endif %}
         </div>
-    </header>
-        <p>{{ project.description }}</p>
+        {% endif %}
+
+        <div class="post-content">
+            {{ project.description }}
+        </div>
         {% if project.github_link %}
-        <a href="{{ project.github_link }}" target="_blank">View on GitHub</a>
+        <div class="post-links">
+            <a href="{{ project.github_link }}" target="_blank" class="github-link">
+                <i class="fa-brands fa-github"></i> View on GitHub
+            </a>
+        </div>
         {% endif %}
     </div>
     {% endfor %}
