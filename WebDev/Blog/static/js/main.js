@@ -888,9 +888,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     data.posts.forEach((post, index) => {
                         const article = document.createElement('article');
                         article.className = 'post-card fade-in';
+
+                        // Create the image tag with conditional path
+                        let imageTag = '';
+                        if (post.image_filename) {
+                            if (window.USING_SPACES) {
+                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="${window.SPACES_URL}/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
+                            } else {
+                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
+                            }
+                        }
                         article.innerHTML = `
                             <h2><a href="/post/${post.id}">${post.title}</a></h2>
-                            ${post.image_filename ? `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/${post.image_filename}" alt="${post.title}" class="post-thumb">` : ''}
+                            ${imageTag}
                             <p>${post.content}</p>
                             <div class="post-footer">
                                 <a href="/post/${post.id}" class="read-more-link">Read More <i class="fa-solid fa-angles-right"></i></a>

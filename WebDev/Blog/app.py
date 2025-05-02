@@ -1,11 +1,14 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from flask_wtf.csrf import CSRFProtect, CSRFError, generate_csrf
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from werkzeug.middleware.proxy_fix import ProxyFix
+from wtforms.validators import none_of
+
 from forms import LoginForm
 from sqlalchemy import MetaData
 import sqlalchemy as sa
@@ -15,14 +18,16 @@ import markdown
 import bleach
 from markupsafe import Markup
 from flask_mail import Mail, Message
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from uuid import uuid4
-from utils.image_utils import process_upload_image, get_srcset, USING_SPACES, SPACES_URL
+from utils.image_utils import process_upload_image, get_srcset, USING_SPACES, SPACES_URL, IMAGE_SIZES
 from utils.minify_utils import asset_url
 
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
+
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 csrf = CSRFProtect(app)
 
 # Define allowed HTML tags and attributes for Bleach
@@ -92,15 +97,20 @@ class User(UserMixin, db.Model):
 
 class Photo(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    filename: so.Mapped[str] = so.mapped_column(sa.String(120), nullable=False)
+    filename: so.Mapped[str] = so.mapped_column(sa.String(120), nullable=False, unique=True)
     description: so.Mapped[Optional[str]] = so.mapped_column(sa.String(510), nullable=True)
+
+    posts: so.Mapped[list["Post"]] = so.relationship("Post", primaryjoin="Post.image_filename == Photo.filename", viewonly=True)
+    project: so.Mapped[list["Project"]] = so.relationship("Project", primaryjoin="Project.image_filename == Photo.filename", viewonly=True)
 
 
 class Project(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     title: so.Mapped[str] = so.mapped_column(sa.String(120), nullable=False)
     description: so.Mapped[Optional[str]] = so.mapped_column(db.Text, nullable=True)
-    image_filename: so.Mapped[Optional[str]] = so.mapped_column(sa.String(120), nullable=True)
+    date_posted: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
+    image_filename: so.Mapped[Optional[str]] = so.mapped_column(sa.ForeignKey(Photo.filename, ondelete="SET NULL"), nullable=True)
+    photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", foreign_keys=[image_filename], innerjoin=False)
     github_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255), nullable=True)
     posts: so.Mapped[list["Post"]] = so.relationship(back_populates="project", cascade="all, delete-orphan")
 
@@ -110,10 +120,11 @@ class Post(db.Model):
     title: so.Mapped[str] = so.mapped_column(sa.String(120), nullable=False)
     content: so.Mapped[str] = so.mapped_column(db.Text, nullable=False)
     date_posted: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
-    image_filename: so.Mapped[Optional[str]] = so.mapped_column(sa.String(120), nullable=True)
+    image_filename: so.Mapped[Optional[str]] = so.mapped_column(sa.ForeignKey(Photo.filename, ondelete="SET NULL"), nullable=True)
+    photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", foreign_keys=[image_filename], innerjoin=False)
     github_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255), nullable=True)
     project_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Project.id, name="fk_post_project"), nullable=True, index=True)
-    project: so.Mapped[Optional["Project"]] = so.relationship(back_populates='posts')
+    project: so.Mapped[Optional["Project"]] = so.relationship(back_populates="posts")
 
 # Helper Functions
 def allowed_file(filename):
@@ -161,6 +172,10 @@ def optimization_utils():
 def make_shell_context():
     return {"sa": sa, "so": so, "db": db, "Project": Project, "Post": Post, "User": User}
 
+# Cookie Handling
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
 
 # Routes
 @app.route('/loading')
@@ -181,6 +196,12 @@ def login():
         return redirect(url_for('index'))
 
     form = LoginForm()
+
+    #Force regeneration of CSRF token for the form
+    if request.method == 'GET':
+        # Generate a fresh token
+        form.csrf_token.data = generate_csrf()
+
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user and user.check_password(form.password.data):
@@ -241,12 +262,16 @@ def new_post():
             image_paths = process_upload_image(image, app.config['UPLOAD_FOLDER'], unique_filename)
 
             if image_paths:
+                # Check if a photo with this filename already exists
+                existing_photo = Photo.query.filter_by(filename=unique_filename).first()
+
+                if not existing_photo:
+                    # Create new photo record
+                    photo = Photo(filename=unique_filename, description=title)
+                    db.session.add(photo)
+                    db.session.flush()
                 # Store the original filename or the medium size in the database
                 image_filename = unique_filename
-
-                # Also add it to the photo gallery
-                photo = Photo(filename=image_filename, description=title)
-                db.session.add(photo)
 
         # Create the post with the optimized image information
         post = Post(
@@ -282,12 +307,16 @@ def new_project():
             image_paths = process_upload_image(image_file, app.config['UPLOAD_FOLDER'], unique_filename)
 
             if image_paths:
-                # Use medium size for project display
-                image_filename = unique_filename
+                # Check if a photo with this filename already exists
+                existing_photo = Photo.query.filter_by(filename=unique_filename).first()
 
-                # Add to photo gallery
-                photo = Photo(filename=image_filename, description=title)
-                db.session.add(photo)
+                if not existing_photo:
+                    # Create new photo record
+                    photo = Photo(filename=unique_filename, description=title)
+                    db.session.add(photo)
+                    db.session.flush()
+
+                image_filename = unique_filename
 
         project = Project(
             title=title,
@@ -302,6 +331,64 @@ def new_project():
         return redirect(url_for('projects'))
 
     return render_template('new_project.html')
+
+@app.route('/new_photo', methods=['GET', 'POST'])
+@login_required
+def new_photo():
+    if request.method == 'POST':
+        photo_file = request.files.get('image')
+        description = request.form.get('description', '').strip()
+
+        if photo_file and allowed_file(photo_file.filename):
+            # Generate unique filename
+            ext = os.path.splitext(secure_filename(photo_file.filename))[1].lower()
+            unique_filename = f"{uuid4().hex}{ext}"
+
+            #Process and optimize the image
+            image_paths = process_upload_image(photo_file, app.config['UPLOAD FOLDER'], unique_filename)
+
+            if image_paths:
+                # Check if a photo with this file name already exists
+                existing_photo = Photo.query.filter_by(filename=unique_filename).first()
+
+                if not existing_photo:
+                    # Create new photo record
+                    photo = Photo(filename=unique_filename, description=description)
+                    db.session.add(photo)
+                    db.session.flush()
+
+            db.session.commit()
+
+            flash('Project created!', 'success')
+            return redirect(url_for('new_photo'))
+
+        else:
+            flash(f'Error, photo required to be uploaded!', 'error')
+            return redirect(url_for('new_photo'))
+
+    return render_template('new_photo.html')
+
+@app.route('/delete_photo/<int:photo_id>', methods=['POST'])
+@login_required
+def delete_photo(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+
+    # Delete the actual image files from storage
+    try:
+        for size in IMAGE_SIZES:
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], size, photo.filename)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+    except Exception as e:
+        flash(f'Error deleting image files: {str(e)}', 'error')
+
+    db.session.delete(photo)
+    db.session.commit()
+
+    flash('Photo deleted successfully', 'success')
+    return redirect(url_for('photo_album'))
+
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
@@ -330,6 +417,16 @@ def site_error(e):
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     flash('The form has expired. Please try again.', 'error')
+    # Log the error for debugging
+    app.logger.warning(f"CSRF Error: {str(e)} on {request.path} from {request.remote_addr}")
+
+    # Return to login or contact with a fresh form
+    if request.path == '/login':
+        return redirect(url_for('login'))
+    elif request.path == '/contact':
+        return redirect(url_for('contact'))
+
+    # For other forms, redirect back to the same page.
     return redirect(request.full_path)
 
 

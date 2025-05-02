@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark-light">
-    <title>{% block title %}Neural Cosmic{% endblock %}</title>
+    <title>{% block title %}Ben's Neurascape{% endblock %}</title>
     <!-- Use minified CSS in production -->
     {% if config.ENV == 'production' %}
     <link rel="stylesheet" href="{{ asset_url('css/style.css') }}">
@@ -15,10 +15,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wdth,wght@100..125,200..800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Megrim&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
-    <!-- Playfair Display variable -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:opsz,wght@10..48,400..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     {% block extra_css %}{% endblock %}
 
     <script>
@@ -29,9 +27,13 @@
             // Don't set seenLoader here - let loader.js do it
         }
     </script>
+    <script>
+    const USING_SPACES = {{ USING_SPACES|tojson }};
+    const SPACES_URL = {{ SPACES_URL|tojson if SPACES_URL is defined else 'null' }};
+    </script>
 </head>
 <body>
-    <!-- Neural Cosmic Background Canvas -->
+    <!-- Neurascape Background Canvas -->
     <canvas id="bg-canvas"></canvas>
 
     <!-- Sidebar Navigation -->
