@@ -8,7 +8,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 from wtforms.validators import none_of
-
 from forms import LoginForm
 from sqlalchemy import MetaData
 import sqlalchemy as sa
@@ -16,6 +15,8 @@ import sqlalchemy.orm as so
 from typing import Optional
 import markdown
 import bleach
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
 from markupsafe import Markup
 from flask_mail import Mail, Message
 from datetime import datetime, timezone, timedelta
@@ -393,16 +394,55 @@ def delete_photo(photo_id):
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        message = request.form['message']
-        msg = Message(subject=f"Contact Form: {name}",
-                      sender=app.config['MAIL_DEFAULT_SENDER'],
-                      recipients=[app.config['MAIL_RECIPIENT']],
-                      body=f"From: {name} <{email}>\n\n{message}")
-        mail.send(msg)
-        flash('Message sent!', 'success')
+        try:
+            #Get form data
+            name = request.form['name']
+            email = request.form['email']
+            message = request.form['message']
+
+            app.logger.info(f"Processing contact form from {email}")
+
+            # Configure API key authorization
+            configuration = sib_api_v3_sdk.Configuration()
+            configuration.api_key['api-key'] = os.environ.get('BREVO_API_KEY')
+
+            # Create an API instance
+            api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+
+            # Format the message with some basic HTML
+            html_content = f"""
+            <p><strong>Contact Form Submission</strong></p>
+            <p><strong>From:</strong> {name} &lt;{email}&gt;</p>
+            <p><strong>Message:</strong></p>
+            <p>{message}</p>
+            """
+            #Create the email object
+            sender = {"name": "Neurascape Transmission", "email": "faust@benamuwo.me"}
+            to = [{"email": "faust@benamuwo.me", "name": "Ben's Neurascape"}]
+            reply_to = {"email": email, "name": name}
+
+            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                to=to,
+                html_content=html_content,
+                sender=sender,
+                reply_to=reply_to,
+                subject=f"Pending Neurascape Transmission: {name}"
+            )
+
+            # Send the email
+            api_response = api_instance.send_transac_email(send_smtp_email)
+            app.logger.info(f"Email sent successfully via API. Message ID: {api_response.message_id}")
+            flash('Your message has been sent. We\'ll get back to you soon.', 'success')
+
+        except ApiException as e:
+            app.logger.error(f"API exception: {e}")
+            flash('Sorry, there was a problem sending your message. Please try again later.', 'error')
+        except Exception as e:
+            app.logger.error(f"Unexpected error: {str(e)}")
+            flash('Sorry, there was a problem processing your request.', 'error')
+
         return redirect(url_for('contact'))
+
     return render_template('contact.html')
 
 
