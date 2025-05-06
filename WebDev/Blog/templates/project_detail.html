@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }} - the Neurascape{% endblock %}
+{% block content %}
+<div class="project-detail">
+    <header class="post-header">
+        <h1 class="post-title">{{ project.title }}</h1>
+        <div class="post-meta">
+            <span class="post-date">{{ project.date_posted.strftime('%B %d, %Y') }}</span>
+        </div>
+    </header>
+
+    {% if project.image_filename %}
+    <div class="post-image">
+        {% if USING_SPACES %}
+        <img src="{{ SPACES_URL }}/medium/{{ project.image_filename }}"
+             srcset="{{ get_srcset(project.image_filename) }}"
+             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
+             alt="{{ project.title }}"
+             class="post-feature-img"
+             loading="eager">
+        {% else %}
+        <img src="{{ url_for('static', filename='images/medium/' + project.image_filename) }}"
+             srcset="{{ get_srcset(project.image_filename) }}"
+             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
+             alt="{{ project.title }}"
+             class="post-feature-img"
+             loading="eager">
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="post-content">
+        {{ project.description|markdown_safe }}
+    </div>
+
+    {% if project.github_link %}
+    <div class="post-links">
+        <a href="{{ project.github_link }}" target="_blank" class="github-link">
+            <i class="fa-brands fa-github"></i> View on GitHub
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Display associated posts -->
+    {% if project.posts %}
+    <section class="project-posts">
+        <h2>Related Posts</h2>
+        <div class="posts-list">
+            {% for post in project.posts %}
+            <div class="post-card">
+                <h3><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h3>
+                <div class="post-meta">
+                    <span class="post-date">{{ post.date_posted.strftime('%B %d, %Y') }}</span>
+                </div>
+                {% if post.image_filename %}
+                <div class="post-thumbnail">
+                    {% if USING_SPACES %}
+                    <img src="{{ SPACES_URL }}/thumbnail/{{ post.image_filename }}" alt="{{ post.title }}">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='images/thumbnail/' + post.image_filename) }}" alt="{{ post.title }}">
+                    {% endif %}
+                </div>
+                {% endif %}
+                <div class="post-excerpt">
+                    {{ post.content[:150] ~ '...' if post.content|length > 150 else post.content }}
+                </div>
+                <a href="{{ url_for('post', post_id=post.id) }}" class="read-more">Read more</a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

@@ -21,7 +21,7 @@ from markupsafe import Markup
 from flask_mail import Mail, Message
 from datetime import datetime, timezone, timedelta
 from uuid import uuid4
-from utils.image_utils import process_upload_image, get_srcset, USING_SPACES, SPACES_URL, IMAGE_SIZES
+from utils.image_utils import process_upload_image, get_srcset, USING_SPACES, SPACES_URL, IMAGE_SIZES, s3
 from utils.minify_utils import asset_url
 
 
@@ -101,8 +101,8 @@ class Photo(db.Model):
     filename: so.Mapped[str] = so.mapped_column(sa.String(120), nullable=False, unique=True)
     description: so.Mapped[Optional[str]] = so.mapped_column(sa.String(510), nullable=True)
 
-    posts: so.Mapped[list["Post"]] = so.relationship("Post", primaryjoin="Post.image_filename == Photo.filename", viewonly=True)
-    project: so.Mapped[list["Project"]] = so.relationship("Project", primaryjoin="Project.image_filename == Photo.filename", viewonly=True)
+    posts: so.Mapped[list["Post"]] = so.relationship("Post", back_populates="photo", foreign_keys="Post.image_filename")
+    projects: so.Mapped[list["Project"]] = so.relationship("Project", back_populates="photo", foreign_keys="Project.image_filename")
 
 
 class Project(db.Model):
@@ -111,9 +111,9 @@ class Project(db.Model):
     description: so.Mapped[Optional[str]] = so.mapped_column(db.Text, nullable=True)
     date_posted: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
     image_filename: so.Mapped[Optional[str]] = so.mapped_column(sa.ForeignKey(Photo.filename, ondelete="SET NULL"), nullable=True)
-    photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", foreign_keys=[image_filename], innerjoin=False)
+    photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", foreign_keys=[image_filename], back_populates="projects", innerjoin=False)
     github_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255), nullable=True)
-    posts: so.Mapped[list["Post"]] = so.relationship(back_populates="project", cascade="all, delete-orphan")
+    posts: so.Mapped[list["Post"]] = so.relationship("Post", back_populates="project", cascade="all, delete-orphan")
 
 
 class Post(db.Model):
@@ -122,10 +122,10 @@ class Post(db.Model):
     content: so.Mapped[str] = so.mapped_column(db.Text, nullable=False)
     date_posted: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
     image_filename: so.Mapped[Optional[str]] = so.mapped_column(sa.ForeignKey(Photo.filename, ondelete="SET NULL"), nullable=True)
-    photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", foreign_keys=[image_filename], innerjoin=False)
+    photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", foreign_keys=[image_filename], back_populates="posts", innerjoin=False)
     github_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255), nullable=True)
     project_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Project.id, name="fk_post_project"), nullable=True, index=True)
-    project: so.Mapped[Optional["Project"]] = so.relationship(back_populates="posts")
+    project: so.Mapped[Optional["Project"]] = so.relationship("Project", back_populates="posts")
 
 # Helper Functions
 def allowed_file(filename):
@@ -243,6 +243,11 @@ def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', post=post)
 
+@app.route('/project/<int:project_id>')
+def project_detail(project_id):
+    project = Project.query.get_or_404(project_id)
+    return render_template('project_detail.html', project=project)
+
 
 @app.route('/new_post', methods=['GET', 'POST'])
 @login_required
@@ -251,6 +256,7 @@ def new_post():
         title = request.form['title']
         content = request.form['content'][:20000]
         github_link = request.form.get('github_link', '')
+        project_id = request.form.get('project_id')
         image = request.files.get('image')
         image_filename = None
 
@@ -279,7 +285,8 @@ def new_post():
             title=title,
             content=content,
             image_filename=image_filename,
-            github_link=github_link if github_link else None
+            github_link=github_link if github_link else None,
+            project_id=project_id if project_id else None
         )
 
         db.session.add(post)
@@ -287,7 +294,8 @@ def new_post():
         flash('Post created!', 'success')
         return redirect(url_for('index'))
 
-    return render_template('new_post.html')
+    projects = Project.query.all()
+    return render_template('new_post.html', projects=projects)
 
 @app.route('/new_project', methods=['GET', 'POST'])
 @login_required
@@ -346,7 +354,7 @@ def new_photo():
             unique_filename = f"{uuid4().hex}{ext}"
 
             #Process and optimize the image
-            image_paths = process_upload_image(photo_file, app.config['UPLOAD FOLDER'], unique_filename)
+            image_paths = process_upload_image(photo_file, app.config['UPLOAD_FOLDER'], unique_filename)
 
             if image_paths:
                 # Check if a photo with this file name already exists
@@ -360,7 +368,7 @@ def new_photo():
 
             db.session.commit()
 
-            flash('Project created!', 'success')
+            flash('Photo uploaded!', 'success')
             return redirect(url_for('new_photo'))
 
         else:
@@ -374,12 +382,24 @@ def new_photo():
 def delete_photo(photo_id):
     photo = Photo.query.get_or_404(photo_id)
 
+    filename = photo.filename
+
     # Delete the actual image files from storage
     try:
-        for size in IMAGE_SIZES:
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], size, photo.filename)
-            if os.path.exists(file_path):
-                os.remove(file_path)
+        if USING_SPACES:
+            # Delete from Digital Ocean Spaces
+            DO_SPACE = s3.Bucket(os.environ.get('DO_SPACE_NAME'))
+
+            for size in IMAGE_SIZES:
+                path = f"{size}/{filename}"
+                DO_SPACE.delete_objects(Delete={'Objects': [{'Key': path}]})
+
+        else:
+            # Delete from local filesystem
+            for size in IMAGE_SIZES:
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], size, filename)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
 
     except Exception as e:
         flash(f'Error deleting image files: {str(e)}', 'error')

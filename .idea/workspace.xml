@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c1d77107-d0eb-4acf-9ec5-e2003d64247e" name="Changes" comment="Post Launch Build (cleaning up some prior changes, here's the real date lmao) 02-05-2025">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/projects.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/projects.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebDev/Blog/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +180,23 @@
       <option name="project" value="LOCAL" />
       <updated>1746212954911</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Post Launch Build (cleaning up some prior changes, here's the real date lmao) 02-05-2025">
+      <option name="closed" value="true" />
+      <created>1746213355675</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1746213355675</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Post Launch Build (cleaning up some prior changes, here's the real date lmao) 02-05-2025">
+      <option name="closed" value="true" />
+      <created>1746213689968</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1746213689968</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
