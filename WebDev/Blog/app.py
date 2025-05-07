@@ -325,9 +325,17 @@ def new_project():
     if request.method == 'POST':
         title = request.form['title'].strip()
         description = request.form.get('description', '').strip()
+
+        # Validate essential fields
+        if not title:
+            flash('Project title is required!', 'error')
+            return redirect(url_for('new_project'))
+        if not description:
+            flash('Project description is required!', 'error')
+            return redirect(url_for('new_project'))
+
         github_link = request.form.get('github_link', '').strip() or None
         image_file = request.files.get('image')
-        image_filename = None
 
         if image_file and allowed_file(image_file.filename):
             # Generate a unique filename
@@ -556,10 +564,108 @@ def handle_csrf_error(e):
     return redirect(request.full_path)
 
 
+@app.route('/admin/check-image-files')
+@login_required
+def check_image_files():
+    """Check if all image files exist in the expected locations"""
+    if not current_user.is_authenticated:
+        flash('You must be logged in to access this page', 'error')
+        return redirect(url_for('login'))
+
+    # Get all photos from the database
+    photos = Photo.query.all()
+
+    if not photos:
+        flash('No photos found in the database', 'info')
+        return redirect(url_for('photo_album'))
+
+    results = []
+
+    for photo in photos:
+        photo_result = {
+            'id': photo.id,
+            'filename': photo.filename,
+            'sizes': {}
+        }
+
+        # Check each size
+        for size in IMAGE_SIZES:
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], size, photo.filename)
+            photo_result['sizes'][size] = {
+                'path': file_path,
+                'exists': os.path.exists(file_path)
+            }
+
+        results.append(photo_result)
+
+    # Return a simple HTML page with the results
+    html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Image Files Check</title>
+        <style>
+            body { font-family: sans-serif; padding: 20px; background: #050518; color: #e0e6f0; }
+            .results { margin-top: 20px; }
+            .photo { margin-bottom: 20px; padding: 15px; background: rgba(20, 20, 50, 0.75); border-radius: 10px; }
+            .status { display: inline-block; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px; }
+            .exists { background: #4CAF50; }
+            .missing { background: #F44336; }
+            h1, h2, h3 { color: #C4B5E2; }
+            .return { margin-top: 20px; display: inline-block; padding: 10px 15px; background: #37B4F8; color: #000; text-decoration: none; border-radius: 5px; }
+        </style>
+    </head>
+    <body>
+        <h1>Image Files Check</h1>
+        <p>Checking image files for all photos in the database.</p>
+
+        <div class="results">
+    """
+
+    all_exists = True
+
+    for result in results:
+        html += f"""
+        <div class="photo">
+            <h3>Photo ID: {result['id']}</h3>
+            <p>Filename: {result['filename']}</p>
+            <ul>
+        """
+
+        for size, info in result['sizes'].items():
+            status_class = "exists" if info['exists'] else "missing"
+            status_text = "Exists" if info['exists'] else "Missing"
+
+            if not info['exists']:
+                all_exists = False
+
+            html += f"""
+            <li>
+                <span class="status {status_class}"></span>
+                {size}: {status_text} (Path: {info['path']})
+            </li>
+            """
+
+        html += """
+            </ul>
+        </div>
+        """
+
+    overall_status = "All image files exist" if all_exists else "Some image files are missing"
+
+    html += f"""
+        <h2>Summary: {overall_status}</h2>
+        <a href="{url_for('photo_album')}" class="return">Return to Photo Album</a>
+    </body>
+    </html>
+    """
+
+    return html
+
 @app.route('/api/posts')
 def api_posts():
     page = int(request.args.get('page', 1))
-    per_page = 5
+    per_page = 10
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=per_page, error_out=False)
     data = []
     for post in posts.items:

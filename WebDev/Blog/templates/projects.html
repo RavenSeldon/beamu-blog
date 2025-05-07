@@ -18,7 +18,13 @@
             {% endif %}
         </a>
         {% endif %}
-        <p>{{ project.description|truncate(150) }}</p>
+        <p>
+            {% if project.description %}
+                {{ project.description|truncate(150) }}
+            {% else %}
+                <em>No description provided</em>
+            {% endif %}
+        </p>
         <div class="project-links">
             <a href="{{ url_for('project_detail', project_id=project.id) }}">View Details</a>
             {% if project.github_link %}

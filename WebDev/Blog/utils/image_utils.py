@@ -4,6 +4,7 @@ from io import BytesIO
 import re
 from werkzeug.utils import secure_filename
 from .s3_utils import upload_file, get_bucket
+import traceback
 
 # Define max dimensions for different image sizes
 IMAGE_SIZES = {
@@ -26,6 +27,7 @@ def optimize_image(img, output_path, max_size, quality=JPEG_QUALITY):
     """
     Resizes and compresses an image while maintaining aspect ratio
     """
+    print(f"Optimizing image to: {output_path} with size: {max_size}")
     try:
         if isinstance(img, str):
             img = Image.open(img)
@@ -47,9 +49,17 @@ def optimize_image(img, output_path, max_size, quality=JPEG_QUALITY):
             img = img.resize((new_width, new_height), Image.LANCZOS)
 
         # Determine output format based on original
-        format = img.format if img.format else os.path.splitext(output_path)[1][1:].upper()
-        if format.lower() not in ['jpeg', 'jpg', 'png', 'gif']:
+        ext = os.path.splitext(output_path)[1][1:].upper()
+
+        # Fix format name - JPG should be JPEG for PIL
+        if ext == 'JPG':
             format = 'JPEG'
+        elif ext in ['JPEG', 'PNG', 'GIF']:
+            format = ext
+        else:
+            format = 'JPEG'
+
+        print(f"Using format: {format} for saving")
 
         # Save to BytesIO object for either filesystem or cloud storage
         img_io = BytesIO()
@@ -62,17 +72,23 @@ def optimize_image(img, output_path, max_size, quality=JPEG_QUALITY):
             upload_file(img_io, output_path, content_type=content_type)
         else:
             # For local filesystem
+            dir_path = os.path.dirname(output_path)
+            print(f"Creating directory: {dir_path}")
             # Create directory if it doesn't exist
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            os.makedirs(dir_path, exist_ok=True)
+            print(f"Directory exists after makedirs: {os.path.exists(dir_path)}")
 
             # Save the optimized image to disk
+            print(f"Writing to file: {output_path}")
             with open(output_path, 'wb') as f:
                 f.write(img_io.getvalue())
+            print(f"File exists after write: {os.path.exists(output_path)}")
 
         return True
 
     except Exception as e:
         print(f"Error optimizing image: {e}")
+        traceback.print_exc()
         return False
 
 
@@ -98,46 +114,61 @@ def process_upload_image(uploaded_file, upload_folder, filename=None):
     if extension not in ['.jpg', '.jpeg', '.png', '.gif']:
         return None
 
-    # Create directories if they don't exist
-    if not USING_SPACES:
-        for size in IMAGE_SIZES:
-            size_folder = os.path.join(upload_folder, size)
-            os.makedirs(size_folder, exist_ok=True)
-
     # Store original file paths
     paths = {}
 
     try:
-        # Open the image with PIL
-        img = Image.open(uploaded_file)
+        # Save uploaded file to temp location
+        temp_path = os.path.join(upload_folder, "temp_" + filename)
+        uploaded_file.save(temp_path)
+
+        # Create directories if they don't exist
+        if not USING_SPACES:
+            for size in IMAGE_SIZES:
+                size_folder = os.path.join(upload_folder, size)
+                print(f"Creating directory: {size_folder}")
+                os.makedirs(size_folder, exist_ok=True)
 
         # Create resized versions
         for size, dimensions in IMAGE_SIZES.items():
-            if USING_SPACES:
-                # For DO Spaces, use path format size/filename
-                size_path = f"{size}/{filename}"
+            # Reopen the image for each size
+            with Image.open(temp_path) as img:
+                if USING_SPACES:
+                    # For DO Spaces, use path format size/filename
+                    size_path = f"{size}/{filename}"
+                    print(f"Processing {size} for DO Spaces: {size_path}")
 
-                if optimize_image(img, size_path, dimensions):
-                    # Store the relative path to be used in templates
-                    paths[size] = f"{size}/{filename}"
+                    if optimize_image(img, size_path, dimensions):
+                        # Store the relative path to be used in templates
+                        paths[size] = f"{size}/{filename}"
+                        print(f"Successfully saved {size} to Spaces")
 
-            else:
-                # For local filesystem
-                size_path = os.path.join(upload_folder, size, filename)
+                else:
+                    # For local filesystem
+                    size_path = os.path.join(upload_folder, size, filename)
+                    print(f"Processing size {size} to path: {size_path}")
 
-                if optimize_image(img, size_path, dimensions):
-                    # Store the relative path to be used in templates
-                    paths[size] = os.path.join(size, filename)
+                    if optimize_image(img, size_path, dimensions):
+                        # Store the relative path to be used in templates
+                        paths[size] = os.path.join(size, filename)
+                        print(f"Successfully saved {size} version to {size_path}")
+                    else:
+                        print(f"Failed to save {size} version to {size_path}")
 
         # If original size is needed, save it too
         # orig_path = os.path.join(upload_folder, 'original', filename)
         # os.makedirs(os.path.dirname(orig_path), exist_ok=True)
         # img.save(orig_path)
 
+        # Clean up temp file
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+
         return paths
 
     except Exception as e:
         print(f"Error processing uploaded image: {e}")
+        traceback.print_exc()
         return None
 
 

@@ -30,7 +30,11 @@
     {% endif %}
 
     <div class="post-content">
-        {{ project.description|markdown_safe }}
+        {% if project.description %}
+            {{ project.description|markdown_safe }}
+        {% else %}
+            <em>No description provided!</em>
+        {% endif %}
     </div>
 
     {% if project.github_link %}

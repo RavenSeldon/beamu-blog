@@ -794,181 +794,297 @@ document.addEventListener('DOMContentLoaded', () => {
     // Infinite scroll for posts
     function initInfiniteScroll() {
         console.log('Initializing infinite scroll');
-        if (document.querySelector('.posts')) {
-            let page = 1, loading = false, hasNext = true, maxLoadTime = 3000;
-            const postsContainer = document.querySelector('.posts');
-            const loader = document.getElementById('loader');
+        const postsContainer = document.querySelector('.posts');
 
-           // Ensure the loader exists
-            if (!loader) return;
+        if (!postsContainer) {
+            console.error('No posts container found, aborting infinite scroll');
+            return;
+        }
 
-            // Function to safely hide loader
-            function hideLoader() {
-                if (loader) {
-                    loader.style.display = 'none';
-                    loader.classList.remove('pulsing');
-                }
+        let page = 1, loading = false, hasNext = true, maxLoadTime = 3000;
+
+        // Find the loader. It should exist in your HTML
+        let loader = document.getElementById('loader');
+        console.log('Initial loader state:', loader);
+
+        // Make sure loader exists and has correct styling
+        if (loader) {
+            // Ensure loader is visible and has proper styling
+            loader.style.display = 'none'; // Initially hidden
+            loader.classList.add('loader'); // Ensure it has the loader class
+            console.log('Loader styles applied');
+        } else {
+            console.warn('Creating loader element - this is unexpected, loader should exist in HTML');
+            loader = document.createElement('div');
+            loader.id = 'loader';
+            loader.className = 'loader';
+
+            // Insert loader after posts container
+            if (postsContainer.parentNode) {
+                postsContainer.parentNode.insertBefore(loader, postsContainer.nextSibling);
             }
+        }
 
-            // Function to safely remove loader
-            function removeLoader() {
-                if (loader) {
-                    hideLoader();
-                    setTimeout(() => {
-                        try {
-                            if (loader.parentNode) {
-                                loader.parentNode.removeChild(loader);
-                            }
-                        } catch (e) {
-                            console.log("Loader already removed");
-                        }
-                    }, 100);
-                }
+        // Function to safely hide loader
+        function hideLoader() {
+            if (loader) {
+                loader.style.display = 'none';
+                loader.classList.remove('pulsing');
+                console.log('Loader hidden');
             }
+        }
 
-            // Add a spinner timeout to ensure it doesn't spin forever
-            function addLoaderTimeout() {
-                if (loader) {
-                    return setTimeout(() => {
-                        if (loading) {
-                            console.log("Loader timeout reached");
-                            loading = false;
-                            hideLoader();
-                        }
-                    }, maxLoadTime);
-                }
-                return null;
+        // Function to safely show loader
+        function showLoader() {
+            if (loader) {
+                loader.style.display = 'block';
+                loader.classList.add('pulsing');
+                console.log('Loader shown');
             }
+        }
 
-            async function loadPosts() {
-                // Don't proceed if already loading or no more posts
-                if (!hasNext || loading) return;
-
-                loading = true;
-                if (loader) {
-                    loader.style.display = 'block';
-                    loader.classList.add('pulsing');
-                }
-
-                // Set a timeout to hide loader if request takes too long
-                const loaderTimeout = addLoaderTimeout();
-
-                try {
-                    const res = await fetch(`/api/posts?page=${page}`);
-                    const data = await res.json();
-
-                    // Clear timeout as we got a response
-                    if (loaderTimeout) clearTimeout(loaderTimeout);
-
-                    // No posts returned - end of content
-                    if (!data.posts || data.posts.length === 0) {
-                        console.log("No more posts to load");
-                        hasNext = false;
-                        loading = false;
-
-                        // First page with no posts - show a message
-                        if (page === 1) {
-                            hideLoader();
-                            const msg = document.createElement('div');
-                            msg.className = 'no-posts-msg';
-                            msg.innerHTML = '<i class="fa fa-info-circle"></i> No posts yet.';
-                            postsContainer.appendChild(msg);
-                        } else {
-                            // End of posts reached - add a message and remove loader
-                            const endMsg = document.createElement('div');
-                            endMsg.className = 'end-of-posts-msg';
-                            endMsg.innerHTML = '<i class="fa fa-check-circle"></i> You\'ve reached the end of posts.';
-                            postsContainer.appendChild(endMsg);
-                            removeLoader();
+        // Function to safely remove loader
+        function removeLoader() {
+            if (loader) {
+                hideLoader();
+                setTimeout(() => {
+                    try {
+                        if (loader.parentNode) {
+                            loader.parentNode.removeChild(loader);
+                            console.log('Loader removed from DOM');
                         }
-                        return;
-                    }
-
-                    // Process the returned posts
-                    data.posts.forEach((post, index) => {
-                        const article = document.createElement('article');
-                        article.className = 'post-card fade-in';
-
-                        // Create the image tag with conditional path
-                        let imageTag = '';
-                        if (post.image_filename) {
-                            if (window.USING_SPACES) {
-                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="${window.SPACES_URL}/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
-                            } else {
-                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
-                            }
-                        }
-                        article.innerHTML = `
-                            <h2><a href="/post/${post.id}">${post.title}</a></h2>
-                            ${imageTag}
-                            <p>${post.content}</p>
-                            <div class="post-footer">
-                                <a href="/post/${post.id}" class="read-more-link">Read More <i class="fa-solid fa-angles-right"></i></a>
-                                ${post.github_link ? `<a href="${post.github_link}" target="_blank" class="github-link"><i class="fa fa-github"></i> View on GitHub</a>` : ''}
-                            </div>
-                        `;
-                        postsContainer.appendChild(article);
-
-                        // Trigger animation with a small delay
-                        setTimeout(() => {
-                            article.classList.add('visible');
-                        }, 50);
-                    });
-
-                    // Use the has_next flag from API response
-                    hasNext = !!data.has_next;
-
-                    // If no more posts, show end message and remove loader
-                    if (!hasNext) {
-                        console.log("No more posts available (has_next: false)");
-                        const endMsg = document.createElement('div');
-                        endMsg.className = 'end-of-posts-msg';
-                        endMsg.innerHTML = '<i class="fa fa-check-circle"></i> You\'ve reached the end of posts.';
-                        postsContainer.appendChild(endMsg);
-                        removeLoader();
-                    } else {
-                        // Increment page for next load
-                        page++;
-                    }
-                } catch (error) {
-                    console.error("Error loading posts:", error);
-                    const errorMsg = document.createElement('div');
-                    errorMsg.className = 'error-msg';
-                    errorMsg.innerHTML = '<i class="fa fa-exclamation-circle"></i> Failed to load posts. Please try again.';
-                    postsContainer.appendChild(errorMsg);
-
-                    // Clear timeout if error occurs
-                    if (loaderTimeout) clearTimeout(loaderTimeout);
-                } finally {
-                    // Hide loader and reset loading state with a delay proportional to posts loaded
-                    const delay = Math.min((data?.posts?.length || 0) * 100 + 300, 1000);
-                    setTimeout(() => {
-                        loading = false;
-                        if (hasNext) {
-                            hideLoader();
-                        }
-                    }, delay);
-                }
-            }
-
-            // Initial load
-            loadPosts();
-
-            // Improved scroll detection with debounce
-            let scrollTimeout;
-            window.addEventListener('scroll', () => {
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(() => {
-                    const scrollPosition = window.innerHeight + window.scrollY;
-                    const documentHeight = document.body.offsetHeight;
-
-                    // Trigger loading more posts when near the bottom (500px threshold)
-                    if (scrollPosition > documentHeight - 500) {
-                        loadPosts();
+                    } catch (e) {
+                        console.error("Error removing loader:", e);
                     }
                 }, 100);
-            });
+            }
         }
+
+        // Add a spinner timeout to ensure it doesn't spin forever
+        function addLoaderTimeout() {
+            if (loader) {
+                return setTimeout(() => {
+                    if (loading) {
+                        console.warn("Loader timeout reached - forcing reset of loading state");
+                        loading = false;
+                        hideLoader();
+                    }
+                }, maxLoadTime);
+            }
+            return null;
+        }
+
+        // Function to display the end of posts message
+        function showEndOfPostsMessage() {
+            // Check if we already have this message
+            if (!document.querySelector('.end-of-posts-msg')) {
+                console.log("Creating 'end of posts' message");
+                const endMsg = document.createElement('div');
+                endMsg.className = 'end-of-posts-msg';
+                endMsg.innerHTML = '<i class="fa fa-check-circle"></i> You\'ve reached the end of posts.';
+
+                // Append to posts container
+                postsContainer.appendChild(endMsg);
+
+                // CRITICAL: Force visibility with inline styles
+                endMsg.style.display = 'block';
+                endMsg.style.textAlign = 'center';
+                endMsg.style.padding = '1.5em';
+                endMsg.style.margin = '2em 0';
+                endMsg.style.color = '#37B4F8';
+
+                console.log("End message created with styles:", endMsg);
+
+                // Hide loader
+                hideLoader();
+            } else {
+                console.log("End message already exists");
+            }
+        }
+
+        async function loadPosts() {
+            // Don't proceed if already loading or no more posts
+            if (!hasNext || loading) {
+                console.log("Skipping loadPosts - hasNext:", hasNext, "loading:", loading);
+                return;
+            }
+
+            console.log("Loading posts page", page);
+            loading = true;
+            showLoader();
+
+            // Set a timeout to hide loader if request takes too long
+            const loaderTimeout = addLoaderTimeout();
+
+            try {
+                // Log the actual URL we're fetching (helps debug API issues)
+                const apiUrl = `/api/posts?page=${page}`;
+                console.log("Fetching:", apiUrl);
+
+                const res = await fetch(apiUrl);
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+
+                const data = await res.json();
+                console.log("API response for page", page, ":", data);
+                console.log("Posts count:", data.posts ? data.posts.length : 0);
+                console.log("Has next:", data.has_next);
+
+                // Clear timeout as we got a response
+                if (loaderTimeout) clearTimeout(loaderTimeout);
+
+                // No posts returned - end of content
+                if (!data.posts || data.posts.length === 0) {
+                    console.log("No more posts to load - empty response");
+                    hasNext = false;
+                    loading = false;
+
+                    // First page with no posts - show a message
+                    if (page === 1) {
+                        hideLoader();
+                        const msg = document.createElement('div');
+                        msg.className = 'no-posts-msg';
+                        msg.innerHTML = '<i class="fa fa-info-circle"></i> No posts yet.';
+                        postsContainer.appendChild(msg);
+                        console.log("'No posts' message displayed");
+                    } else {
+                        // End of posts reached - add a message and remove loader
+                        showEndOfPostsMessage();
+                        removeLoader();
+                    }
+                    return;
+                }
+
+                // Process the returned posts
+                data.posts.forEach((post, index) => {
+                    const article = document.createElement('article');
+                    article.className = 'post-card fade-in';
+
+                    // Create the image tag with conditional path
+                    let imageTag = '';
+                    if (post.image_filename) {
+                        if (window.USING_SPACES) {
+                            imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="${window.SPACES_URL}/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
+                        } else {
+                            imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
+                        }
+                    }
+                    article.innerHTML = `
+                        <h2><a href="/post/${post.id}">${post.title}</a></h2>
+                        ${imageTag}
+                        <p>${post.content}</p>
+                        <div class="post-footer">
+                            <a href="/post/${post.id}" class="read-more-link">Read More <i class="fa-solid fa-angles-right"></i></a>
+                            ${post.github_link ? `<a href="${post.github_link}" target="_blank" class="github-link"><i class="fa fa-github"></i> View on GitHub</a>` : ''}
+                        </div>
+                    `;
+                    postsContainer.appendChild(article);
+
+                    // Trigger animation with a small delay
+                    setTimeout(() => {
+                        article.classList.add('visible');
+                    }, 50);
+                });
+
+                console.log(`Added ${data.posts.length} posts to the container`);
+
+                // CRITICAL: Update the hasNext flag from API response
+                console.log("API has_next value:", data.has_next);
+                hasNext = !!data.has_next;
+                console.log("Updated hasNext flag:", hasNext);
+
+                // If no more posts, show end message and remove loader
+                if (!hasNext) {
+                    console.log("No more posts available (has_next: false)");
+                    showEndOfPostsMessage();
+                    removeLoader();
+                } else {
+                    // Increment page for next load
+                    page++;
+                    console.log("Ready for next page:", page);
+                }
+            } catch (error) {
+                console.error("Error loading posts:", error);
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'error-msg';
+                errorMsg.innerHTML = '<i class="fa fa-exclamation-circle"></i> Failed to load posts. Please try again.';
+                postsContainer.appendChild(errorMsg);
+
+                // Clear timeout if error occurs
+                if (loaderTimeout) clearTimeout(loaderTimeout);
+            } finally {
+                // Reset loading state with a short delay
+                setTimeout(() => {
+                    loading = false;
+                    if (hasNext) {
+                        hideLoader();
+                    }
+                    console.log("Loading state reset. Current state - loading:", loading, "hasNext:", hasNext);
+                }, 300);
+            }
+        }
+
+        // Check if we already have content and need to check if there are more posts
+        const initialArticles = postsContainer.querySelectorAll('article');
+
+        console.log(`Found ${initialArticles.length} initial articles`);
+
+        // IMPORTANT: If the container is empty, load page 1 immediately
+        if (initialArticles.length === 0) {
+            console.log('No initial articles, loading page 1');
+            loadPosts();
+        } else {
+            // If we already have articles (server-rendered), check if there are more
+            console.log("Checking for more posts beyond the initial loaded ones");
+
+            // Try to load page 2 to see if there are more posts
+            fetch('/api/posts?page=2')
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Check for more posts result:", data);
+
+                    if (!data.posts || data.posts.length === 0 || !data.has_next) {
+                        console.log('All posts already loaded, showing end message');
+                        showEndOfPostsMessage();
+                        hideLoader(); // Make sure loader is hidden
+                        hasNext = false; // No more posts to load
+                    } else {
+                        console.log('More posts available, page 2 ready for loading');
+                        page = 2; // Start from page 2 next time we load
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking for more posts:', error);
+                });
+        }
+
+        // Set up scroll event listener for infinite scroll
+        console.log("Setting up scroll event listener");
+
+        // Improved scroll detection with debounce
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                // Only attempt to load more if we're not currently loading and there are more posts
+                if (loading || !hasNext) {
+                    console.log("Scroll detected but not loading more - loading:", loading, "hasNext:", hasNext);
+                    return;
+                }
+
+                const scrollPosition = window.innerHeight + window.scrollY;
+                const documentHeight = document.body.offsetHeight;
+
+                // Load more posts when near the bottom
+                if (scrollPosition > documentHeight - 600) {
+                    console.log("Near bottom of page, loading more posts");
+                    loadPosts();
+                }
+            }, 100);
+        });
+
+        console.log("Infinite scroll initialization complete");
     }
 
     // ------- 3. OPTIONAL LOADING ANIMATIONS --------
@@ -988,5 +1104,74 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.log('Return visit - initialization complete');
     }
+
+    // Manually check for more posts shortly after page load
+    function checkForMorePosts() {
+        // Only run on the homepage
+        if (window.location.pathname === '/') {
+            console.log("Checking for additional posts...");
+
+            // Get the posts container
+            const postsContainer = document.querySelector('.posts');
+            if (!postsContainer) return;
+
+            // Get all articles
+            const articles = postsContainer.querySelectorAll('article');
+            console.log(`Found ${articles.length} articles on page`);
+
+            // If we have articles but possibly not all of them, fetch the next page
+            if (articles.length > 0) {
+                // Create or find the end message element
+                let endMsg = document.querySelector('.end-of-posts-msg');
+
+                if (!endMsg) {
+                    // Only check for more posts if we don't already have an end message
+                    fetch('/api/posts?page=2')
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Manual check for page 2:", data);
+
+                            // If page 2 has posts, simulate scrolling to load them
+                            if (data.posts && data.posts.length > 0) {
+                                console.log("Found more posts on page 2, triggering load");
+
+                                // Simulate a scroll event near the bottom
+                                const scrollEvent = new Event('scroll');
+                                window.dispatchEvent(scrollEvent);
+
+                                // Additionally, force the scroll position to trigger loading
+                                const currentScroll = window.scrollY;
+                                window.scrollTo(0, document.body.scrollHeight);
+                                setTimeout(() => {
+                                    window.scrollTo(0, currentScroll);
+                                }, 50);
+                            } else {
+                                console.log("No more posts on page 2");
+                                // Show end message directly
+                                const endMsg = document.createElement('div');
+                                endMsg.className = 'end-of-posts-msg';
+                                endMsg.innerHTML = '<i class="fa fa-check-circle"></i> You\'ve reached the end of posts.';
+
+                                // Style the end message
+                                endMsg.style.display = 'block';
+                                endMsg.style.textAlign = 'center';
+                                endMsg.style.padding = '1.5em';
+                                endMsg.style.margin = '2em 0';
+                                endMsg.style.color = '#37B4F8';
+
+                                // Add to container
+                                postsContainer.appendChild(endMsg);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking for more posts:', error);
+                        });
+                }
+            }
+        }
+    }
+
+    // Run this check a short time after page load
+    setTimeout(checkForMorePosts, 2000);
 
 });

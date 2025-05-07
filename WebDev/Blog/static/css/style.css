@@ -801,6 +801,28 @@ a:hover {
     box-shadow: 0 0 48px rgba(126, 249, 255, 0.4), 0 0 16px rgba(243, 249, 157, 0.25);
 }
 
+/* Fix for photo card images */
+.photo-card img {
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+    max-height: 350px;
+    object-fit: contain;
+    margin-bottom: 1em;
+    border-radius: 8px;
+    box-shadow: 0 0 32px rgba(126, 249, 255, 0.3), 0 0 8px rgba(243, 249, 157, 0.15);
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.photo-card .photo-link {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 1em;
+    text-align: center;
+}
+
 .posts article h2 {
     margin-top: 0;
     position: relative;
@@ -1293,10 +1315,10 @@ button:hover::before {
     padding: 1.2em;
     border-radius: 14px;
     text-align: center;
+    height: auto;
     border: 1.5px solid var(--glass-border);
-    box-shadow: 0 0 16px rgba(126, 249, 255, 0.2);
+    box-shadow: 0 0 2px rgba(126, 249, 255, 0.2);
     transition: box-shadow var(--transition), transform var(--transition);
-    height: 100%;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -1309,7 +1331,7 @@ button:hover::before {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: auto%;
     background:
         radial-gradient(circle at 30% 30%, rgba(126, 249, 255, 0.08), transparent 50%),
         radial-gradient(circle at 70% 70%, rgba(243, 249, 157, 0.08), transparent 50%),
@@ -1324,17 +1346,8 @@ button:hover::before {
 }
 
 .photo-card:hover {
-    box-shadow: 0 10px 32px rgba(243, 249, 157, 0.3), 0 4px 16px rgba(126, 249, 255, 0.3);
+    box-shadow: 0 10px 8px rgba(243, 249, 157, 0.3), 0 4px 16px rgba(126, 249, 255, 0.3);
     transform: scale(1.03) translateY(-5px);
-}
-
-.photo-card img {
-    width: 100%;
-    height: 0;
-    padding-bottom: 75%; /* 4:3 aspect ratio */
-    object-fit: cover;
-    margin-bottom: 1em;
-    border-radius: 8px;
 }
 
 .photo-card .caption {

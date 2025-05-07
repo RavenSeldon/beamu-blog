@@ -2,19 +2,32 @@
 {% block title %}Photo Album - My Cosmic-Neural Blog{% endblock %}
 {% block content %}
 <h1>Photo Album</h1>
+
+<!-- Debug info -->
+{% if current_user.is_authenticated %}
+<div class="debug-info" style="margin-bottom: 20px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+    <p><strong>Debug Info:</strong> USING_SPACES = {{ USING_SPACES }}</p>
+    {% if USING_SPACES %}
+    <p>SPACES_URL = {{ SPACES_URL }}</p>
+    {% endif %}
+</div>
+{% endif %}
+
 <div class="photo-grid">
     {% for photo in photos %}
     <div class="photo-card">
         {% if USING_SPACES %}
         <a href="{{ SPACES_URL }}/large/{{ photo.filename }}" target="_blank" class="photo-link">
-            <img src="{{ SPACES_URL }}/medium/{{ photo.filename }}" alt="{{ photo.description }}">
+            <img src="{{ SPACES_URL }}/medium/{{ photo.filename }}" alt="{{ photo.description if photo.description else 'Photo' }}">
         </a>
         {% else %}
         <a href="{{ url_for('static', filename='images/large/' + photo.filename) }}" target="_blank" class="photo-link">
-            <img src="{{ url_for('static', filename='images/medium/' + photo.filename) }}" alt="{{ photo.description }}">
+            <img src="{{ url_for('static', filename='images/medium/' + photo.filename) }}" alt="{{ photo.description if photo.description else 'Photo' }}"
+                 onerror="this.onerror=null; console.log('Error loading medium image: {{ photo.filename }}'); this.src='{{ url_for('static', filename='images/large/' + photo.filename) }}';">
         </a>
         {% endif %}
-        <p class="caption">{{ photo.description }}</p>
+
+        <p class="caption">{% if photo.description %}{{ photo.description }}{% else %}<em>No description</em>{% endif %}</p>
 
         {% if photo.posts or photo.projects %}
         <div class="photo-related">
@@ -47,4 +60,38 @@
     </div>
     {% endfor %}
 </div>
+
+{% if current_user.is_authenticated %}
+<!-- Admin Actions -->
+<div class="admin-section" style="margin-top: 30px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+    <h3>Admin Actions</h3>
+    <a href="{{ url_for('check_image_files') }}" class="admin-btn" style="display: inline-block; padding: 8px 15px; background: #37B4F8; color: #000; text-decoration: none; border-radius: 5px;">
+        Check Image Files
+    </a>
+</div>
+
+<script>
+document.getElementById('check-images-btn').addEventListener('click', function() {
+    const photoCards = document.querySelectorAll('.photo-card');
+
+    photoCards.forEach((card, index) => {
+        const img = card.querySelector('img');
+        const imgSrc = img.getAttribute('src');
+
+        // Test if the image can be loaded
+        const testImg = new Image();
+        testImg.onload = function() {
+            console.log(`Image ${index+1} loaded successfully: ${imgSrc}`);
+        };
+        testImg.onerror = function() {
+            console.error(`Image ${index+1} failed to load: ${imgSrc}`);
+            alert(`Image failed to load: ${imgSrc}`);
+        };
+        testImg.src = imgSrc;
+    });
+
+    alert('Checking image paths. See browser console for details.');
+});
+</script>
+{% endif %}
 {% endblock %}

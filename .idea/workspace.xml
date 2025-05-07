@@ -4,17 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1d77107-d0eb-4acf-9ec5-e2003d64247e" name="Changes" comment="Post Launch Build 2 (cleaning up database relationships) 02-05-2025">
+    <list default="true" id="c1d77107-d0eb-4acf-9ec5-e2003d64247e" name="Changes" comment="Post Launch Build 3 (cleaning up database relationships) 07-05-2025">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WebDev/Blog/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WebDev/Blog/static/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/static/css/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WebDev/Blog/static/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/static/js/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/new_post.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/new_post.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/photo_album.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/photo_album.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/post.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/post.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/project_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/project_detail.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WebDev/Blog/templates/projects.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/templates/projects.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebDev/Blog/utils/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/utils/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WebDev/Blog/utils/image_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/utils/image_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -251,7 +248,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746538792766</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Post Launch Build 3 (cleaning up database relationships) 07-05-2025">
+      <option name="closed" value="true" />
+      <created>1746595023347</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1746595023347</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -263,6 +268,7 @@
     <MESSAGE value="Post Launch Build (bug fixes, update database relationships, about me page, modifying home page with images) 25-04-2025" />
     <MESSAGE value="Post Launch Build (cleaning up some prior changes, here's the real date lmao) 02-05-2025" />
     <MESSAGE value="Post Launch Build 2 (cleaning up database relationships) 02-05-2025" />
-    <option name="LAST_COMMIT_MESSAGE" value="Post Launch Build 2 (cleaning up database relationships) 02-05-2025" />
+    <MESSAGE value="Post Launch Build 3 (cleaning up database relationships) 07-05-2025" />
+    <option name="LAST_COMMIT_MESSAGE" value="Post Launch Build 3 (cleaning up database relationships) 07-05-2025" />
   </component>
 </project>
