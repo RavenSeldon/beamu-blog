@@ -6,11 +6,44 @@
     {% for photo in photos %}
     <div class="photo-card">
         {% if USING_SPACES %}
-        <img src="{{ SPACES_URL }}/large/{{ photo.filename }}" alt="{{ photo.description }}">
+        <a href="{{ SPACES_URL }}/large/{{ photo.filename }}" target="_blank" class="photo-link">
+            <img src="{{ SPACES_URL }}/medium/{{ photo.filename }}" alt="{{ photo.description }}">
+        </a>
         {% else %}
-        <img src="{{ url_for('static', filename='images/large/' + photo.filename) }}" alt="{{ photo.description }}">
+        <a href="{{ url_for('static', filename='images/large/' + photo.filename) }}" target="_blank" class="photo-link">
+            <img src="{{ url_for('static', filename='images/medium/' + photo.filename) }}" alt="{{ photo.description }}">
+        </a>
         {% endif %}
-        <p>{{ photo.description }}</p>
+        <p class="caption">{{ photo.description }}</p>
+
+        {% if photo.posts or photo.projects %}
+        <div class="photo-related">
+            {% if photo.posts %}
+            <h4>Related Posts:</h4>
+            <ul>
+                {% for post in photo.posts %}
+                <li><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% if photo.projects %}
+            <h4>Related Projects:</h4>
+            <ul>
+                {% for project in photo.projects %}
+                <li><a href="{{ url_for('project_detail', project_id=project.id) }}">{{ project.title }}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if current_user.is_authenticated %}
+        <form method="post" action="{{ url_for('delete_photo', photo_id=photo.id) }}" onsubmit="return confirm('Are you sure you want to delete this photo?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i> Delete</button>
+        </form>
+        {% endif %}
     </div>
     {% endfor %}
 </div>

@@ -988,4 +988,5 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.log('Return visit - initialization complete');
     }
+
 });

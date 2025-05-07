@@ -70,5 +70,18 @@
         </div>
     </section>
     {% endif %}
+    {% if current_user.is_authenticated %}
+    <div class="project-admin">
+        <form method="post" action="{{ url_for('delete_project', project_id=project.id) }}" onsubmit="return confirm('Are you sure you want to delete this project and all its posts?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i> Delete Project</button>
+        </form>
+    </div>
+    {% endif %}
+    <div class="post-navigation">
+        <a href="{{ url_for('projects') }}" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Back to all projects
+        </a>
+    </div>
 </div>
 {% endblock %}

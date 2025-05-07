@@ -5,44 +5,26 @@
 {% if projects %}
 <div class="projects-list">
     {% for project in projects %}
-    <div class="project-card">
-        <header class="post-header">
-            <h1 class="post-title">{{ project.title }}</h1>
-            <div class="post-meta">
-                <span class="post-date">{{ project.date_posted.strftime('%B %d, %Y') }}</span>
-            </div>
-        </header>
+    <div class="project-card visible" id="project-{{ project.id }}">
+        <h3><a href="{{ url_for('project_detail', project_id=project.id) }}">{{ project.title }}</a></h3>
         {% if project.image_filename %}
-        <div class="post-image">
-            <!-- Responsive image with srcset -->
+        <a href="{{ url_for('project_detail', project_id=project.id) }}">
             {% if USING_SPACES %}
             <img src="{{ SPACES_URL }}/medium/{{ project.image_filename }}"
-                 srcset="{{ get_srcset(project.image_filename) }}"
-                 sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
-                 alt="{{ project.title }}"
-                 class="post-feature-img"
-                 loading="eager">
+                 alt="{{ project.title }}">
             {% else %}
             <img src="{{ url_for('static', filename='images/medium/' + project.image_filename) }}"
-                 srcset="{{ get_srcset(project.image_filename) }}"
-                 sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
-                 alt="{{ project.title }}"
-                 class="post-feature-img"
-                 loading="eager">
+                 alt="{{ project.title }}">
+            {% endif %}
+        </a>
+        {% endif %}
+        <p>{{ project.description|truncate(150) }}</p>
+        <div class="project-links">
+            <a href="{{ url_for('project_detail', project_id=project.id) }}">View Details</a>
+            {% if project.github_link %}
+            <a href="{{ project.github_link }}" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
             {% endif %}
         </div>
-        {% endif %}
-
-        <div class="post-content">
-            {{ project.description }}
-        </div>
-        {% if project.github_link %}
-        <div class="post-links">
-            <a href="{{ project.github_link }}" target="_blank" class="github-link">
-                <i class="fa-brands fa-github"></i> View on GitHub
-            </a>
-        </div>
-        {% endif %}
     </div>
     {% endfor %}
 </div>

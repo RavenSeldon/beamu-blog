@@ -21,8 +21,9 @@ from markupsafe import Markup
 from flask_mail import Mail, Message
 from datetime import datetime, timezone, timedelta
 from uuid import uuid4
-from utils.image_utils import process_upload_image, get_srcset, USING_SPACES, SPACES_URL, IMAGE_SIZES, s3
+from utils.image_utils import process_upload_image, get_srcset, USING_SPACES, SPACES_URL, IMAGE_SIZES
 from utils.minify_utils import asset_url
+from utils.s3_utils import delete_file, delete_files, upload_file, get_bucket, get_s3_resource
 
 
 app = Flask(__name__)
@@ -259,7 +260,19 @@ def new_post():
         project_id = request.form.get('project_id')
         image = request.files.get('image')
         image_filename = None
+        photo = None
 
+        # Create the post first without the image
+        post = Post(
+            title=title,
+            content=content,
+            github_link=github_link if github_link else None,
+            project_id=project_id if project_id else None
+        )
+        db.session.add(post)
+        db.session.flush()  # This gives post an ID
+
+        # Process image if provided
         if image and allowed_file(image.filename):
             # Generate a unique filename to prevent collisions
             base_name, ext = os.path.splitext(secure_filename(image.filename))
@@ -276,24 +289,33 @@ def new_post():
                     # Create new photo record
                     photo = Photo(filename=unique_filename, description=title)
                     db.session.add(photo)
-                    db.session.flush()
-                # Store the original filename or the medium size in the database
-                image_filename = unique_filename
+                    db.session.flush()  # This gives photo an ID
+                else:
+                    # Use existing photo
+                    photo = existing_photo
+                    app.logger.info(f"Using existing photo with ID {photo.id}")
 
-        # Create the post with the optimized image information
-        post = Post(
-            title=title,
-            content=content,
-            image_filename=image_filename,
-            github_link=github_link if github_link else None,
-            project_id=project_id if project_id else None
-        )
+                # Now establish the relationship between post and photo
+                post.image_filename = unique_filename
+                post.photo = photo
 
-        db.session.add(post)
+                # Debug info
+                app.logger.info(f"Associated post ID {post.id} with photo ID {photo.id}")
+
+        # Commit all changes at once
         db.session.commit()
+
+        # Optionally refresh to verify
+        db.session.refresh(post)
+        if photo:
+            db.session.refresh(photo)
+            app.logger.info(f"After commit: Post image_filename = {post.image_filename}")
+            app.logger.info(f"After commit: Photo posts count = {len(photo.posts)}")
+
         flash('Post created!', 'success')
         return redirect(url_for('index'))
 
+    # For GET request
     projects = Project.query.all()
     return render_template('new_post.html', projects=projects)
 
@@ -316,25 +338,48 @@ def new_project():
             image_paths = process_upload_image(image_file, app.config['UPLOAD_FOLDER'], unique_filename)
 
             if image_paths:
-                # Check if a photo with this filename already exists
-                existing_photo = Photo.query.filter_by(filename=unique_filename).first()
+                # Create the project first
+                project = Project(
+                    title=title,
+                    description=description or None,
+                    github_link=github_link,
+                )
+                db.session.add(project)
+                db.session.flush()  # This assigns an ID to the project
 
-                if not existing_photo:
-                    # Create new photo record
-                    photo = Photo(filename=unique_filename, description=title)
-                    db.session.add(photo)
-                    db.session.flush()
+                # Now create and associate the photo
+                photo = Photo(filename=unique_filename, description=title)
+                db.session.add(photo)
+                db.session.flush()  # This assigns an ID to the photo
 
-                image_filename = unique_filename
+                # Set the relationship in both directions
+                project.image_filename = unique_filename
+                project.photo = photo
 
-        project = Project(
-            title=title,
-            description=description or None,
-            image_filename=image_filename,
-            github_link=github_link,
-        )
-        db.session.add(project)
-        db.session.commit()
+                # Add the project to the photo's projects list
+                if project not in photo.projects:
+                    photo.projects.append(project)
+
+                # Debug info
+                app.logger.info(f"Created photo with ID {photo.id} and filename {photo.filename}")
+                app.logger.info(f"Associated with project ID {project.id}")
+
+                db.session.commit()
+
+                # Double-check the association after commit
+                db.session.refresh(project)
+                db.session.refresh(photo)
+                app.logger.info(f"After commit: Project image_filename = {project.image_filename}")
+                app.logger.info(f"After commit: Photo projects count = {len(photo.projects)}")
+        else:
+            # No image, just create the project
+            project = Project(
+                title=title,
+                description=description or None,
+                github_link=github_link,
+            )
+            db.session.add(project)
+            db.session.commit()
 
         flash('Project created!', 'success')
         return redirect(url_for('projects'))
@@ -377,6 +422,28 @@ def new_photo():
 
     return render_template('new_photo.html')
 
+@app.route('/delete_post/<int:post_id>', methods=['POST'])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+
+    db.session.delete(post)
+    db.session.commit()
+
+    flash('Post deleted successfully', 'success')
+    return redirect(url_for('index'))
+
+@app.route('/delete_project/<int:project_id>', methods=['POST'])
+@login_required
+def delete_project(project_id):
+    project = Project.query.get_or_404(project_id)
+
+    db.session.delete(project)
+    db.session.commit()
+
+    flash('Project deleted successfully', 'success')
+    return redirect(url_for('projects'))
+
 @app.route('/delete_photo/<int:photo_id>', methods=['POST'])
 @login_required
 def delete_photo(photo_id):
@@ -387,12 +454,11 @@ def delete_photo(photo_id):
     # Delete the actual image files from storage
     try:
         if USING_SPACES:
-            # Delete from Digital Ocean Spaces
-            DO_SPACE = s3.Bucket(os.environ.get('DO_SPACE_NAME'))
+            # Collect paths for all image sizes
+            paths_to_delete = [f"{size}/{filename}" for size in IMAGE_SIZES]
 
-            for size in IMAGE_SIZES:
-                path = f"{size}/{filename}"
-                DO_SPACE.delete_objects(Delete={'Objects': [{'Key': path}]})
+            # Batch delete all image sizes
+            delete_files(paths_to_delete)
 
         else:
             # Delete from local filesystem
@@ -480,7 +546,7 @@ def handle_csrf_error(e):
     # Log the error for debugging
     app.logger.warning(f"CSRF Error: {str(e)} on {request.path} from {request.remote_addr}")
 
-    # Return to login or contact with a fresh form
+    # Return to log in or contact with a fresh form
     if request.path == '/login':
         return redirect(url_for('login'))
     elif request.path == '/contact':

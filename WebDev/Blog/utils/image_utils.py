@@ -2,9 +2,8 @@ import os
 from PIL import Image
 from io import BytesIO
 import re
-import boto3
-from botocore.client import Config
 from werkzeug.utils import secure_filename
+from .s3_utils import upload_file, get_bucket
 
 # Define max dimensions for different image sizes
 IMAGE_SIZES = {
@@ -17,18 +16,10 @@ IMAGE_SIZES = {
 JPEG_QUALITY = 85
 
 # Check if we're in production with Spaces configured
-if os.environ.get('DO_SPACE_KEY'):
-    s3 = boto3.resource('s3',
-        endpoint_url=f"https://{os.environ.get('DO_SPACE_REGION')}.digitaloceanspaces.com",
-        aws_access_key_id=os.environ.get('DO_SPACE_KEY'),
-        aws_secret_access_key=os.environ.get('DO_SPACE_SECRET'),
-        config=Config(signature_version='s3v4')
-    )
-    DO_SPACE = s3.Bucket(os.environ.get('DO_SPACE_NAME'))
+USING_SPACES = bool(os.environ.get('DO_SPACE_KEY'))
+if USING_SPACES:
     SPACES_URL = f"https://{os.environ.get('DO_SPACE_NAME')}.{os.environ.get('DO_SPACE_REGION')}.digitaloceanspaces.com"
-    USING_SPACES = True
 else:
-    USING_SPACES = False
     SPACES_URL = None
 
 def optimize_image(img, output_path, max_size, quality=JPEG_QUALITY):
@@ -68,14 +59,7 @@ def optimize_image(img, output_path, max_size, quality=JPEG_QUALITY):
         if USING_SPACES and not output_path.startswith('/'):
             # For DO Spaces, upload to appropriate path
             content_type = f"image/{format.lower()}"
-            DO_SPACE.upload_fileobj(
-                img_io,
-                output_path,
-                ExtraArgs={
-                    'ContentType': content_type,
-                    'ACL': 'public-read'
-                }
-            )
+            upload_file(img_io, output_path, content_type=content_type)
         else:
             # For local filesystem
             # Create directory if it doesn't exist

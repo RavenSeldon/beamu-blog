@@ -26,7 +26,24 @@
         <span class="file-name">No file chosen...</span>
         <img class="preview" style="display:none;" alt="Image preview" src="">
       </label>
+
+      <label class="flex-grow">
+        <span>Project <small>(optional)</small></span>
+        <select name="project_id" class="form-control">
+          <option value="">-- None --</option>
+          {% for project in projects %}
+          <option value="{{ project.id }}">{{ project.title }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label class="flex-grow">
+        <span>GitHub URL <small>(optional)</small></span>
+        <input type="url" name="github_link" placeholder="https://github.com/user/repo">
+      </label>
     </div>
+
+
 
     <button type="submit" class="send-btn">
       <i class="fa-solid fa-rocket"></i> Publish
