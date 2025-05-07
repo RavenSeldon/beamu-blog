@@ -235,8 +235,14 @@ def photo_album():
 
 @app.route('/projects')
 def projects():
-    projects = Project.query.all()
-    return render_template('projects.html', projects=projects)
+    # projects = Project.query.all()
+    try:
+        projects = []
+        app.logger.info("Rendering /new_post (GET) with empty project list (test)")
+        return render_template('new_post.html', projects=projects)
+    except Exception as e:
+        app.logger.error(f"Error in /new_post (GET) route even with empty project list {str(e)}")
+        return "An error occurred rendering the new post page. ", 500
 
 
 @app.route('/post/<int:post_id>')
@@ -316,8 +322,14 @@ def new_post():
         return redirect(url_for('index'))
 
     # For GET request
-    projects = Project.query.all()
-    return render_template('new_post.html', projects=projects)
+    #projects = Project.query.all()
+    try:
+        projects = []
+        app.logger.info("Rendering /new_post (GET) with empty project list (test)")
+        return render_template('new_post.html', projects=projects)
+    except Exception as e:
+        app.logger.error(f"Error in /new_post (GET) route even with empty project list {str(e)}")
+        return "An error occurred rendering the new post page. ", 500
 
 @app.route('/new_project', methods=['GET', 'POST'])
 @login_required
