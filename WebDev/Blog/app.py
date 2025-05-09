@@ -1,4 +1,5 @@
 import os
+import sys
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -21,6 +22,7 @@ from markupsafe import Markup
 from flask_mail import Mail, Message
 from datetime import datetime, timezone, timedelta
 from uuid import uuid4
+from pathlib import Path
 from utils.image_utils import process_upload_image, get_srcset, USING_SPACES, SPACES_URL, IMAGE_SIZES
 from utils.minify_utils import asset_url
 from utils.s3_utils import delete_file, delete_files, upload_file, get_bucket, get_s3_resource
@@ -50,6 +52,24 @@ naming_convention = {
     "ix": "ix_%(table_name)s_%(column_0_name)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",
 }
+
+try:
+    from dotenv import load_dotenv
+    # Look for .env file in various locations
+    env_paths = [
+        Path('.') / '.env', # Current directory
+        Path('..') / '.env', # Parent directory
+        Path('/etc/neurascape') / '.env', # System config directory
+    ]
+
+    for env_path in env_paths:
+        if env_path.exists():
+            load_dotenv(dotenv_path=env_path)
+            break
+
+except ImportError:
+    # python-dotenv not installed, continue without it
+    pass
 
 # Custom Jinja filter
 @app.template_filter('markdown_safe')
