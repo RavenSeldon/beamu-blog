@@ -694,20 +694,27 @@ def check_image_files():
 
     return html
 
+
 @app.route('/check-spaces', methods=['GET'])
 @login_required
 def check_spaces():
-    # Debug endpoint to test Digital Ocean Spaces configuration
+    """Debug endpoint to test Digital Ocean Spaces configuration"""
     try:
-        output = ['<h2>Digital Ocean Spaces Check</h2>']
+        from io import BytesIO
+        import time
+
+        output = ["<h2>Digital Ocean Spaces Check</h2>"]
 
         # Check environment variables
-        output.append('<h3>Environment Variables</h3>')
-        output.append(f'Using_SPACES: {USING_SPACES}')
-        output.append(f'DO_SPACE_KEY exists: {bool(os.environ.get("DO_SPACE_KEY"))}')
-        output.append(f'DO_SPACE_SECRET exists: {bool(os.environ.get("DO_SPACE_SECRET"))}')
-        output.append(f'DO_SPACE_NAME exists: {bool(os.environ.get("DO_SPACE_NAME"))}')
-        output.append(f'DO_SPACE_REGION exists: {bool(os.environ.get("DO_SPACE_REGION"))}')
+        output.append("<h3>Environment Variables</h3>")
+        output.append(f"USING_SPACES: {USING_SPACES}")
+        output.append(f"DO_SPACE_KEY exists: {bool(os.environ.get('DO_SPACE_KEY'))}")
+        output.append(f"DO_SPACE_SECRET exists: {bool(os.environ.get('DO_SPACE_SECRET'))}")
+        output.append(f"DO_SPACE_NAME exists: {bool(os.environ.get('DO_SPACE_NAME'))}")
+        output.append(f"DO_SPACE_REGION exists: {bool(os.environ.get('DO_SPACE_REGION'))}")
+
+        if USING_SPACES:
+            output.append(f"SPACES_URL: {SPACES_URL}")
 
         # Try to create S3 resource
         output.append("<h3>S3 Resource</h3>")
@@ -723,7 +730,7 @@ def check_spaces():
         if bucket:
             output.append(f"✓ Bucket retrieved: {bucket.name}")
 
-            # Try listing some ojbects
+            # Try listing objects
             try:
                 objects = list(bucket.objects.limit(5))
                 output.append(f"✓ Listed {len(objects)} objects from bucket")
@@ -732,16 +739,43 @@ def check_spaces():
                     for obj in objects:
                         output.append(f"<li>{obj.key}</li>")
                     output.append("</ul>")
-
             except Exception as list_error:
                 output.append(f"✗ Error listing objects: {str(list_error)}")
+
+            # Test direct upload
+            output.append("<h3>Test Upload</h3>")
+            try:
+                # Create a simple test file
+                test_data = BytesIO(b"This is a test file created at " + str(time.time()).encode())
+                test_path = f"test/test_file_{int(time.time())}.txt"
+
+                # Try uploading
+                output.append(f"Attempting to upload test file to: {test_path}")
+                upload_file(test_data, test_path, content_type="text/plain")
+
+                output.append(f"✓ Test upload appears successful")
+                output.append(f"Test file URL would be: {SPACES_URL}/{test_path}")
+
+                # Check if it's accessible
+                import requests
+                test_url = f"{SPACES_URL}/{test_path}"
+                resp = requests.head(test_url)
+                if resp.status_code == 200:
+                    output.append(f"✓ Test file accessible at: <a href='{test_url}' target='_blank'>{test_url}</a>")
+                else:
+                    output.append(f"✗ Test file not accessible (status code: {resp.status_code})")
+
+            except Exception as upload_error:
+                output.append(f"✗ Error during test upload: {str(upload_error)}")
+                import traceback
+                output.append("<pre>" + traceback.format_exc() + "</pre>")
         else:
             output.append("✗ Failed to get bucket")
 
         return "<br>".join(output)
-
     except Exception as e:
-        return f"Error: {str(e)}"
+        import traceback
+        return f"Error: {str(e)}<br><pre>{traceback.format_exc()}</pre>"
 
 @app.route('/api/posts')
 def api_posts():

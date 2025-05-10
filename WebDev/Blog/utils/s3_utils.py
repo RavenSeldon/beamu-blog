@@ -46,18 +46,35 @@ def delete_file(path):
         return bucket.Object(path).delete()
     return None
 
+
 def upload_file(file_obj, path, content_type=None, acl='public-read'):
     """
-    Upload a file to the s3 bucket
+    Upload a file to the s3 bucket with detailed error reporting
     """
+    print(f"Attempting to upload file to path: {path}")
+    print(f"Content-Type: {content_type}, ACL: {acl}")
+
     bucket = get_bucket()
     if bucket:
-        extra_args = {'ACL': acl}
-        if content_type:
-            extra_args['ContentType'] = content_type
+        try:
+            extra_args = {'ACL': acl}
+            if content_type:
+                extra_args['ContentType'] = content_type
 
-        return bucket.upload_fileobj(file_obj, path, ExtraArgs=extra_args)
-    return None
+            print(f"Extra args: {extra_args}")
+
+            # Try to upload
+            result = bucket.upload_fileobj(file_obj, path, ExtraArgs=extra_args)
+            print(f"Upload successful, result: {result}")
+            return True
+        except Exception as e:
+            print(f"Error uploading file to {path}: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False
+    else:
+        print("Cannot upload - bucket is None")
+        return False
 
 def delete_files(paths):
     """
