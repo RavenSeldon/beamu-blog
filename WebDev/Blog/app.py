@@ -1,5 +1,8 @@
 import os
 import sys
+import logging
+from io import BytesIO
+from PIL import Image, ImageDraw
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -16,6 +19,7 @@ import sqlalchemy.orm as so
 from typing import Optional
 import markdown
 import bleach
+import time
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 from markupsafe import Markup
@@ -70,6 +74,19 @@ try:
 except ImportError:
     # python-dotenv not installed, continue without it
     pass
+
+# Set up logging to file and console
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('/tmp/flask_app.log'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+logger = logging.getLogger(__name__)
+logger.info("Application starting")
 
 # Custom Jinja filter
 @app.template_filter('markdown_safe')
@@ -311,6 +328,7 @@ def new_post():
 
             # Process and optimize the image
             image_paths = process_upload_image(image, app.config['UPLOAD_FOLDER'], unique_filename)
+            app.logger.info(f"Photo successfully processed {unique_filename}")
 
             if image_paths:
                 # Check if a photo with this filename already exists
@@ -694,15 +712,11 @@ def check_image_files():
 
     return html
 
-
 @app.route('/check-spaces', methods=['GET'])
 @login_required
 def check_spaces():
     """Debug endpoint to test Digital Ocean Spaces configuration"""
     try:
-        from io import BytesIO
-        import time
-
         output = ["<h2>Digital Ocean Spaces Check</h2>"]
 
         # Check environment variables
@@ -776,6 +790,89 @@ def check_spaces():
     except Exception as e:
         import traceback
         return f"Error: {str(e)}<br><pre>{traceback.format_exc()}</pre>"
+
+@app.route('/test-image-upload')
+@login_required
+def test_image_upload():
+    # Test endpoint that does a real image upload and processing
+    try:
+        results = []
+        results.append("<h1>Image Processing Test</h1>")
+
+        # Create a test image
+        img = Image.new('RGB', (800, 600), color = 'red')
+
+        # Draw something on it
+        draw = ImageDraw.Draw(img)
+        draw.rectangle(((200, 200), (600, 400)), fill="blue")
+        draw.text((300, 300), f"Test {time.time()}", fill="white")
+
+        # Save to BytesIO
+        img_io = BytesIO()
+        img.save(img_io, 'JPEG')
+        img_io.seek(0)
+
+        # Create a test filename
+        test_filename = f"test_image_{int(time.time())}.jpeg"
+        results.append(f"Test image created: {test_filename}")
+
+        # Log the upload folder
+        upload_folder = app.config['UPLOAD_FOLDER']
+        results.append(f"Upload folder: {upload_folder}")
+        results.append(f"Upload folder exists: {os.path.exists(upload_folder)}")
+
+        # Process the image like in a real upload
+        results.append("<h2>Starting Image Processing</h2>")
+
+        # Create a file-like object from BytesIO
+        from werkzeug.datastructures import FileStorage
+        test_file = FileStorage(
+            stream=img_io,
+            filename=test_filename,
+            content_type='image/jpeg',
+        )
+
+        # Process the image:
+        results.append("Calling process_upload_image...")
+        image_paths = process_upload_image(test_file, upload_folder, test_filename)
+
+        results.append(f"Result from process_upload_image: {image_paths}")
+
+        if image_paths:
+            results.append("<h2>Image Processing Successful</h2>")
+            results.append("<ul>")
+            for size, path in image_paths.items():
+                if USING_SPACES:
+                    url = f"{SPACES_URL}/{path}"
+                    results.append(f"<li>{size}: <a href='{url}' target='_blank'>{url}</a></li>")
+                else:
+                    results.append(f"<li>{size}: {path}</li>")
+            results.append("</ul>")
+        else:
+            results.append("<h2>Image Processing Failed</h2>")
+
+        # Check debug log
+        if os.path.exists('/tmp/flask_debug.log'):
+            results.append("<h2>Debug Log Contents</h2>")
+            with open('/tmp/flask_debug.log', 'r') as f:
+                log_content = f.read()
+            results.append(f"<pre>{log_content}</pre>")
+
+        return "<br>".join(results)
+
+
+    except Exception as e:
+        import traceback
+        return f"Error during test: {str(e)}<br><pre>{traceback.format_exc()}</pre>"
+
+@app.route('/test-logging')
+def test_logging():
+    app.logger.debug("This is a debug message")
+    app.logger.info("This is an info message")
+    app.logger.warning("This is a warning message")
+    app.logger.error("This is an error message")
+    print("This is a print statement")
+    return "Log messages generated. Check your logs."
 
 @app.route('/api/posts')
 def api_posts():
