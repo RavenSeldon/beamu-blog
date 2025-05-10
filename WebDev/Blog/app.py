@@ -75,18 +75,18 @@ except ImportError:
     # python-dotenv not installed, continue without it
     pass
 
-# Set up logging to file and console
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('/tmp/flask_app.log'),
-        logging.StreamHandler(sys.stdout)
-    ]
-)
+# Use project directory for logs
+log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'debug.log')
 
-logger = logging.getLogger(__name__)
-logger.info("Application starting")
+# Set up logging
+file_handler = logging.FileHandler(log_path)
+file_handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+app.logger.addHandler(file_handler)
+app.logger.setLevel(logging.INFO)
+app.logger.info(f"Flask application startup - logs going to {log_path}")
 
 # Custom Jinja filter
 @app.template_filter('markdown_safe')

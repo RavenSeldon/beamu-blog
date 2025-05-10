@@ -99,9 +99,15 @@ def process_upload_image(uploaded_file, upload_folder, filename=None):
     2. Create optimized versions
     3. Return paths to the optimized images
     """
+
     if not uploaded_file:
         print("No file provided to process_upload_image")
         return None
+
+    # Ensure upload directory exists
+    if not os.path.exists(upload_folder):
+        print(f"Creating upload directory: {upload_folder}")
+        os.makedirs(upload_folder, exist_ok=True)
 
     # Secure the filename
     if not filename:
