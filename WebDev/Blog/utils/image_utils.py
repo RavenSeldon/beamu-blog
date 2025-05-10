@@ -100,11 +100,16 @@ def process_upload_image(uploaded_file, upload_folder, filename=None):
     3. Return paths to the optimized images
     """
     if not uploaded_file:
+        print("No file provided to process_upload_image")
         return None
 
     # Secure the filename
     if not filename:
         filename = secure_filename(uploaded_file.filename)
+
+    print(f"Processing upload for file: {filename}")
+    print(f"Upload folder: {upload_folder}")
+    print(f"Upload folder exists: {os.path.exists(upload_folder)}")
 
     # Ensure filename is unique
     base_name, extension = os.path.splitext(filename)
@@ -112,6 +117,7 @@ def process_upload_image(uploaded_file, upload_folder, filename=None):
 
     # Only process image files
     if extension not in ['.jpg', '.jpeg', '.png', '.gif']:
+        print(f"Invalid file extension: {extension}")
         return None
 
     # Store original file paths
@@ -120,7 +126,10 @@ def process_upload_image(uploaded_file, upload_folder, filename=None):
     try:
         # Save uploaded file to temp location
         temp_path = os.path.join(upload_folder, "temp_" + filename)
+        print(f"Saving temp file to: {temp_path}")
         uploaded_file.save(temp_path)
+        print(f"Temp file exists: {os.path.exists(temp_path)}")
+        print(f"Temp file size: {os.path.getsize(temp_path) if os.path.exists(temp_path) else 'N/A'}")
 
         # Create directories if they don't exist
         if not USING_SPACES:
@@ -128,32 +137,38 @@ def process_upload_image(uploaded_file, upload_folder, filename=None):
                 size_folder = os.path.join(upload_folder, size)
                 print(f"Creating directory: {size_folder}")
                 os.makedirs(size_folder, exist_ok=True)
+                print(f"Directory exists: {os.path.exists(size_folder)}")
 
         # Create resized versions
         for size, dimensions in IMAGE_SIZES.items():
-            # Reopen the image for each size
-            with Image.open(temp_path) as img:
-                if USING_SPACES:
-                    # For DO Spaces, use path format size/filename
-                    size_path = f"{size}/{filename}"
-                    print(f"Processing {size} for DO Spaces: {size_path}")
+            try:
+                # Reopen the image for each size
+                with Image.open(temp_path) as img:
+                    if USING_SPACES:
+                        # For DO Spaces, use path format size/filename
+                        size_path = f"{size}/{filename}"
+                        print(f"Processing {size} for DO Spaces: {size_path}")
 
-                    if optimize_image(img, size_path, dimensions):
-                        # Store the relative path to be used in templates
-                        paths[size] = f"{size}/{filename}"
-                        print(f"Successfully saved {size} to Spaces")
+                        if optimize_image(img, size_path, dimensions):
+                            # Store the relative path to be used in templates
+                            paths[size] = f"{size}/{filename}"
+                            print(f"Successfully saved {size} to Spaces")
 
-                else:
-                    # For local filesystem
-                    size_path = os.path.join(upload_folder, size, filename)
-                    print(f"Processing size {size} to path: {size_path}")
-
-                    if optimize_image(img, size_path, dimensions):
-                        # Store the relative path to be used in templates
-                        paths[size] = os.path.join(size, filename)
-                        print(f"Successfully saved {size} version to {size_path}")
                     else:
-                        print(f"Failed to save {size} version to {size_path}")
+                        # For local filesystem
+                        size_path = os.path.join(upload_folder, size, filename)
+                        print(f"Processing size {size} to path: {size_path}")
+
+                        if optimize_image(img, size_path, dimensions):
+                            # Store the relative path to be used in templates
+                            paths[size] = os.path.join(size, filename)
+                            print(f"Successfully saved {size} version to {size_path}")
+                        else:
+                            print(f"Failed to save {size} version to {size_path}")
+
+            except Exception as size_error:
+                print(f"Error processing size {size}: {str(size_error)}")
+                traceback.print_exc()
 
         # If original size is needed, save it too
         # orig_path = os.path.join(upload_folder, 'original', filename)

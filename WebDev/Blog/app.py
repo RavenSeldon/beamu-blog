@@ -255,9 +255,20 @@ def photo_album():
 
 @app.route('/projects')
 def projects():
-    projects = Project.query.all()
-    return render_template('projects.html', projects=projects)
+    try:
+        # Get projects with the newest first
+        projects_list = Project.query.order_by(Project.date_posted.desc()).all()
+        app.logger.info(f"Retrieved {len(projects_list)} projects")
 
+        # Debug information about each project
+        for project in projects_list:
+            app.logger.info(f"Project ID: {project.id}, Title: {project.title}, Image: {project.image_filename}")
+
+        return render_template('projects.html', projects=projects_list)
+    except Exception as e:
+        app.logger.error(f"Error retrieving projects: {str(e)}")
+        flash(f'Error loading projects: {str(e)}', 'error')
+        return render_template('projects.html', projects=[])
 
 @app.route('/post/<int:post_id>')
 def post(post_id):
@@ -343,6 +354,7 @@ def new_post():
 @login_required
 def new_project():
     if request.method == 'POST':
+        app.logger.info("Processing new project submission")
         title = request.form['title'].strip()
         description = request.form.get('description', '').strip()
 
@@ -357,60 +369,60 @@ def new_project():
         github_link = request.form.get('github_link', '').strip() or None
         image_file = request.files.get('image')
 
-        if image_file and allowed_file(image_file.filename):
-            # Generate a unique filename
-            ext = os.path.splitext(secure_filename(image_file.filename))[1].lower()
-            unique_filename = f"{uuid4().hex}{ext}"
+        # Start a database transaction
+        try:
+            # Create the project
+            project = Project(
+                title=title,
+                description=description,
+                github_link=github_link or None,
+                date_posted=datetime.now(timezone.utc)
+            )
+            db.session.add(project)
+            db.session.flush()
 
-            # Process and optimize the image
-            image_paths = process_upload_image(image_file, app.config['UPLOAD_FOLDER'], unique_filename)
 
-            if image_paths:
-                # Create the project first
-                project = Project(
-                    title=title,
-                    description=description or None,
-                    github_link=github_link,
-                )
-                db.session.add(project)
-                db.session.flush()  # This assigns an ID to the project
+            if image_file and allowed_file(image_file.filename):
+                app.logger.info(f"Processing image for project: {title}")
 
-                # Now create and associate the photo
-                photo = Photo(filename=unique_filename, description=title)
-                db.session.add(photo)
-                db.session.flush()  # This assigns an ID to the photo
+                # Generate a unique filename
+                ext = os.path.splitext(secure_filename(image_file.filename))[1].lower()
+                unique_filename = f"{uuid4().hex}{ext}"
 
-                # Set the relationship in both directions
-                project.image_filename = unique_filename
-                project.photo = photo
+                # Process and optimize the image
+                image_paths = process_upload_image(image_file, app.config['UPLOAD_FOLDER'], unique_filename)
 
-                # Add the project to the photo's projects list
-                if project not in photo.projects:
-                    photo.projects.append(project)
+                if image_paths:
+                    app.logger.info(f"Image processed successfully: {unique_filename}")
+                    # Now create and associate the photo
+                    photo = Photo(filename=unique_filename, description=title)
+                    db.session.add(photo)
+                    db.session.flush()  # This assigns an ID to the photo
+
+                    # Set the relationship in both directions
+                    project.image_filename = unique_filename
+                    project.photo = photo
 
                 # Debug info
                 app.logger.info(f"Created photo with ID {photo.id} and filename {photo.filename}")
                 app.logger.info(f"Associated with project ID {project.id}")
 
-                db.session.commit()
-
-                # Double-check the association after commit
-                db.session.refresh(project)
-                db.session.refresh(photo)
-                app.logger.info(f"After commit: Project image_filename = {project.image_filename}")
-                app.logger.info(f"After commit: Photo projects count = {len(photo.projects)}")
-        else:
-            # No image, just create the project
-            project = Project(
-                title=title,
-                description=description or None,
-                github_link=github_link,
-            )
-            db.session.add(project)
             db.session.commit()
 
-        flash('Project created!', 'success')
-        return redirect(url_for('projects'))
+            # Double-check the association after commit
+            db.session.refresh(project)
+            db.session.refresh(photo)
+            app.logger.info(f"After commit: Project image_filename = {project.image_filename}")
+            app.logger.info(f"After commit: Photo projects count = {len(photo.projects)}")
+
+            flash('Project created!', 'success')
+            return redirect(url_for('projects'))
+
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Error creating project: {str(e)}")
+            flash(f'Error creating project: {str(e)}', 'error')
+            return redirect(url_for('new_project'))
 
     return render_template('new_project.html')
 
@@ -681,6 +693,55 @@ def check_image_files():
     """
 
     return html
+
+@app.route('/check-spaces', methods=['GET'])
+@login_required
+def check_spaces():
+    # Debug endpoint to test Digital Ocean Spaces configuration
+    try:
+        output = ['<h2>Digital Ocean Spaces Check</h2>']
+
+        # Check environment variables
+        output.append('<h3>Environment Variables</h3>')
+        output.append(f'Using_SPACES: {USING_SPACES}')
+        output.append(f'DO_SPACE_KEY exists: {bool(os.environ.get("DO_SPACE_KEY"))}')
+        output.append(f'DO_SPACE_SECRET exists: {bool(os.environ.get("DO_SPACE_SECRET"))}')
+        output.append(f'DO_SPACE_NAME exists: {bool(os.environ.get("DO_SPACE_NAME"))}')
+        output.append(f'DO_SPACE_REGION exists: {bool(os.environ.get("DO_SPACE_REGION"))}')
+
+        # Try to create S3 resource
+        output.append("<h3>S3 Resource</h3>")
+        s3 = get_s3_resource()
+        if s3:
+            output.append("✓ S3 resource created successfully")
+        else:
+            output.append("✗ Failed to create S3 resource")
+
+        # Try to get bucket
+        output.append("<h3>S3 Bucket</h3>")
+        bucket = get_bucket()
+        if bucket:
+            output.append(f"✓ Bucket retrieved: {bucket.name}")
+
+            # Try listing some ojbects
+            try:
+                objects = list(bucket.objects.limit(5))
+                output.append(f"✓ Listed {len(objects)} objects from bucket")
+                if objects:
+                    output.append("<ul>")
+                    for obj in objects:
+                        output.append(f"<li>{obj.key}</li>")
+                    output.append("</ul>")
+
+            except Exception as list_error:
+                output.append(f"✗ Error listing objects: {str(list_error)}")
+        else:
+            output.append("✗ Failed to get bucket")
+
+        return "<br>".join(output)
+
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 @app.route('/api/posts')
 def api_posts():
