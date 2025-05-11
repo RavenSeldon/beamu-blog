@@ -69,7 +69,7 @@ def optimize_image(img, output_path, max_size, quality=JPEG_QUALITY):
         if USING_SPACES and not output_path.startswith('/'):
             # For DO Spaces, upload to appropriate path
             content_type = f"image/{format.lower()}"
-            upload_file(img_io, output_path, content_type=content_type)
+            return upload_file(img_io, output_path, content_type=content_type)
         else:
             # For local filesystem
             dir_path = os.path.dirname(output_path)

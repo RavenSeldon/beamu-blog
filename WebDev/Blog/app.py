@@ -16,6 +16,7 @@ from forms import LoginForm
 from sqlalchemy import MetaData
 import sqlalchemy as sa
 import sqlalchemy.orm as so
+from sqlalchemy.exc import OperationalError
 from typing import Optional
 import markdown
 import bleach
@@ -216,6 +217,21 @@ def make_shell_context():
 def make_session_permanent():
     session.permanent = True
 
+# Database retries
+def retry_database_operation(func, *args, **kwargs):
+    max_retries = 3
+    retry_delay = 1
+
+    for attempt in range(max_retries):
+        try:
+            return func(*args, **kwargs)
+        except OperationalError as e:
+            if attempt == max_retries -1:
+                raise
+            time.sleep(retry_delay)
+            retry_delay *= 2
+            db.session.rollback()
+
 # Routes
 @app.route('/loading')
 def loading():
@@ -224,9 +240,13 @@ def loading():
 
 @app.route('/')
 def index():
-    posts = Post.query.order_by(Post.date_posted.desc()).all()
-    return render_template('index.html', posts=posts)
-
+    try:
+        posts = retry_database_operation(lambda: Post.query.order_by(Post.date_posted.desc()).all())
+        return render_template('index.html', posts=posts)
+    except OperationalError as e:
+        app.logger.error(f"Database connection error: {str(e)}")
+        flash('Database connection issue. Please try again in a moment.', 'error')
+        return render_template('index.html', posts=[])
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -386,6 +406,7 @@ def new_project():
 
         github_link = request.form.get('github_link', '').strip() or None
         image_file = request.files.get('image')
+        photo = None
 
         # Start a database transaction
         try:
@@ -406,6 +427,8 @@ def new_project():
                 # Generate a unique filename
                 ext = os.path.splitext(secure_filename(image_file.filename))[1].lower()
                 unique_filename = f"{uuid4().hex}{ext}"
+
+                app.logger.info(f"Processing image: {unique_filename}")
 
                 # Process and optimize the image
                 image_paths = process_upload_image(image_file, app.config['UPLOAD_FOLDER'], unique_filename)

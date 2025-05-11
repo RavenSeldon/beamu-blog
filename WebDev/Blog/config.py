@@ -58,6 +58,24 @@ if DATABASE_URL and DATABASE_URL.startswith('postgresql://') and '?sslmode=' not
 SQLALCHEMY_DATABASE_URI = DATABASE_URL or 'sqlite:///' + os.path.join(basedir, 'instance', 'blog.db')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+# Neon Specific Configurations
+SQLALCHEMY_ENGINE_OPTIONS = {
+    'pool_pre_ping': True,  # Verify connections before using them
+    'pool_size': 5,
+    'pool_recycle': 1800,  # Recycle connections after 30 minutes
+    'pool_timeout': 30,
+    'max_overflow': 10,
+}
+
+if DATABASE_URL and 'neon.tech' in DATABASE_URL:
+    # Neon-specific connection options
+    SQLALCHEMY_ENGINE_OPTIONS.update({
+        'connect_args': {
+            'sslmode': 'require',
+            'connect_timeout': 10,
+        }
+    })
+
 # Session and security settings
 PERMANENT_SESSION_LIFETIME = timedelta(days=1)
 WTF_CSRF_TIME_LIMIT = 3600

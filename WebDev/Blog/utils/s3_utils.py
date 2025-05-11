@@ -53,6 +53,12 @@ def upload_file(file_obj, path, content_type=None, acl='public-read'):
     """
     print(f"Attempting to upload file to path: {path}")
     print(f"Content-Type: {content_type}, ACL: {acl}")
+    print(f"File object type: {type(file_obj)}")
+    print(f"File object position: {file_obj.tell() if hasattr(file_obj, 'tell') else 'N/A'}")
+
+    # Reset file position to beginning
+    if hasattr(file_obj, 'seek'):
+        file_obj.seek(0)
 
     bucket = get_bucket()
     if bucket:
@@ -66,7 +72,16 @@ def upload_file(file_obj, path, content_type=None, acl='public-read'):
             # Try to upload
             result = bucket.upload_fileobj(file_obj, path, ExtraArgs=extra_args)
             print(f"Upload successful, result: {result}")
-            return True
+
+            # Verify the upload by checking if the file exists
+            try:
+                bucket.Object(path).load()
+                print(f"Verified: Object {path} exists in bucket")
+                return True
+            except Exception as verify_error:
+                print(f"Upload verification failed: {str(verify_error)}")
+                return False
+
         except Exception as e:
             print(f"Error uploading file to {path}: {str(e)}")
             import traceback
