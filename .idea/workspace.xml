@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1d77107-d0eb-4acf-9ec5-e2003d64247e" name="Changes" comment="Post Launch Build 5 (Potentially final fix before live site is usable) 12-05-2025">
+    <list default="true" id="c1d77107-d0eb-4acf-9ec5-e2003d64247e" name="Changes" comment="Post Launch Build 5.1 (Potentially final fix before live site is usable) 12-05-2025">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebDev/Blog/utils/image_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebDev/Blog/utils/image_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -330,7 +329,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747057945899</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Post Launch Build 5.1 (Potentially final fix before live site is usable) 12-05-2025">
+      <option name="closed" value="true" />
+      <created>1747059171484</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1747059171484</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -352,6 +359,7 @@
     <MESSAGE value="Post Launch Build 4.5 (Literally crying, shitting myself and throwing up at this point...) 10-05-2025" />
     <MESSAGE value="Post Launch Build 4.6 (Literally crying, shitting myself and throwing up at this point...) 11-05-2025" />
     <MESSAGE value="Post Launch Build 5 (Potentially final fix before live site is usable) 12-05-2025" />
-    <option name="LAST_COMMIT_MESSAGE" value="Post Launch Build 5 (Potentially final fix before live site is usable) 12-05-2025" />
+    <MESSAGE value="Post Launch Build 5.1 (Potentially final fix before live site is usable) 12-05-2025" />
+    <option name="LAST_COMMIT_MESSAGE" value="Post Launch Build 5.1 (Potentially final fix before live site is usable) 12-05-2025" />
   </component>
 </project>
