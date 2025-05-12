@@ -19,7 +19,16 @@ JPEG_QUALITY = 85
 # Check if we're in production with Spaces configured
 USING_SPACES = bool(os.environ.get('DO_SPACE_KEY'))
 if USING_SPACES:
-    SPACES_URL = f"https://{os.environ.get('DO_SPACE_NAME')}.{os.environ.get('DO_SPACE_REGION')}.digitaloceanspaces.com"
+    # Construct CDN URL
+    space_name = os.environ.get('DO_SPACE_NAME')
+    space_region = os.environ.get('DO_SPACE_REGION')
+    if space_name and space_region: # Ensure the variables are set
+        SPACES_URL = f"https://{space_name}.{space_region}.cdn.digitaloceanspaces.com"
+    else:
+        print(f"Error loading DO_SPACE_NAME or DO_SPACE_REGION environment variables")
+        SPACES_URL = None
+        USING_SPACES = False
+
 else:
     SPACES_URL = None
 
