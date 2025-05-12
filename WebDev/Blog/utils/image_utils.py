@@ -18,18 +18,20 @@ JPEG_QUALITY = 85
 
 space_name = os.environ.get('DO_SPACE_NAME')
 space_region = os.environ.get('DO_SPACE_REGION')
+space_key = os.environ.get('DO_SPACE_KEY')
 
 # Check if we're in production with Spaces configured
-USING_SPACES = bool(os.environ.get('DO_SPACE_KEY'))
-if USING_SPACES:
-    # Construct CDN URL
-    if space_name and space_region: # Ensure the variables are set
-        SPACES_URL = f"https://{space_name}.{space_region}.cdn.digitaloceanspaces.com"
-    else:
-        print(f"Error loading DO_SPACE_NAME or DO_SPACE_REGION environment variables")
-        SPACES_URL = None
+if space_name and space_region and space_key:
+    USING_SPACES = True
+    SPACES_URL = f"https://{space_name}.{space_region}.cdn.digitaloceanspaces.com"
+    print(f"[image_utils.py INFO] Initialized for DigitalOcean Spaces. SPACES_URL: {SPACES_URL}")
 else:
+    USING_SPACES = False
     SPACES_URL = None
+    if space_key:
+        print(f"[image_utils.py INFO] DO_SPACE_KEY is set, but DO_SPACE_NAME ('{space_name}') or DO_SPACE_REGION ('{space_region}') is missing. Disabling Spaces.")
+    else:
+        print(f"[image_utils.py INFO] DigitalOcean Spaces not configured (DO_SPACE_KEY not found).")
 
 def optimize_image(img, output_path, max_size, quality=JPEG_QUALITY):
     """
