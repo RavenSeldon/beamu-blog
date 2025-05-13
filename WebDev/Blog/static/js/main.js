@@ -1,248 +1,192 @@
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM fully loaded - ensuring critical elements are ready');
+    console.log('DOM fully loaded - ALL INITIALIZATIONS START HERE');
 
-  // 1. Force pointerEvents to none on the canvas to prevent click interference
-  const bgCanvas = document.getElementById('bg-canvas');
-  if (bgCanvas) {
-    bgCanvas.style.pointerEvents = 'none';
-  }
+    // ------ 0. GLOBAL CONFIGURATION CHECK (From base.html) --------
+    console.log('Client-side JS sees USING_SPACES:', window.USING_SPACES, 'Type:', typeof window.USING_SPACES);
+    console.log('Client-side JS sees SPACES_URL:', window.SPACES_URL, 'Type:', typeof window.SPACES_URL);
 
-  // 2. Add an inline event handler directly to the sidebar toggle
-  //    This bypasses any potential event binding issues
-  const sidebarToggle = document.getElementById('sidebar-toggle');
-  const sidebar = document.getElementById('sidebar');
-
-  if (sidebarToggle && sidebar) {
-    // Replace the element to clear any existing handlers
-    const newToggle = sidebarToggle.cloneNode(true);
-    if (sidebarToggle.parentNode) {
-      sidebarToggle.parentNode.replaceChild(newToggle, sidebarToggle);
+    if (typeof window.USING_SPACES === 'undefined') {
+        console.warn('window.USING_SPACES is undefined. Critical for image paths. Check base.html script order and Jinja templating.');
+    }
+    if (typeof window.SPACES_URL === 'undefined' && window.USING_SPACES === true) { // SPACES_URL is needed if USING_SPACES is true
+        console.warn('window.SPACES_URL is undefined but USING_SPACES is true. Critical for image paths. Check base.html script order and Jinja templating.');
     }
 
-    // Add onclick handler directly to HTML element
-    newToggle.setAttribute('onclick', `
-      event.stopPropagation();
-      event.preventDefault();
-      const sidebar = document.getElementById('sidebar');
-      const isOpen = sidebar.classList.toggle('open');
-      document.body.classList.toggle('sidebar-open', isOpen);
-      this.classList.toggle('active', isOpen);
-      this.innerHTML = isOpen
-        ? '<i class="fa-solid fa-xmark"></i>'
-        : '<i class="fa-solid fa-bars"></i>';
-      return false;
-    `);
+    // ------- 1. DEFINE ALL INITIALIZATION FUNCTIONS --------
 
-    // Set critical styles
-    newToggle.style.zIndex = '10000';
-    newToggle.style.pointerEvents = 'auto';
-  }
-
-  // 3. Fix infinite scroll initialization if it's on the page
-  if (document.querySelector('.posts')) {
-    // Force initialization of infinite scroll
-    const postElements = document.querySelectorAll('.posts');
-    if (postElements.length > 0) {
-      console.log('Forcing infinite scroll initialization');
-      setTimeout(initInfiniteScroll, 100);
+    function initBackgroundCanvas() {
+        console.log('Initializing background canvas properties');
+        const bgCanvas = document.getElementById('bg-canvas');
+        if (bgCanvas) {
+            bgCanvas.style.pointerEvents = 'none';
+        } else {
+            console.warn('Background canvas element (#bg-canvas) not found.');
+        }
     }
-  }
-});
 
-// Advanced Neural-Cosmic Background Animation
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded - starting initialization in defined order');
-
-    // ------- 1. CORE INITIALIZATION --------
-    // Initialize all critical components in a specific order
-    initSidebar();
-    initAnimationToggle();
-    initInfiniteScroll();
-    initBackgroundAnimation();
-
-    // Function to ensure sidebar toggle works properly
     function initSidebar() {
         console.log('Initializing sidebar');
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
 
-        if (!sidebar || !sidebarToggle) return;
+        if (!sidebar || !sidebarToggle) {
+            console.warn('Sidebar or toggle button not found. Sidebar functionality may be affected.');
+            return;
+        }
 
-        // Fix critical z-index and pointer-events issues
-        sidebarToggle.style.zIndex = '10000'; // Higher than anything else
+        sidebarToggle.style.zIndex = '10000';
         sidebarToggle.style.pointerEvents = 'auto';
 
-        // Remove any existing listeners to prevent duplicates
-        const toggleSidebar = (e) => {
-            // Immediately stop event propagation
-            e.stopPropagation();
-            e.preventDefault();
+        // To ensure only one click listener, we can remove and re-add or use a flag
+        // A simple way is to replace the element if it might have old listeners from previous script versions
+        let currentToggle = sidebarToggle;
+        if (sidebarToggle.getAttribute('data-listener-attached') !== 'true') {
+            const newToggle = sidebarToggle.cloneNode(true);
+            if (sidebarToggle.parentNode) {
+                sidebarToggle.parentNode.replaceChild(newToggle, sidebarToggle);
+            }
+            currentToggle = newToggle; // Work with the new or existing toggle
+            currentToggle.setAttribute('data-listener-attached', 'true');
 
-            // Toggle sidebar classes
-            const isOpen = sidebar.classList.toggle('open');
-            document.body.classList.toggle('sidebar-open', isOpen);
-            sidebarToggle.classList.toggle('active', isOpen);
+            currentToggle.onclick = function(event) {
+                event.stopPropagation();
+                event.preventDefault();
+                const sidebarElem = document.getElementById('sidebar');
+                if (!sidebarElem) return false;
 
-            // Update icon
-            sidebarToggle.innerHTML = isOpen
-                ? '<i class="fa-solid fa-xmark"></i>'
-                : '<i class="fa-solid fa-bars"></i>';
+                const isOpen = sidebarElem.classList.toggle('open');
+                document.body.classList.toggle('sidebar-open', isOpen);
+                this.classList.toggle('active', isOpen);
+                this.innerHTML = isOpen ?
+                    '<i class="fa-solid fa-xmark"></i>' :
+                    '<i class="fa-solid fa-bars"></i>';
+                console.log('Sidebar toggled:', isOpen);
+                return false;
+            };
+        }
 
-            console.log('Sidebar toggled:', isOpen);
-            return false;
-        };
 
-        // Apply direct event handler
-        sidebarToggle.onclick = toggleSidebar;
-
-        // Handle document clicks for closing the sidebar
         document.addEventListener('click', (e) => {
-            // Don't close if clicking inside sidebar, on toggle button, or on animation toggle
-            if (
-                sidebar.classList.contains('open') &&
-                !sidebar.contains(e.target) &&
-                e.target !== sidebarToggle &&
-                !sidebarToggle.contains(e.target) &&
-                !e.target.closest('#animation-toggle')
-            ) {
-                sidebar.classList.remove('open');
+            const currentSidebarEl = document.getElementById('sidebar');
+            const activeSidebarToggle = document.getElementById('sidebar-toggle'); // Get the current toggle in DOM
+
+            if (currentSidebarEl && activeSidebarToggle && currentSidebarEl.classList.contains('open') &&
+                !currentSidebarEl.contains(e.target) &&
+                e.target !== activeSidebarToggle && !activeSidebarToggle.contains(e.target) &&
+                !e.target.closest('#animation-toggle')) {
+                currentSidebarEl.classList.remove('open');
                 document.body.classList.remove('sidebar-open');
-                sidebarToggle.classList.remove('active');
-                sidebarToggle.innerHTML = '<i class="fa-solid fa-bars"></i>';
+                activeSidebarToggle.classList.remove('active');
+                activeSidebarToggle.innerHTML = '<i class="fa-solid fa-bars"></i>';
             }
         });
     }
 
-    // Function to initialize animation toggle
     function initAnimationToggle() {
         console.log('Initializing animation toggle');
         const animToggle = document.getElementById('animation-toggle');
-        if (!animToggle) return;
+        if (!animToggle) {
+            console.warn('Animation toggle button not found.');
+            return;
+        }
 
-        const toggleIcon = document.getElementById('animation-toggle-icon') ||
-                          animToggle.querySelector('i');
+        const toggleIcon = document.getElementById('animation-toggle-icon') || animToggle.querySelector('i');
 
-        // Set initial state based on localStorage preference
-        const animationsEnabled = localStorage.getItem('animationsEnabled') !== 'false';
+        const animationsStoredPreference = localStorage.getItem('animationsEnabled');
+        const animationsEnabled = animationsStoredPreference !== 'false';
         window.isAnimationPaused = !animationsEnabled;
 
         if (toggleIcon) {
-            toggleIcon.className = animationsEnabled ?
-                'fa-solid fa-pause' : 'fa-solid fa-play';
-
-            animToggle.setAttribute('aria-checked', animationsEnabled.toString());
-            animToggle.setAttribute('title',
-                animationsEnabled ? 'Pause background animation' : 'Resume background animation');
+            toggleIcon.className = animationsEnabled ? 'fa-solid fa-pause' : 'fa-solid fa-play';
         }
+        animToggle.setAttribute('aria-checked', animationsEnabled.toString());
+        animToggle.setAttribute('title', animationsEnabled ? 'Pause background animation' : 'Resume background animation');
 
-        // Apply initial canvas opacity
         const canvas = document.getElementById('bg-canvas');
         if (canvas && window.isAnimationPaused) {
             canvas.style.opacity = '0.2';
         }
 
-        // Animation toggle handler
-        function toggleAnimation(e) {
-            // Immediately stop event propagation
+        animToggle.onclick = function(e) {
             e.stopPropagation();
             e.preventDefault();
 
-            const isEnabled = animToggle.getAttribute('aria-checked') === 'true';
-            const newState = !isEnabled;
+            const isCurrentlyEnabled = this.getAttribute('aria-checked') === 'true';
+            const newIsEnabledState = !isCurrentlyEnabled;
 
-            // Save to localStorage
-            localStorage.setItem('animationsEnabled', newState);
+            localStorage.setItem('animationsEnabled', newIsEnabledState.toString());
+            window.isAnimationPaused = !newIsEnabledState;
 
-            // Update toggle button
-            animToggle.setAttribute('aria-checked', newState.toString());
+            this.setAttribute('aria-checked', newIsEnabledState.toString());
             if (toggleIcon) {
-                toggleIcon.className = newState ?
-                    'fa-solid fa-pause' : 'fa-solid fa-play';
-                animToggle.setAttribute('title',
-                    newState ? 'Pause background animation' : 'Resume background animation');
+                toggleIcon.className = newIsEnabledState ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+            }
+            this.setAttribute('title', newIsEnabledState ? 'Pause background animation' : 'Resume background animation');
+
+            const bgCanvas = document.getElementById('bg-canvas');
+            if (bgCanvas) {
+                bgCanvas.style.opacity = newIsEnabledState ? '1' : '0.2';
             }
 
-            // Update animation state
-            window.isAnimationPaused = !newState;
-
-            // Update canvas
-            const canvas = document.getElementById('bg-canvas');
-            if (canvas) {
-                canvas.style.opacity = newState ? '1' : '0.2';
-            }
-
-            // Trigger a custom event that the animation code can listen for
             document.dispatchEvent(new CustomEvent('animationToggled', {
-                detail: { enabled: newState }
+                detail: { enabled: newIsEnabledState }
             }));
-
-            console.log('Animation toggle clicked, new state:', newState);
+            console.log('Animation toggle clicked, new state:', newIsEnabledState);
             return false;
-        }
-
-        // Add click event handler
-        animToggle.onclick = toggleAnimation;
+        };
     }
 
-    // Initialize the background animation
     function initBackgroundAnimation() {
         console.log('Initializing background animation');
         const canvas = document.getElementById('bg-canvas');
-        if (!canvas) return;
+        if (!canvas) {
+            console.warn('Background canvas #bg-canvas not found for animation.');
+            return;
+        }
 
-        // Ensure canvas doesn't block mouse events
+        // Ensure canvas doesn't block mouse events (already done in initBackgroundCanvas, but good to be sure)
         canvas.style.pointerEvents = 'none';
 
         const ctx = canvas.getContext('2d');
         let width = window.innerWidth, height = window.innerHeight;
-
-        // --- ANIMATION STATE & PERFORMANCE VARIABLES ---
         let animationFrameId = null;
-        let isPageVisible = true;
+        let isPageVisible = document.visibilityState === 'visible';
         let lastFrameTime = 0;
-        const TARGET_FRAMERATE = 30; // Cap at 30fps to save resources
+        const TARGET_FRAMERATE = 30;
         const FRAME_DELAY = 1000 / TARGET_FRAMERATE;
-        let devicePerformance = 'high'; // Will be set based on device capability
+        let devicePerformance = 'high';
 
-        // Resize handling
         function resize() {
             width = window.innerWidth;
             height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
+            if(canvas) { // Check if canvas still exists
+                canvas.width = width;
+                canvas.height = height;
+            }
         }
         resize();
         window.addEventListener('resize', resize);
 
-        // --- PAGE VISIBILITY HANDLING ---
         document.addEventListener('visibilitychange', () => {
             isPageVisible = document.visibilityState === 'visible';
-
-            if (isPageVisible && !window.isAnimationPaused) {
-                // Resume animation if page becomes visible and not manually paused
-                if (!animationFrameId) {
-                    lastFrameTime = performance.now();
-                    animationFrameId = requestAnimationFrame(draw);
-                }
-            } else {
-                // Pause animation when page is hidden
-                if (animationFrameId) {
-                    cancelAnimationFrame(animationFrameId);
-                    animationFrameId = null;
-                }
+            if (isPageVisible && !window.isAnimationPaused && !animationFrameId) {
+                lastFrameTime = performance.now();
+                animationFrameId = requestAnimationFrame(draw);
+            } else if (!isPageVisible && animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
             }
         });
 
-        // Listen for animation toggle events
         document.addEventListener('animationToggled', (e) => {
-            window.isAnimationPaused = !e.detail.enabled;
-
+            // window.isAnimationPaused is set by initAnimationToggle
+            const bgCanvasForToggle = document.getElementById('bg-canvas'); // Re-fetch
             if (window.isAnimationPaused) {
-                cancelAnimationFrame(animationFrameId);
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
                 animationFrameId = null;
-                if (canvas) canvas.style.opacity = '0.2'; // Dim the canvas when paused
+                if (bgCanvasForToggle) bgCanvasForToggle.style.opacity = '0.2';
             } else {
-                if (canvas) canvas.style.opacity = '1'; // Restore full opacity
+                if (bgCanvasForToggle) bgCanvasForToggle.style.opacity = '1';
                 if (!animationFrameId && isPageVisible) {
                     lastFrameTime = performance.now();
                     animationFrameId = requestAnimationFrame(draw);
@@ -250,930 +194,428 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // --- DEVICE PERFORMANCE DETECTION ---
         function detectDevicePerformance() {
-            // Simple performance estimation based on user agent and hardware concurrency
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const cpuCores = navigator.hardwareConcurrency || 2;
-
-            if (isMobile || cpuCores <= 2) {
-                devicePerformance = 'low';
-            } else if (cpuCores <= 4) {
-                devicePerformance = 'medium';
-            } else {
-                devicePerformance = 'high';
-            }
-
+            if (isMobile || cpuCores <= 2) devicePerformance = 'low';
+            else if (cpuCores <= 4) devicePerformance = 'medium';
+            else devicePerformance = 'high';
             console.log(`Device performance level: ${devicePerformance}`);
         }
         detectDevicePerformance();
 
-        // --- SPACE-LIKE STARFIELD & CURSOR ---
-        // Adjust star count based on device performance
-        const getStarCount = () => {
-            switch(devicePerformance) {
-                case 'low': return 80;
-                case 'medium': return 120;
-                default: return 160;
-            }
-        };
-
-        // Starfield
+        const getStarCount = () => (devicePerformance === 'low' ? 80 : devicePerformance === 'medium' ? 120 : 160);
         const STAR_COUNT = getStarCount();
-        const STAR_COLORS = [
-            [255,255,255], // white
-            [200,220,255], // blue
-            [255,220,200], // yellowish
-            [255,180,180], // reddish
-        ];
-        const stars = [];
-        for (let i = 0; i < STAR_COUNT; i++) {
+        const STAR_COLORS = [[255,255,255],[200,220,255],[255,220,200],[255,180,180]];
+        const stars = Array.from({ length: STAR_COUNT }, () => {
             const color = STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)];
-            stars.push({
-                x: Math.random() * width,
-                y: Math.random() * height,
-                z: Math.random() * 0.9 + 0.1, // depth
-                r: Math.random() * 1.8 + 0.6,
-                twinkle: Math.random() * Math.PI * 2,
-                twinkleSpeed: Math.random() * 0.03 + 0.01,
-                color,
-            });
-        }
-
-        // Adjust cloud count based on device performance
-        const getCloudCount = () => {
-            switch(devicePerformance) {
-                case 'low': return 1;
-                case 'medium': return 2;
-                default: return 3;
-            }
-        };
-
-        // Nebula clouds
-        const CLOUD_COUNT = getCloudCount();
-        const clouds = [];
-        for (let i = 0; i < CLOUD_COUNT; i++) {
-            const hue = Math.random() * 360;
-            clouds.push({
-                x: width * (0.1 + Math.random() * 0.8),
-                y: height * (0.1 + Math.random() * 0.8),
-                radius: Math.min(width, height) * (0.13 + Math.random() * 0.18),
-                color: `hsla(${hue}, 80%, 70%, ${Math.random() * 0.06 + 0.04})`,
-                drift: {
-                    x: (Math.random() - 0.5) * 0.08,
-                    y: (Math.random() - 0.5) * 0.04
-                },
-                pulse: Math.random() * Math.PI * 2
-            });
-        }
-
-        // Cursor star
-        let mouseX = width/2, mouseY = height/2;
-        let targetMouseX = width/2, targetMouseY = height/2;
-        document.addEventListener('mousemove', e => {
-            targetMouseX = e.clientX;
-            targetMouseY = e.clientY;
+            return {
+                x: Math.random() * width, y: Math.random() * height, z: Math.random() * 0.9 + 0.1,
+                r: Math.random() * 1.8 + 0.6, twinkle: Math.random() * Math.PI * 2,
+                twinkleSpeed: Math.random() * 0.03 + 0.01, color,
+            };
         });
 
-        // Adjust node count based on device performance
-        const getNodeCount = () => {
-            switch(devicePerformance) {
-                case 'low': return 15;
-                case 'medium': return 25;
-                default: return 35;
-            }
-        };
+        const getCloudCount = () => (devicePerformance === 'low' ? 1 : devicePerformance === 'medium' ? 2 : 3);
+        const CLOUD_COUNT = getCloudCount();
+        const clouds = Array.from({ length: CLOUD_COUNT }, () => {
+            const hue = Math.random() * 360;
+            return {
+                x: width * (0.1 + Math.random() * 0.8), y: height * (0.1 + Math.random() * 0.8),
+                radius: Math.min(width, height) * (0.13 + Math.random() * 0.18),
+                color: `hsla(${hue}, 80%, 70%, ${Math.random() * 0.06 + 0.04})`,
+                drift: { x: (Math.random() - 0.5) * 0.08, y: (Math.random() - 0.5) * 0.04 },
+                pulse: Math.random() * Math.PI * 2
+            };
+        });
 
-        // --- NEURAL NETWORK, LINKS, DATA FLOWS, ETC ---
-        // Neural Nodes with more variety
+        let mouseX = width / 2, mouseY = height / 2;
+        let targetMouseX = width / 2, targetMouseY = height / 2;
+        document.addEventListener('mousemove', e => { targetMouseX = e.clientX; targetMouseY = e.clientY; });
+
+        const getNodeCount = () => (devicePerformance === 'low' ? 15 : devicePerformance === 'medium' ? 25 : 35);
         const NODE_COUNT = getNodeCount();
         const nodes = [];
-        const nodeColors = [
-            'rgba(127, 249, 255, 0.9)', // cyan
-            'rgba(243, 249, 157, 0.9)', // yellow
-            'rgba(137, 207, 240, 0.9)', // light blue
-            'rgba(230, 255, 230, 0.9)', // light green
-            'rgba(255, 255, 255, 0.9)' // white
-        ];
-
+        const nodeColors = ['rgba(127,249,255,0.9)','rgba(243,249,157,0.9)','rgba(137,207,240,0.9)','rgba(230,255,230,0.9)','rgba(255,255,255,0.9)'];
         for (let i = 0; i < NODE_COUNT; i++) {
-            // Create a curved neural network pattern that spans the visible area
-            const angle = Math.random() * 2 * Math.PI;
-            const r = (Math.random() * 0.5 + 0.2) * Math.min(width, height);
-            const xSpread = width * 0.9;
-            const ySpread = height * 0.8;
-
-            // Use parametric equations to create a more organized pattern
+            const xSpread = width * 0.9, ySpread = height * 0.8;
             let cx, cy;
             if (Math.random() < 0.7) {
-                // Neural pattern
                 const t = Math.random() * Math.PI * 2;
                 cx = width / 2 + Math.cos(t * 2.5) * Math.sin(t * 3) * xSpread * 0.4;
                 cy = height / 2 + Math.sin(t * 2) * ySpread * 0.35;
             } else {
-                // Some random nodes for variety
-                cx = width * (0.1 + Math.random() * 0.8);
-                cy = height * (0.1 + Math.random() * 0.8);
+                cx = width * (0.1 + Math.random() * 0.8); cy = height * (0.1 + Math.random() * 0.8);
             }
-
-            // Node properties
             nodes.push({
-                x: cx,
-                y: cy,
-                r: Math.random() * 10 + 7,
-                pulse: Math.random() * Math.PI * 2,
-                pulseSpeed: Math.random() * 0.03 + 0.01,
-                color: nodeColors[Math.floor(Math.random() * nodeColors.length)],
+                x: cx, y: cy, r: Math.random() * 10 + 7, pulse: Math.random() * Math.PI * 2,
+                pulseSpeed: Math.random() * 0.03 + 0.01, color: nodeColors[Math.floor(Math.random() * nodeColors.length)],
                 glowIntensity: Math.random() * 0.5 + 0.5
             });
         }
 
-        // Enhanced Neural Links with thickness variety
         const links = [];
+        const getConnectionFactor = () => (devicePerformance === 'low' ? 0.15 : devicePerformance === 'medium' ? 0.25 : 0.3);
         for (let i = 0; i < NODE_COUNT; i++) {
-            const nodeA = nodes[i];
-
-            // Adjust connection probability based on device performance
-            const getConnectionFactor = () => {
-                switch(devicePerformance) {
-                    case 'low': return 0.15;
-                    case 'medium': return 0.25;
-                    default: return 0.3;
-                }
-            };
-
-            // Each node connects to closer nodes with higher probability
             for (let j = 0; j < NODE_COUNT; j++) {
                 if (i === j) continue;
-
-                const nodeB = nodes[j];
-                const dx = nodeA.x - nodeB.x;
-                const dy = nodeA.y - nodeB.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                // The closer the nodes, the higher the chance to connect
+                const nodeA = nodes[i], nodeB = nodes[j];
+                const distance = Math.sqrt(Math.pow(nodeA.x - nodeB.x, 2) + Math.pow(nodeA.y - nodeB.y, 2));
                 const connectionProbability = 1 - Math.min(1, distance / (Math.min(width, height) * 0.4));
-
                 if (Math.random() < connectionProbability * getConnectionFactor()) {
                     links.push({
-                        from: i,
-                        to: j,
-                        width: Math.random() * 1.8 + 0.8,
-                        strength: Math.random() * 0.7 + 0.3,
-                        speed: Math.random() * 0.04 + 0.01,
-                        offset: Math.random() * Math.PI * 2,
-                        particles: Array(Math.floor(Math.random() * 2 + 1)).fill().map(() => ({
-                            position: Math.random(),
-                            speed: Math.random() * 0.005 + 0.001,
-                            size: Math.random() * 3 + 1
+                        from: i, to: j, width: Math.random() * 1.8 + 0.8, strength: Math.random() * 0.7 + 0.3,
+                        speed: Math.random() * 0.04 + 0.01, offset: Math.random() * Math.PI * 2,
+                        particles: Array.from({ length: Math.floor(Math.random() * 2 + 1) }, () => ({
+                            position: Math.random(), speed: Math.random() * 0.005 + 0.001, size: Math.random() * 3 + 1
                         }))
                     });
                 }
             }
         }
 
-        // Data flow particles
         const dataFlows = [];
-
-        // Function to add new data flow between random nodes
+        const getDataFlowInterval = () => (devicePerformance === 'low' ? 800 : devicePerformance === 'medium' ? 500 : 300);
         function addDataFlow() {
-            if (nodes.length < 2) return;
-
-            // Skip adding new flows if paused or low device performance
-            if (window.isAnimationPaused || !isPageVisible || devicePerformance === 'low') return;
-
-            // Limit flows more aggressively on medium performance devices
-            if (devicePerformance === 'medium' && dataFlows.length > 5) return;
-
+            if (nodes.length < 2 || window.isAnimationPaused || !isPageVisible || devicePerformance === 'low') return;
+            if (devicePerformance === 'medium' && dataFlows.length > 5) return; // Limit flows on medium perf
             const fromIndex = Math.floor(Math.random() * nodes.length);
             let toIndex;
-            do {
-                toIndex = Math.floor(Math.random() * nodes.length);
-            } while (toIndex === fromIndex);
-
-            const fromNode = nodes[fromIndex];
-            const toNode = nodes[toIndex];
-
+            do { toIndex = Math.floor(Math.random() * nodes.length); } while (toIndex === fromIndex);
             dataFlows.push({
-                fromX: fromNode.x,
-                fromY: fromNode.y,
-                toX: toNode.x,
-                toY: toNode.y,
-                progress: 0,
-                speed: Math.random() * 0.01 + 0.003,
-                size: Math.random() * 3 + 2,
-                color: fromNode.color
+                fromX: nodes[fromIndex].x, fromY: nodes[fromIndex].y, toX: nodes[toIndex].x, toY: nodes[toIndex].y,
+                progress: 0, speed: Math.random() * 0.01 + 0.003, size: Math.random() * 3 + 2, color: nodes[fromIndex].color
             });
         }
-
-        // Adjust data flow interval based on device performance
-        const getDataFlowInterval = () => {
-            switch(devicePerformance) {
-                case 'low': return 800;
-                case 'medium': return 500;
-                default: return 300;
-            }
-        };
-
-        // Occasionally add new data flows
         let dataFlowInterval = setInterval(addDataFlow, getDataFlowInterval());
 
-        // --- ANIMATION LOOP ---
         let t = 0;
         function draw(timestamp) {
-            // Throttle frame rate for better performance
-            const elapsed = timestamp - lastFrameTime;
-            if (elapsed < FRAME_DELAY) {
-                animationFrameId = requestAnimationFrame(draw);
-                return;
-            }
-
-            lastFrameTime = timestamp - (elapsed % FRAME_DELAY);
-
-            // Skip drawing if paused or page hidden
+            if (!canvas) return; // Canvas might have been removed from DOM
             if (window.isAnimationPaused || !isPageVisible) {
-                animationFrameId = null;
-                return;
+                animationFrameId = null; return;
             }
+            const elapsed = timestamp - lastFrameTime;
+            if (elapsed < FRAME_DELAY && animationFrameId) { // Ensure animationFrameId is checked
+                animationFrameId = requestAnimationFrame(draw); return;
+            }
+            lastFrameTime = timestamp - (elapsed % FRAME_DELAY);
 
             ctx.clearRect(0, 0, width, height);
 
-            // Draw cosmic nebula clouds
-            for (let cloud of clouds) {
-                // Update cloud position with gentle drift
-                cloud.x += cloud.drift.x;
-                cloud.y += cloud.drift.y;
-
-                // Wrap around screen
-                if (cloud.x < -cloud.radius) cloud.x = width + cloud.radius;
-                if (cloud.x > width + cloud.radius) cloud.x = -cloud.radius;
-                if (cloud.y < -cloud.radius) cloud.y = height + cloud.radius;
-                if (cloud.y > height + cloud.radius) cloud.y = -cloud.radius;
-
-                // Pulsating effect
+            clouds.forEach(cloud => {
+                cloud.x += cloud.drift.x; cloud.y += cloud.drift.y;
+                if (cloud.x < -cloud.radius) cloud.x = width + cloud.radius; if (cloud.x > width + cloud.radius) cloud.x = -cloud.radius;
+                if (cloud.y < -cloud.radius) cloud.y = height + cloud.radius; if (cloud.y > height + cloud.radius) cloud.y = -cloud.radius;
                 const pulseScale = 0.9 + 0.1 * Math.sin(t * 0.4 + cloud.pulse);
-
-                // Draw cloud
                 for (let j = 0; j < 3; j++) {
                     const offsetX = Math.cos(j * 2 * Math.PI / 3 + cloud.pulse) * cloud.radius * 0.18;
                     const offsetY = Math.sin(j * 2 * Math.PI / 3 + cloud.pulse) * cloud.radius * 0.18;
-                    const grad = ctx.createRadialGradient(
-                        cloud.x + offsetX, cloud.y + offsetY, 0,
-                        cloud.x + offsetX, cloud.y + offsetY, cloud.radius * pulseScale * (0.8 + 0.2 * Math.random())
-                    );
-                    grad.addColorStop(0, cloud.color.replace(/[\d.]+\)$/, '0.12)'));
-                    grad.addColorStop(1, cloud.color.replace(/[\d.]+\)$/, '0)'));
-                    ctx.beginPath();
-                    ctx.arc(cloud.x + offsetX, cloud.y + offsetY, cloud.radius * pulseScale, 0, Math.PI * 2);
-                    ctx.fillStyle = grad;
-                    ctx.fill();
+                    const grad = ctx.createRadialGradient(cloud.x + offsetX, cloud.y + offsetY, 0, cloud.x + offsetX, cloud.y + offsetY, cloud.radius * pulseScale * (0.8 + 0.2 * Math.random()));
+                    grad.addColorStop(0, cloud.color.replace(/[\d.]+\)$/, '0.12)')); grad.addColorStop(1, cloud.color.replace(/[\d.]+\)$/, '0)'));
+                    ctx.beginPath(); ctx.arc(cloud.x + offsetX, cloud.y + offsetY, cloud.radius * pulseScale, 0, Math.PI * 2); ctx.fillStyle = grad; ctx.fill();
                 }
-            }
+            });
 
-            // Easy mouse position for smoother movement
-            mouseX += (targetMouseX - mouseX) * 0.05;
-            mouseY += (targetMouseY - mouseY) * 0.05;
+            mouseX += (targetMouseX - mouseX) * 0.05; mouseY += (targetMouseY - mouseY) * 0.05;
 
-            // Draw animated starfield with improved parallax
-            for (let i = 0; i < STAR_COUNT; i++) {
-                let s = stars[i];
-
-                // Enhanced parallax effect based on depth
-                let px = s.x + (mouseX - width/2) * s.z * 0.06;
-                let py = s.y + (mouseY - height/2) * s.z * 0.06;
-
-                // Wrap stars around the screen
-                if (px < 0) px += width;
-                if (px > width) px -= width;
-                if (py < 0) py += height;
-                if (py > height) py -= height;
-
-                // More dynamic twinkling
+            stars.forEach(s => {
+                let px = s.x + (mouseX - width / 2) * s.z * 0.06, py = s.y + (mouseY - height / 2) * s.z * 0.06;
+                if (px < 0) px += width; if (px > width) px -= width; if (py < 0) py += height; if (py > height) py -= height;
                 let tw = 0.7 + 0.5 * Math.sin(t * s.twinkleSpeed * 3 + s.twinkle);
+                const starRadius = s.r * tw, glowRadius = starRadius * (3 + 2 * s.z);
+                const [r, g, b] = s.color;
+                const grad = ctx.createRadialGradient(px, py, 0, px, py, glowRadius);
+                grad.addColorStop(0, `rgba(${r},${g},${b},${0.3 * s.z * tw})`); grad.addColorStop(1, 'rgba(200,220,255,0)');
+                ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(px, py, glowRadius, 0, 2 * Math.PI); ctx.fill();
+                ctx.beginPath(); ctx.arc(px, py, starRadius, 0, 2 * Math.PI); ctx.fillStyle = `rgba(${r},${g},${b},${0.8 + 0.2 * s.z})`; ctx.fill();
+            });
 
-                // Larger stars have more glow
-                const starRadius = s.r * tw;
-                const glowRadius = starRadius * (3 + 2 * s.z);
-
-                // Draw star glow
-                const [r,g,b] = s.color;
-                const grad = ctx.createRadialGradient(
-                    px, py, 0,
-                    px, py, glowRadius
-                );
-                grad.addColorStop(0, `rgba(${r},${g},${b},${0.3 * s.z * tw})`);
-                grad.addColorStop(1, 'rgba(200,220,255,0)');
-
-                ctx.fillStyle = grad;
-                ctx.beginPath();
-                ctx.arc(px, py, glowRadius, 0, 2 * Math.PI);
-                ctx.fill();
-
-                // Draw star core
-                ctx.beginPath();
-                ctx.arc(px, py, starRadius, 0, 2 * Math.PI);
-                ctx.fillStyle = `rgba(${r},${g},${b},${0.8 + 0.2 * s.z})`;
-                ctx.fill();
-            }
-
-            // Draw neural links with enhanced effects
-            for (let link of links) {
+            links.forEach(link => {
                 let a = nodes[link.from], b = nodes[link.to];
                 let pulse = 0.5 + 0.5 * Math.sin(t * link.speed * 3 + link.offset);
-
-                // Draw main link with gradient
                 ctx.save();
-
-                // Create gradient along the link path
                 const linkGradient = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
                 linkGradient.addColorStop(0, `rgba(127,249,255,${0.2 + 0.2 * pulse * link.strength})`);
                 linkGradient.addColorStop(0.5, `rgba(180,250,255,${0.3 + 0.3 * pulse * link.strength})`);
                 linkGradient.addColorStop(1, `rgba(243,249,157,${0.2 + 0.2 * pulse * link.strength})`);
-
-                ctx.strokeStyle = linkGradient;
-                ctx.lineWidth = 2 + 2 * pulse * link.strength;
-                ctx.shadowBlur = 16 + 12 * pulse * link.strength;
-                ctx.shadowColor = `rgba(255,255,255,${0.4 * pulse * link.strength})`;
-                ctx.beginPath();
-                ctx.moveTo(a.x, a.y);
-                ctx.lineTo(b.x, b.y);
-                ctx.stroke();
-
-                // Skip particle effects on low performance devices
+                ctx.strokeStyle = linkGradient; ctx.lineWidth = 2 + 2 * pulse * link.strength;
+                ctx.shadowBlur = 16 + 12 * pulse * link.strength; ctx.shadowColor = `rgba(255,255,255,${0.4 * pulse * link.strength})`;
+                ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
                 if (devicePerformance !== 'low') {
-                    // Update and draw particles moving along the link
-                    for (let particle of link.particles) {
-                        // Update position
-                        particle.position += particle.speed;
-                        if (particle.position > 1) particle.position = 0;
-
-                        let px = a.x + (b.x - a.x) * particle.position;
-                        let py = a.y + (b.y - a.y) * particle.position;
-
-                        let particleColor = `rgba(243,249,157,${0.5 + 0.4 * pulse})`;
-
-                        ctx.beginPath();
-                        ctx.arc(px, py, particle.size, 0, Math.PI * 2);
-                        ctx.fillStyle = particleColor;
-                        ctx.shadowBlur = 12;
-                        ctx.fill();
-                    }
+                    link.particles.forEach(particle => {
+                        particle.position += particle.speed; if (particle.position > 1) particle.position = 0;
+                        let px = a.x + (b.x - a.x) * particle.position, py = a.y + (b.y - a.y) * particle.position;
+                        ctx.beginPath(); ctx.arc(px, py, particle.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(243,249,157,${0.5 + 0.4 * pulse})`; ctx.shadowBlur = 12; ctx.fill();
+                    });
                 }
-
                 ctx.restore();
-            }
+            });
 
-            for (let node of nodes) {
+            nodes.forEach(node => {
                 let pulse = 0.7 + 0.3 * Math.sin(t * node.pulseSpeed * 3 + node.pulse);
+                const nodeGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.r * 3 * pulse);
+                nodeGradient.addColorStop(0, node.color); nodeGradient.addColorStop(0.5, node.color.replace(/[\d.]+\)$/, `${0.3 * node.glowIntensity})`)); nodeGradient.addColorStop(1, node.color.replace(/[\d.]+\)$/, '0)'));
+                ctx.beginPath(); ctx.arc(node.x, node.y, node.r * 3 * pulse, 0, 2 * Math.PI); ctx.fillStyle = nodeGradient; ctx.fill();
+                ctx.save(); ctx.beginPath(); ctx.arc(node.x, node.y, node.r * pulse, 0, 2 * Math.PI); ctx.fillStyle = node.color; ctx.fill(); ctx.restore();
+                ctx.beginPath(); ctx.arc(node.x, node.y, node.r * 0.6 * pulse, 0, 2 * Math.PI); ctx.fillStyle = `rgba(255,255,255,${0.3 + 0.2 * pulse})`; ctx.fill();
+            });
 
-                // Draw outer glow
-                const nodeGradient = ctx.createRadialGradient(
-                    node.x, node.y, 0,
-                    node.x, node.y, node.r * 3 * pulse
-                );
-
-                const nodeColor = node.color;
-                nodeGradient.addColorStop(0, nodeColor);
-                nodeGradient.addColorStop(0.5, nodeColor.replace(/[\d.]+\)$/, `${0.3 * node.glowIntensity})`));
-                nodeGradient.addColorStop(1, nodeColor.replace(/[\d.]+\)$/, '0)'));
-
-                ctx.beginPath();
-                ctx.arc(node.x, node.y, node.r * 3 * pulse, 0, 2 * Math.PI);
-                ctx.fillStyle = nodeGradient;
-                ctx.fill();
-
-                // Draw node core
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(node.x, node.y, node.r * pulse, 0, 2 * Math.PI);
-                ctx.fillStyle = node.color;
-                ctx.fill();
-                ctx.restore();
-
-                //Draw white highlight
-                ctx.beginPath();
-                ctx.arc(node.x, node.y, node.r * 0.6 * pulse, 0, 2 * Math.PI);
-                ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + 0.2 * pulse})`;
-                ctx.fill();
-            }
-
-            // Draw data flow particles
             for (let i = dataFlows.length - 1; i >= 0; i--) {
-                const flow = dataFlows[i];
-
-                // Update progress
-                flow.progress += flow.speed;
-                if (flow.progress >= 1) {
-                    // Remove completed flows
-                    dataFlows.splice(i, 1);
-                    continue;
-                }
-
-                // Calculate current position
-                const x = flow.fromX + (flow.toX - flow.fromX) * flow.progress;
-                const y = flow.fromY + (flow.toY - flow.fromY) * flow.progress;
-
-                // Draw particle with trail
-                ctx.beginPath();
-                ctx.arc(x, y, flow.size, 0, Math.PI * 2);
-                ctx.fillStyle = flow.color;
-                ctx.shadowColor = flow.color;
-                ctx.shadowBlur = 15;
-                ctx.fill();
-
-                // Skip trails on low performance devices
+                const flow = dataFlows[i]; flow.progress += flow.speed;
+                if (flow.progress >= 1) { dataFlows.splice(i, 1); continue; }
+                const x = flow.fromX + (flow.toX - flow.fromX) * flow.progress, y = flow.fromY + (flow.toY - flow.fromY) * flow.progress;
+                ctx.beginPath(); ctx.arc(x, y, flow.size, 0, Math.PI * 2); ctx.fillStyle = flow.color; ctx.shadowColor = flow.color; ctx.shadowBlur = 15; ctx.fill();
                 if (devicePerformance !== 'low') {
-                    // Draw trail
-                    ctx.beginPath();
-                    ctx.moveTo(x, y);
-                    const trailLength = 0.1;
-                    const trailX = flow.fromX + (flow.toX - flow.fromX) * Math.max(0, flow.progress - trailLength);
-                    const trailY = flow.fromY + (flow.toY - flow.fromY) * Math.max(0, flow.progress - trailLength);
-                    ctx.lineTo(trailX, trailY);
-                    ctx.strokeStyle = flow.color;
-                    ctx.lineWidth = flow.size * 1.5;
-                    ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(x, y);
+                    const trailX = flow.fromX + (flow.toX - flow.fromX) * Math.max(0, flow.progress - 0.1);
+                    const trailY = flow.fromY + (flow.toY - flow.fromY) * Math.max(0, flow.progress - 0.1);
+                    ctx.lineTo(trailX, trailY); ctx.strokeStyle = flow.color; ctx.lineWidth = flow.size * 1.5; ctx.stroke();
                 }
             }
 
-            // Cursor Star
-            // Twinkle and pulse
-            const cursorPulse = 1 + 0.15 * Math.sin(t * 2.5);
-            const cursorTwinkle = 0.8 + 0.2 * Math.sin(t * 5.7);
-            const baseRadius = 10;
+            const cursorPulse = 1 + 0.15 * Math.sin(t * 2.5), cursorTwinkle = 0.8 + 0.2 * Math.sin(t * 5.7), baseRadius = 10;
+            ctx.beginPath(); ctx.arc(mouseX, mouseY, baseRadius * 2.5 * cursorPulse, 0, 2 * Math.PI); ctx.fillStyle = 'rgba(210,195,240,0.1)'; ctx.fill();
+            ctx.beginPath(); ctx.arc(mouseX, mouseY, baseRadius * cursorPulse * cursorTwinkle, 0, 2 * Math.PI); ctx.fillStyle = 'rgba(210,195,240,0.85)'; ctx.shadowColor = '#7ef9ff'; ctx.shadowBlur = 25 * cursorPulse; ctx.fill();
 
-            ctx.beginPath();
-            ctx.arc(mouseX, mouseY, baseRadius * 2.5 * cursorPulse, 0, 2 * Math.PI);
-            ctx.fillStyle = 'rgba(210,195,240,0.1)';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(mouseX, mouseY, baseRadius * cursorPulse * cursorTwinkle, 0, 2 * Math.PI);
-            ctx.fillStyle = 'rgba(210,195,240,0.85)';
-            ctx.shadowColor = '#7ef9ff';
-            ctx.shadowBlur = 25 * cursorPulse;
-            ctx.fill(); // Draw cursor core
-
-            // Update time at a rate appropriate for the frame rate
-            // Slower on low-performance devices
-            const timeStep = devicePerformance === 'low' ? 0.007 : 0.01;
-            t += timeStep;
-
-            // Continue animation
+            t += (devicePerformance === 'low' ? 0.007 : 0.01);
             animationFrameId = requestAnimationFrame(draw);
         }
 
-        // Always show loading animation on the first page load
-        const isFirstVisit = !sessionStorage.getItem('visited');
-
-        if (isFirstVisit || window.location.pathname === '/loading') {
-            // Create loading container if it doesn't exist
-            if (!document.getElementById('loading-container')) {
-                const loadingContainer = document.createElement('div');
-                loadingContainer.id = 'loading-container';
-                document.body.prepend(loadingContainer);
-
-                // Hide main content initially
-                const mainContent = document.querySelector('main');
-                if (mainContent) {
-                    mainContent.style.opacity = '0';
-                    mainContent.style.transition = 'opacity 1s ease-in-out';
-                }
-            }
-
-            // Check if animations are enabled in user preferences
-            const animationsEnabled = localStorage.getItem('animationsEnabled') !== 'false';
-
-            if (animationsEnabled) {
-                // Initialize loading animation with the main content element
-                initLoadingAnimation(
-                    document.getElementById('loading-container'),
-                    document.querySelector('main')
-                );
-            } else {
-                // Skip animation if user has disabled animations
-                const loadingContainer = document.getElementById('loading-container');
-                if (loadingContainer) loadingContainer.style.display = 'none';
-
-                const mainContent = document.querySelector('main');
-                if (mainContent) mainContent.style.opacity = '1';
-            }
-
-            // Set visited flag in session storage
-            sessionStorage.setItem('visited', 'true');
-        } else {
-            // For non-first visits to non-home pages, ensure main content is visible
-            const mainContent = document.querySelector('main');
-            if (mainContent) {
-                mainContent.style.opacity = '1';
-            }
-        }
-
-        // Set canvas opacity based on animation setting
-        if (canvas && window.isAnimationPaused) {
-            canvas.style.opacity = '0.2';
-        }
-
-        // Start the animation (if not paused)
+        // Initial call to start animation if not paused
         if (!window.isAnimationPaused && isPageVisible) {
             lastFrameTime = performance.now();
             animationFrameId = requestAnimationFrame(draw);
         }
 
-        // Clean up when navigating away or when component unmounts
-        return () => {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
+        // Handle loading screen logic (if it was part of the original background animation setup)
+        const isFirstVisit = !sessionStorage.getItem('visited');
+        if (isFirstVisit || window.location.pathname === '/loading') {
+            if (!document.getElementById('loading-container') && window.location.pathname === '/loading') { // Only create if on loading page
+                const loadingContainer = document.createElement('div');
+                loadingContainer.id = 'loading-container';
+                // Add content to loadingContainer as needed, or let loader.js handle it
+                document.body.prepend(loadingContainer);
             }
-            if (dataFlowInterval) {
-                clearInterval(dataFlowInterval);
-            }
-        };
+            // Assuming loader.js handles the actual loading animation and redirection
+            // Set visited flag in session storage will be handled by loader.js after animation
+        } else {
+            const mainContent = document.querySelector('main');
+            if (mainContent) mainContent.style.opacity = '1';
+        }
     }
 
-    // ------- 2. UTILITY FUNCTIONS --------
-    // Infinite scroll for posts
     function initInfiniteScroll() {
         console.log('Initializing infinite scroll');
         const postsContainer = document.querySelector('.posts');
-
         if (!postsContainer) {
-            console.error('No posts container found, aborting infinite scroll');
+            console.warn('Posts container (.posts) not found. Infinite scroll will not be initialized.');
             return;
         }
 
-        let page = 1, loading = false, hasNext = true, maxLoadTime = 3000;
+        let page = 1;
+        let loading = false;
+        let hasNext = true;
+        const maxLoadTime = 5000;
+        let loaderTimeoutId = null;
 
-        // Find the loader. It should exist in your HTML
         let loader = document.getElementById('loader');
-        console.log('Initial loader state:', loader);
-
-        // Make sure loader exists and has correct styling
-        if (loader) {
-            // Ensure loader is visible and has proper styling
-            loader.style.display = 'none'; // Initially hidden
-            loader.classList.add('loader'); // Ensure it has the loader class
-            console.log('Loader styles applied');
-        } else {
-            console.warn('Creating loader element - this is unexpected, loader should exist in HTML');
+        if (!loader) {
+            console.warn('Loader element (#loader) not found. Creating it dynamically for infinite scroll.');
             loader = document.createElement('div');
             loader.id = 'loader';
             loader.className = 'loader';
-
-            // Insert loader after posts container
             if (postsContainer.parentNode) {
                 postsContainer.parentNode.insertBefore(loader, postsContainer.nextSibling);
+            } else if (document.querySelector('main')) {
+                 document.querySelector('main').appendChild(loader);
             }
         }
+        if(loader) loader.style.display = 'none';
 
-        // Function to safely hide loader
+
         function hideLoader() {
             if (loader) {
                 loader.style.display = 'none';
                 loader.classList.remove('pulsing');
-                console.log('Loader hidden');
             }
+            if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
         }
 
-        // Function to safely show loader
         function showLoader() {
             if (loader) {
                 loader.style.display = 'block';
                 loader.classList.add('pulsing');
-                console.log('Loader shown');
             }
         }
 
-        // Function to safely remove loader
         function removeLoader() {
-            if (loader) {
-                hideLoader();
-                setTimeout(() => {
-                    try {
-                        if (loader.parentNode) {
-                            loader.parentNode.removeChild(loader);
-                            console.log('Loader removed from DOM');
-                        }
-                    } catch (e) {
-                        console.error("Error removing loader:", e);
-                    }
-                }, 100);
+            if (loader && loader.parentNode) {
+                loader.parentNode.removeChild(loader);
+                loader = null;
             }
+            if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
         }
 
-        // Add a spinner timeout to ensure it doesn't spin forever
-        function addLoaderTimeout() {
-            if (loader) {
-                return setTimeout(() => {
-                    if (loading) {
-                        console.warn("Loader timeout reached - forcing reset of loading state");
-                        loading = false;
-                        hideLoader();
-                    }
-                }, maxLoadTime);
-            }
-            return null;
+        function startLoaderTimeout() {
+            if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
+            loaderTimeoutId = setTimeout(() => {
+                if (loading) {
+                    console.warn("Loader timeout. Forcing loading state to false.");
+                    loading = false;
+                    hideLoader();
+                }
+            }, maxLoadTime);
         }
 
-        // Function to display the end of posts message
         function showEndOfPostsMessage() {
-            // Check if we already have this message
-            if (!document.querySelector('.end-of-posts-msg')) {
-                console.log("Creating 'end of posts' message");
+            if (postsContainer && !postsContainer.querySelector('.end-of-posts-msg')) {
                 const endMsg = document.createElement('div');
                 endMsg.className = 'end-of-posts-msg';
-                endMsg.innerHTML = '<i class="fa fa-check-circle"></i> You\'ve reached the end of posts.';
-
-                // Append to posts container
+                endMsg.innerHTML = '<i class="fa fa-check-circle"></i> You\'ve reached the end of all posts.';
                 postsContainer.appendChild(endMsg);
-
-                // CRITICAL: Force visibility with inline styles
-                endMsg.style.display = 'block';
-                endMsg.style.textAlign = 'center';
-                endMsg.style.padding = '1.5em';
-                endMsg.style.margin = '2em 0';
-                endMsg.style.color = '#37B4F8';
-
-                console.log("End message created with styles:", endMsg);
-
-                // Hide loader
-                hideLoader();
-            } else {
-                console.log("End message already exists");
             }
+            removeLoader(); // Remove loader once end is definitively reached
         }
 
         async function loadPosts() {
-            // Don't proceed if already loading or no more posts
-            if (!hasNext || loading) {
-                console.log("Skipping loadPosts - hasNext:", hasNext, "loading:", loading);
-                return;
-            }
+            if (!hasNext || loading) return;
 
-            console.log("Loading posts page", page);
+            console.log(`Infinite Scroll: Loading page ${page}`);
             loading = true;
             showLoader();
-
-            // Set a timeout to hide loader if request takes too long
-            const loaderTimeout = addLoaderTimeout();
+            startLoaderTimeout();
 
             try {
-                // Log the actual URL we're fetching (helps debug API issues)
-                const apiUrl = `/api/posts?page=${page}`;
-                console.log("Fetching:", apiUrl);
+                const response = await fetch(`/api/posts?page=${page}`);
+                if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
 
-                const res = await fetch(apiUrl);
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+                console.log(`Infinite Scroll: API response for page ${page}:`, data);
 
-                const data = await res.json();
-                console.log("API response for page", page, ":", data);
-                console.log("Posts count:", data.posts ? data.posts.length : 0);
-                console.log("Has next:", data.has_next);
-
-                // Clear timeout as we got a response
-                if (loaderTimeout) clearTimeout(loaderTimeout);
-
-                // No posts returned - end of content
-                if (!data.posts || data.posts.length === 0) {
-                    console.log("No more posts to load - empty response");
-                    hasNext = false;
-                    loading = false;
-
-                    // First page with no posts - show a message
-                    if (page === 1) {
-                        hideLoader();
-                        const msg = document.createElement('div');
-                        msg.className = 'no-posts-msg';
-                        msg.innerHTML = '<i class="fa fa-info-circle"></i> No posts yet.';
-                        postsContainer.appendChild(msg);
-                        console.log("'No posts' message displayed");
-                    } else {
-                        // End of posts reached - add a message and remove loader
-                        showEndOfPostsMessage();
-                        removeLoader();
-                    }
-                    return;
-                }
-
-                // Process the returned posts
-                data.posts.forEach((post, index) => {
-                    const article = document.createElement('article');
-                    article.className = 'post-card fade-in';
-
-                    // Create the image tag with conditional path
-                    let imageTag = '';
-                    if (post.image_filename) {
-                        if (window.USING_SPACES === true) {
-                            console.log(`Using Spaces URL for image: ${post.image_filename}`);
-                            imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="${window.SPACES_URL}/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
-                        } else {
-                            console.log(`Using local path for image: ${post.image_filename}`);
-                            imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
+                if (data.posts && data.posts.length > 0) {
+                    data.posts.forEach((post, idx) => {
+                        const article = document.createElement('article');
+                        article.className = 'post-card fade-in';
+                        let imageTag = '';
+                        if (post.image_filename) {
+                            if (window.USING_SPACES === true && window.SPACES_URL) {
+                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="${window.SPACES_URL}/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
+                            } else {
+                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
+                            }
                         }
-                    }
-                    article.innerHTML = `
-                        <h2><a href="/post/${post.id}">${post.title}</a></h2>
-                        ${imageTag}
-                        <p>${post.content}</p>
-                        <div class="post-footer">
-                            <a href="/post/${post.id}" class="read-more-link">Read More <i class="fa-solid fa-angles-right"></i></a>
-                            ${post.github_link ? `<a href="${post.github_link}" target="_blank" class="github-link"><i class="fa fa-github"></i> View on GitHub</a>` : ''}
-                        </div>
-                    `;
-                    postsContainer.appendChild(article);
-
-                    // Trigger animation with a small delay
-                    setTimeout(() => {
-                        article.classList.add('visible');
-                    }, 50);
-                });
-
-                console.log(`Added ${data.posts.length} posts to the container`);
-
-                // CRITICAL: Update the hasNext flag from API response
-                console.log("API has_next value:", data.has_next);
-                hasNext = !!data.has_next;
-                console.log("Updated hasNext flag:", hasNext);
-
-                // If no more posts, show end message and remove loader
-                if (!hasNext) {
-                    console.log("No more posts available (has_next: false)");
-                    showEndOfPostsMessage();
-                    removeLoader();
-                } else {
-                    // Increment page for next load
+                        article.innerHTML = `
+                            <h2><a href="/post/${post.id}">${post.title}</a></h2>
+                            ${imageTag}
+                            <p>${post.content}</p> <div class="post-footer">
+                                <a href="/post/${post.id}" class="read-more-link">Read More <i class="fa-solid fa-angles-right"></i></a>
+                                ${post.github_link ? `<a href="${post.github_link}" target="_blank" class="github-link"><i class="fa-brands fa-github"></i> View on GitHub</a>` : ''}
+                            </div>`;
+                        postsContainer.appendChild(article);
+                        setTimeout(() => article.classList.add('visible'), 50 * idx);
+                    });
                     page++;
-                    console.log("Ready for next page:", page);
+                    hasNext = !!data.has_next; // Ensure boolean
+                    if (!hasNext) {
+                        console.log("Infinite Scroll: No more posts after this page.");
+                        showEndOfPostsMessage();
+                    }
+                } else {
+                    hasNext = false;
+                    console.log("Infinite Scroll: API returned no posts for this page.");
+                    if (page === 1) { // No posts at all
+                         if (!postsContainer.querySelector('.no-posts-msg')) {
+                            const msg = document.createElement('div');
+                            msg.className = 'no-posts-msg';
+                            msg.innerHTML = '<i class="fa fa-info-circle"></i> No posts yet.';
+                            postsContainer.appendChild(msg);
+                         }
+                    } else { // Was loading subsequent pages and found no more
+                        showEndOfPostsMessage();
+                    }
+                    removeLoader();
                 }
             } catch (error) {
-                console.error("Error loading posts:", error);
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'error-msg';
-                errorMsg.innerHTML = '<i class="fa fa-exclamation-circle"></i> Failed to load posts. Please try again.';
-                postsContainer.appendChild(errorMsg);
-
-                // Clear timeout if error occurs
-                if (loaderTimeout) clearTimeout(loaderTimeout);
+                console.error("Infinite Scroll: Error loading posts:", error);
+                if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
+                hasNext = false;
+                 if (postsContainer && !postsContainer.querySelector('.error-msg')) {
+                    const errorMsg = document.createElement('div');
+                    errorMsg.className = 'error-msg';
+                    errorMsg.innerHTML = '<i class="fa fa-exclamation-circle"></i> Failed to load more posts.';
+                    postsContainer.appendChild(errorMsg);
+                }
+                removeLoader(); // Stop trying on error
             } finally {
-                // Reset loading state with a short delay
-                setTimeout(() => {
-                    loading = false;
-                    if (hasNext) {
-                        hideLoader();
-                    }
-                    console.log("Loading state reset. Current state - loading:", loading, "hasNext:", hasNext);
-                }, 300);
+                loading = false;
+                if (hasNext) hideLoader(); // Hide loader if there might be more, otherwise it's removed
             }
         }
 
-        // Check if we already have content and need to check if there are more posts
-        const initialArticles = postsContainer.querySelectorAll('article');
-
-        console.log(`Found ${initialArticles.length} initial articles`);
-
-        // IMPORTANT: If the container is empty, load page 1 immediately
-        if (initialArticles.length === 0) {
-            console.log('No initial articles, loading page 1');
+        // Initial check/load logic for infinite scroll
+        const initialPostElements = postsContainer.querySelectorAll('article');
+        if (initialPostElements.length === 0 && window.location.pathname === '/') {
+            console.log('Infinite Scroll: No initial posts on home page. Attempting to load page 1.');
             loadPosts();
-        } else {
-            // If we already have articles (server-rendered), check if there are more
-            console.log("Checking for more posts beyond the initial loaded ones");
-
-            // Try to load page 2 to see if there are more posts
-            fetch('/api/posts?page=2')
-                .then(response => response.json())
+        } else if (initialPostElements.length > 0) {
+            console.log(`Infinite Scroll: ${initialPostElements.length} initial posts found. Checking for more.`);
+            fetch('/api/posts?page=' + (postsContainer.dataset.initialPageCount ? parseInt(postsContainer.dataset.initialPageCount) + 1 : 2) )
+                .then(res => res.json())
                 .then(data => {
-                    console.log("Check for more posts result:", data);
-
                     if (!data.posts || data.posts.length === 0 || !data.has_next) {
-                        console.log('All posts already loaded, showing end message');
+                        hasNext = false;
                         showEndOfPostsMessage();
-                        hideLoader(); // Make sure loader is hidden
-                        hasNext = false; // No more posts to load
                     } else {
-                        console.log('More posts available, page 2 ready for loading');
-                        page = 2; // Start from page 2 next time we load
+                        page = (postsContainer.dataset.initialPageCount ? parseInt(postsContainer.dataset.initialPageCount) + 1 : 2);
+                        console.log(`Infinite Scroll: More posts available. Next page to load on scroll: ${page}`);
                     }
-                })
-                .catch(error => {
-                    console.error('Error checking for more posts:', error);
-                });
+                }).catch(err => console.error("Infinite Scroll: Error checking for more initial posts:", err));
         }
 
-        // Set up scroll event listener for infinite scroll
-        console.log("Setting up scroll event listener");
-
-        // Improved scroll detection with debounce
-        let scrollTimeout;
+        let scrollDebounceTimeout;
         window.addEventListener('scroll', () => {
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                // Only attempt to load more if we're not currently loading and there are more posts
-                if (loading || !hasNext) {
-                    console.log("Scroll detected but not loading more - loading:", loading, "hasNext:", hasNext);
-                    return;
-                }
-
+            if (!hasNext || loading) return;
+            clearTimeout(scrollDebounceTimeout);
+            scrollDebounceTimeout = setTimeout(() => {
                 const scrollPosition = window.innerHeight + window.scrollY;
-                const documentHeight = document.body.offsetHeight;
-
-                // Load more posts when near the bottom
-                if (scrollPosition > documentHeight - 600) {
-                    console.log("Near bottom of page, loading more posts");
+                const documentHeight = document.documentElement.scrollHeight;
+                if (scrollPosition >= documentHeight - 600) {
                     loadPosts();
                 }
-            }, 100);
+            }, 150);
         });
-
-        console.log("Infinite scroll initialization complete");
+        console.log("Infinite scroll event listener attached.");
     }
 
-    // ------- 3. OPTIONAL LOADING ANIMATIONS --------
-    // Initialize loading animation if needed
     function initLoadingAnimation(container, mainContent) {
-        // This function should be defined elsewhere or imported
-        // It's called by the background animation code
-        console.log('Loading animation would start here if defined');
+        console.log('Loading animation setup function called (if defined elsewhere).');
+        // This function was in your original structure, assumed to be part of the full page load animation.
+        // If it was tied to `loader.js`, ensure that `loader.js` is still included and functioning as expected for the `/loading` route.
     }
 
-    // ------- 4. ADDITIONAL INITIALIZATION --------
-    // Show loading hint for first-time visitors
-    const isFirstVisit = !sessionStorage.getItem('visited');
-    if (isFirstVisit) {
-        sessionStorage.setItem('visited', 'true');
-        console.log('First visit - initialization complete');
-    } else {
-        console.log('Return visit - initialization complete');
-    }
-
-    // Manually check for more posts shortly after page load
     function checkForMorePosts() {
-        // Only run on the homepage
-        if (window.location.pathname === '/') {
-            console.log("Checking for additional posts...");
-
-            // Get the posts container
-            const postsContainer = document.querySelector('.posts');
-            if (!postsContainer) return;
-
-            // Get all articles
-            const articles = postsContainer.querySelectorAll('article');
-            console.log(`Found ${articles.length} articles on page`);
-
-            // If we have articles but possibly not all of them, fetch the next page
-            if (articles.length > 0) {
-                // Create or find the end message element
-                let endMsg = document.querySelector('.end-of-posts-msg');
-
-                if (!endMsg) {
-                    // Only check for more posts if we don't already have an end message
-                    fetch('/api/posts?page=2')
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log("Manual check for page 2:", data);
-
-                            // If page 2 has posts, simulate scrolling to load them
-                            if (data.posts && data.posts.length > 0) {
-                                console.log("Found more posts on page 2, triggering load");
-
-                                // Simulate a scroll event near the bottom
-                                const scrollEvent = new Event('scroll');
-                                window.dispatchEvent(scrollEvent);
-
-                                // Additionally, force the scroll position to trigger loading
-                                const currentScroll = window.scrollY;
-                                window.scrollTo(0, document.body.scrollHeight);
-                                setTimeout(() => {
-                                    window.scrollTo(0, currentScroll);
-                                }, 50);
-                            } else {
-                                console.log("No more posts on page 2");
-                                // Show end message directly
-                                const endMsg = document.createElement('div');
-                                endMsg.className = 'end-of-posts-msg';
-                                endMsg.innerHTML = '<i class="fa fa-check-circle"></i> You\'ve reached the end of posts.';
-
-                                // Style the end message
-                                endMsg.style.display = 'block';
-                                endMsg.style.textAlign = 'center';
-                                endMsg.style.padding = '1.5em';
-                                endMsg.style.margin = '2em 0';
-                                endMsg.style.color = '#37B4F8';
-
-                                // Add to container
-                                postsContainer.appendChild(endMsg);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error checking for more posts:', error);
-                        });
-                }
-            }
-        }
+        // This function was present in your original script.
+        // Its primary purpose now is likely covered by initInfiniteScroll's initial checks.
+        // If it has unique logic, it can be kept, otherwise, it might be simplified or removed.
+        // For now, just logging its call.
+        console.log('checkForMorePosts called. Review if its logic is still needed separately from initInfiniteScroll.');
+        // The original logic for this function is now better integrated into initInfiniteScroll.
     }
 
-    // Run this check a short time after page load
-    setTimeout(checkForMorePosts, 2000);
+    // ------- CALL INITIALIZATION FUNCTIONS --------
+    // The order here matters!
+    initBackgroundCanvas(); // Set up canvas properties
+    initSidebar();          // Set up sidebar interactions
+    initAnimationToggle();  // Set up animation play/pause
+    initBackgroundAnimation(); // Start the background visuals
+    initInfiniteScroll();   // Handle dynamic post loading
 
+    const isFirstVisit = !sessionStorage.getItem('visited');
+    if (isFirstVisit && window.location.pathname !== '/loading') { // Avoid flag setting if loader.js will handle it
+        sessionStorage.setItem('visited', 'true');
+        console.log('First visit (not /loading) - flag set.');
+    }
+    console.log('All JavaScript initializations have been set up.');
 });
