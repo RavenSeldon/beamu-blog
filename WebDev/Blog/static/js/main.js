@@ -964,9 +964,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Create the image tag with conditional path
                     let imageTag = '';
                     if (post.image_filename) {
-                        if (window.USING_SPACES) {
+                        if (window.USING_SPACES === true) {
+                            console.log(`Using Spaces URL for image: ${post.image_filename}`);
                             imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="${window.SPACES_URL}/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
                         } else {
+                            console.log(`Using local path for image: ${post.image_filename}`);
                             imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
                         }
                     }
