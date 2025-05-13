@@ -28,8 +28,19 @@
         }
     </script>
     <script>
-    const USING_SPACES = {{ USING_SPACES|tojson }};
-    const SPACES_URL = {{ SPACES_URL|tojson if SPACES_URL is defined else 'null' }};
+        const USING_SPACES = {{ USING_SPACES|tojson }};
+        const SPACES_URL = {{ SPACES_URL|tojson if SPACES_URL is defined else 'null' }};
+
+        console.log("Server-provided config:", {
+            "USING_SPACES": USING_SPACES,
+            "SPACES_URL": SPACES_URL,
+            "USING_SPACES type": typeof USING_SPACES,
+            "SPACES_URL type": typeof SPACES_URL
+        });
+
+        if ( !USING_SPACES || !SPACES_URL) {
+            console.warn("Digital Ocean Spaces configuration issue - check env variables");
+        }
     </script>
 </head>
 <body>
