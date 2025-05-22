@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Add a New Music Item - Ben Amuwo's Neurascape{% endblock %}
+
+{% block content %}
+<section class="newpost-wrap">
+  <h1><i class="fa-solid fa-record-vinyl"></i> Add New Music Item</h1>
+
+  <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <label for="title">
+      <span>Title</span>
+      <input type="text" id="title" name="title" maxlength="120" placeholder="Song or Album Title" required>
+    </label>
+
+    <label for="item_type">
+        <span>Item Type</span>
+        <select id="item_type" name="item_type" required>
+            <option value="" disabled selected>Select type...</option>
+            <option value="album_release">Album Release</option>
+            <option value="single_track">Single Track</option>
+            <option value="music_video">Music Video</option>
+            <option value="live_performance">Live Performance</option>
+            <option value="dj_set">DJ Set/Mix</option>
+            <option value="soundtrack">Soundtrack</option>
+            <option value="playlist_feature">Playlist Feature</option>
+            <option value="other_music_related">Other</option>
+        </select>
+    </label>
+
+    <label for="artist">
+      <span>Artist</span>
+      <input type="text" id="artist" name="artist" maxlength="120" placeholder="Artist Name">
+    </label>
+
+    <label for="album_title">
+      <span>Album Title <small>(if applicable)</small></span>
+      <input type="text" id="album_title" name="album_title" maxlength="256" placeholder="Album Title">
+    </label>
+
+    <label for="content" class="full">
+      <span>Content/Description <small>(Markdown OK)</small></span>
+      <textarea id="content" name="content" rows="8" maxlength="20000"
+                placeholder="Your thoughts, review, or details about this music item..."></textarea>
+    </label>
+
+    <div class="flex-row">
+        <label class="file-input has-preview flex-grow">
+            <i class="fa-solid fa-image"></i> Cover Image <small>(optional)</small>
+            <input id="post-image" type="file" name="image" accept="image/*">
+            <span class="file-name">No file chosen...</span>
+            <img class="preview" style="display:none;" alt="Image preview" src="">
+        </label>
+
+        <label for="project_id" class="flex-grow">
+            <span>Associated Project <small>(optional)</small></span>
+            <select id="project_id" name="project_id" class="form-control">
+              <option value="">-- None --</option>
+              {% for project in projects %}
+              <option value="{{ project.id }}">{{ project.title }}</option>
+              {% endfor %}
+            </select>
+        </label>
+    </div>
+
+    <div class="flex-row">
+        <label for="spotify_link" class="flex-grow">
+            <span>Spotify Link <small>(optional)</small></span>
+            <input type="url" id="spotify_link" name="spotify_link" placeholder="https://open.spotify.com/...">
+        </label>
+
+        <label for="youtube_link" class="flex-grow">
+            <span>YouTube Link <small>(optional)</small></span>
+            <input type="url" id="youtube_link" name="youtube_link" placeholder="https://youtube.com/watch?v=...">
+        </label>
+    </div>
+
+    <button type="submit" class="send-btn">
+      <i class="fa-solid fa-rocket"></i> Publish Music Item
+    </button>
+  </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* image preview */
+(function () {
+  const input = document.getElementById('post-image');
+  if (!input) return;
+
+  const label = input.closest('.file-input');
+  const fileNameEl = label.querySelector('.file-name');
+  const previewEl = label.querySelector('.preview');
+
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) {
+      fileNameEl.textContent = 'No file chosen…';
+      previewEl.style.display = 'none';
+      previewEl.src = '';
+      return;
+    }
+    fileNameEl.textContent = file.name;
+    if (file.type.startsWith('image/')) {
+      previewEl.src = URL.createObjectURL(file);
+      previewEl.style.display = 'block';
+      previewEl.onload = () => URL.revokeObjectURL(previewEl.src);
+    } else {
+      previewEl.style.display = 'none';
+      previewEl.src = '';
+    }
+  });
+})();
+</script>
+{% endblock %}

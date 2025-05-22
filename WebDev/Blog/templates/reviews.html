@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Reviews - Ben's Neurascape{% endblock %}
+
+{% block content %}
+<section class="review-items-wrap">
+    <h1><i class="fa-solid fa-star-half-stroke"></i> Reviews</h1>
+    <br>
+
+    {% if reviews %}
+    <div class="posts-list">
+        {% for review in reviews %}
+        <article class="post-card visible review-card">
+            <header class="post-header">
+                <h2 class="post-title"><a href="{{ url_for('post', post_id=review.id) }}">{{ review.title }}</a></h2>
+                <div class="post-meta">
+                    <span class="post-date"><i class="fa-solid fa-calendar-alt"></i> {{ review.date_posted.strftime('%B %d, %Y') }}</span>
+                    <span class="review-category"><i class="fa-solid fa-tag"></i> {{ review.category | title }}</span>
+                    {% if review.project %}
+                    <span class="post-project">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <a href="{{ url_for('project_detail', project_id=review.project.id) }}">{{ review.project.title }}</a>
+                    </span>
+                    {% endif %}
+                </div>
+            </header>
+
+            {% if review.photo and review.photo.filename %}
+            <div class="post-image">
+                <a href="{{ url_for('post', post_id=review.id) }}">
+                     {% if USING_SPACES %}
+                    <img src="{{ SPACES_URL }}/medium/{{ review.photo.filename }}"
+                         srcset="{{ get_srcset(review.photo.filename) }}"
+                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                         alt="{{ review.photo.description if review.photo.description else review.item_title }}"
+                         class="post-feature-img" loading="lazy">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='images/medium/' + review.photo.filename) }}"
+                         srcset="{{ get_srcset(review.photo.filename) }}"
+                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                         alt="{{ review.photo.description if review.photo.description else review.item_title }}"
+                         class="post-feature-img" loading="lazy">
+                    {% endif %}
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="post-content review-summary">
+                <p><strong>Reviewing:</strong> {{ review.item_title }}
+                   {% if review.year_released %}({{ review.year_released }}){% endif %}
+                </p>
+                {% if review.director_author %}
+                    <p><strong>By:</strong> {{ review.director_author }}</p>
+                {% endif %}
+                {% if review.rating %}
+                    <p><strong>Rating:</strong> {{ review.rating }}</p>
+                {% endif %}
+                {{ review.content | markdown_safe | truncate(200) }}
+            </div>
+
+            <div class="post-links">
+                <a href="{{ url_for('post', post_id=review.id) }}" class="read-more">Read Full Review <i class="fa-solid fa-angles-right"></i></a>
+                {% if review.item_link %}
+                <a href="{{ review.item_link }}" target="_blank" class="external-link"><i class="fa-solid fa-link"></i> View Item</a>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-items-msg">
+        <p><i class="fa-solid fa-ghost"></i> No reviews found yet. Check back soon!</p>
+    </div>
+    {% endif %}
+
+    {% if current_user.is_authenticated %}
+    <div class="admin-actions" style="margin-top: 2em; text-align: center;">
+        <a href="{{ url_for('new_review') }}" class="hero-btn"><i class="fa-solid fa-plus-circle"></i> Add New Review</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

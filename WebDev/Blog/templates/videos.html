@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Videos - Ben Amuwo's Neurascape{% endblock %}
+{% block content %}
+<section class="video-items-wrap">
+    <h1><i class="fa-solid fa-video"></i> Videos</h1>
+    <br>
+
+    {% if videos %}
+    <div class="posts-list">
+        {% for video in videos %}
+        <article class="post-card visible video-card">
+            <header class="post-header">
+                <h2 class="post-title"><a href="{{ url_for('post', post_id=video.id) }}">{{ video.title }}</a></h2>
+                <div class="post-meta">
+                    <span class="post-date">{{ video.date_posted.strftime('%B %d, %Y') }}</span>
+                    {% if video.project %}
+                    <span class="post-project">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <a href="{{ url_for('project_detail', project_id=video.project.id) }}">{{ video.project.title }}</a>
+                    </span>
+                    {% endif %}
+                     {% if video.source_type %}
+                        <span class="video-source-type"><i class="fa-solid fa-film"></i> {{ video.source_type | title }}</span>
+                    {% endif %}
+                </div>
+            </header>
+
+            {% if video.photo and video.photo.filename %}
+            <div class="post-image video-thumbnail">
+                <a href="{{ url_for('post', post_id=video.id) }}">
+                     {% if USING_SPACES %}
+                    <img src="{{ SPACES_URL }}/medium/{{ video.photo.filename }}"
+                         srcset="{{ get_srcset(video.photo.filename) }}"
+                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                         alt="{{ video.photo.description if video.photo.description else video.title }}"
+                         class="post-feature-img" loading="lazy">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='images/medium/' + video.photo.filename) }}"
+                         srcset="{{ get_srcset(video.photo.filename) }}"
+                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                         alt="{{ video.photo.description if video.photo.description else video.title }}"
+                         class="post-feature-img" loading="lazy">
+                    {% endif %}
+                </a>
+            </div>
+            {% elif video.embed_code %}
+            <div class="video-embed-preview">
+                {{ video.embed_code | safe }}
+            </div>
+            {% endif %}
+
+            <div class="post-content">
+                {{ video.content | markdown_safe | truncate(250) }}
+            </div>
+
+            <div class="post-links">
+                <a href="{{ url_for('post', post_id=video.id) }}" class="read-more">Watch/Read More <i class="fa-solid fa-angles-right"></i></a>
+                 {% if video.video_url %}
+                <a href="{{ video.video_url }}" target="_blank" class="external-link"><i class="fa-solid fa-external-link-alt"></i> Watch Video</a>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-items-msg">
+        <p><i class="fa-solid fa-ghost"></i> No videos found yet. Stay tuned!</p>
+    </div>
+    {% endif %}
+
+    {% if current_user.is_authenticated %}
+    <div class="admin-actions" style="margin-top: 2em; text-align: center;">
+        <a href="{{ url_for('new_video_item') }}" class="hero-btn"><i class="fa-solid fa-plus-circle"></i> Add New Video</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

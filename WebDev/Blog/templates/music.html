@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Music - Ben Amuwo's Neurascape{% endblock %}
+{% block content %}
+<section class="music-items-wrap">
+    <h1><i class="fa-solid fa-compact-disc"></i> Music Collection</h1>
+    <br>
+    {% if items %}
+    <div class="posts-list"> {# Reusing .posts-list for similar card layout #}
+        {% for item in items %}
+        <article class="post-card visible"> {# Reusing .post-card styling #}
+            <header class="post-header">
+                <h2 class="post-title"><a href="{{ url_for('post', post_id=item.id) }}">{{ item.title }}</a></h2>
+                <div class="post-meta">
+                    <span class="post-date">{{ item.date_posted.strftime('%B %d, %Y') }}</span>
+                    {% if item.project %}
+                    <span class="post-project">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <a href="{{ url_for('project_detail', project_id=item.project.id) }}">{{ item.project.title }}</a>
+                    </span>
+                    {% endif %}
+                    <span class="music-item-type"><i class="fa-solid fa-music"></i> {{ item.item_type | replace('_', ' ') | title }}</span>
+                </div>
+            </header>
+
+            {% if item.photo and item.photo.filename %}
+            <div class="post-image">
+                <a href="{{ url_for('post', post_id=item.id) }}">
+                    {% if USING_SPACES %}
+                    <img src="{{ SPACES_URL }}/medium/{{ item.photo.filename }}"
+                         srcset="{{ get_srcset(item.photo.filename) }}"
+                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                         alt="{{ item.photo.description if item.photo.description else item.title }}"
+                         class="post-feature-img"
+                         loading="lazy">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='images/medium/' + item.photo.filename) }}"
+                         srcset="{{ get_srcset(item.photo.filename) }}"
+                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                         alt="{{ item.photo.description if item.photo.description else item.title }}"
+                         class="post-feature-img"
+                         loading="lazy">
+                    {% endif %}
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="post-content">
+                {% if item.artist %}
+                    <p><strong>Artist:</strong> {{ item.artist }}</p>
+                {% endif %}
+                {% if item.album_title %}
+                    <p><strong>Album:</strong> {{ item.album_title }}</p>
+                {% endif %}
+                {{ item.content | markdown_safe | truncate(250) }}
+            </div>
+
+            <div class="post-links">
+                <a href="{{ url_for('post', post_id=item.id) }}" class="read-more">Read More <i class="fa-solid fa-angles-right"></i></a>
+                {% if item.spotify_link %}
+                <a href="{{ item.spotify_link }}" target="_blank" class="external-link"><i class="fa-brands fa-spotify"></i> Spotify</a>
+                {% endif %}
+                {% if item.youtube_link %}
+                <a href="{{ item.youtube_link }}" target="_blank" class="external-link"><i class="fa-brands fa-youtube"></i> YouTube</a>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-items-msg">
+        <p><i class="fa-solid fa-ghost"></i> No music items found yet. Stay tuned!</p>
+    </div>
+    {% endif %}
+
+    {% if current_user.is_authenticated %}
+    <div class="admin-actions" style="margin-top: 2em; text-align: center;">
+        <a href="{{ url_for('new_music_item') }}" class="hero-btn"><i class="fa-solid fa-plus-circle"></i> Add New Music Item</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

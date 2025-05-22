@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Photo Album - My Cosmic-Neural Blog{% endblock %}
+{% block title %}Photo Album - Ben Amuwo's Neurascape{% endblock %}
 {% block content %}
-<h1>Photo Album</h1>
+<h1><i class="fa-solid fa-camera-retro"></i> Photo Album</h1>
 
 <!-- Debug info -->
 {% if current_user.is_authenticated %}
@@ -29,21 +29,21 @@
 
         <p class="caption">{% if photo.description %}{{ photo.description }}{% else %}<em>No description</em>{% endif %}</p>
 
-        {% if photo.posts or photo.projects %}
+        {% if photo.linked_posts or photo.linked_projects %}
         <div class="photo-related">
-            {% if photo.posts %}
+            {% if photo.linked_posts %}
             <h4>Related Posts:</h4>
             <ul>
-                {% for post in photo.posts %}
+                {% for post in photo.linked_posts %}
                 <li><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></li>
                 {% endfor %}
             </ul>
             {% endif %}
 
-            {% if photo.projects %}
+            {% if photo.linked_projects %}
             <h4>Related Projects:</h4>
             <ul>
-                {% for project in photo.projects %}
+                {% for project in photo.linked_projects %}
                 <li><a href="{{ url_for('project_detail', project_id=project.id) }}">{{ project.title }}</a></li>
                 {% endfor %}
             </ul>
@@ -68,6 +68,10 @@
     <a href="{{ url_for('check_image_files') }}" class="admin-btn" style="display: inline-block; padding: 8px 15px; background: #37B4F8; color: #000; text-decoration: none; border-radius: 5px;">
         Check Image Files
     </a>
+</div>
+
+<div class="admin-actions" style="margin-top: 2em; text-align: center;">
+    <a href="{{ url_for('new_photo') }}" class="hero-btn"><i class="fa-solid fa-plus-circle"></i> Add New Photo</a>
 </div>
 
 <script>

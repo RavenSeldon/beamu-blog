@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}New Video - Ben Amuwo's Neurascape{% endblock %}
+
+{% block content %}
+<section class="newpost-wrap">
+  <h1><i class="fa-solid fa-film"></i> Add New Video</h1>
+
+  <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <label for="title">
+      <span>Title</span>
+      <input type="text" id="title" name="title" maxlength="120" placeholder="Video Title" required>
+    </label>
+
+    <label for="content" class="full">
+      <span>Description <small>(Markdown OK)</small></span>
+      <textarea id="content" name="content" rows="8" maxlength="20000"
+                placeholder="Details about the video..."></textarea>
+    </label>
+
+    <div class="flex-row">
+        <label for="video_url" class="flex-grow">
+            <span>Video URL <small>(e.g., YouTube, Vimeo link)</small></span>
+            <input type="url" id="video_url" name="video_url" placeholder="https://...">
+        </label>
+        <label for="source_type" class="flex-grow">
+            <span>Source Type <small>(e.g., YouTube, Vimeo, Self-hosted)</small></span>
+            <input type="text" id="source_type" name="source_type" placeholder="YouTube">
+        </label>
+    </div>
+
+    <label for="embed_code" class="full">
+      <span>Embed Code <small>(if applicable, overrides Video URL for display)</small></span>
+      <textarea id="embed_code" name="embed_code" rows="4" placeholder="<iframe ...></iframe>"></textarea>
+    </label>
+
+    <div class="flex-row">
+        <label for="duration" class="flex-grow">
+            <span>Duration <small>(e.g., 3:45, 1:20:30)</small></span>
+            <input type="text" id="duration" name="duration" placeholder="HH:MM:SS or MM:SS">
+        </label>
+
+        <label for="project_id" class="flex-grow">
+          <span>Associated Project <small>(optional)</small></span>
+          <select id="project_id" name="project_id" class="form-control">
+            <option value="">-- None --</option>
+            {% for project in projects %}
+            <option value="{{ project.id }}">{{ project.title }}</option>
+            {% endfor %}
+          </select>
+        </label>
+    </div>
+
+    <label class="file-input has-preview">
+        <i class="fa-solid fa-image"></i> Thumbnail Image <small>(optional)</small>
+        <input id="post-image" type="file" name="image" accept="image/*">
+        <span class="file-name">No file chosen...</span>
+        <img class="preview" style="display:none;" alt="Image preview" src="">
+    </label>
+
+    <button type="submit" class="send-btn">
+      <i class="fa-solid fa-rocket"></i> Publish Video
+    </button>
+  </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* image preview */
+(function () {
+  const input = document.getElementById('post-image');
+  if (!input) return;
+  const label = input.closest('.file-input');
+  const fileNameEl = label.querySelector('.file-name');
+  const previewEl = label.querySelector('.preview');
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) {
+      fileNameEl.textContent = 'No file chosen…';
+      previewEl.style.display = 'none'; previewEl.src = ''; return;
+    }
+    fileNameEl.textContent = file.name;
+    if (file.type.startsWith('image/')) {
+      previewEl.src = URL.createObjectURL(file);
+      previewEl.style.display = 'block';
+      previewEl.onload = () => URL.revokeObjectURL(previewEl.src);
+    } else {
+      previewEl.style.display = 'none'; previewEl.src = '';
+    }
+  });
+})();
+</script>
+{% endblock %}

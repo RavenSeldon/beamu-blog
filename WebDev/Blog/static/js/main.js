@@ -499,11 +499,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         const article = document.createElement('article');
                         article.className = 'post-card fade-in';
                         let imageTag = '';
-                        if (post.image_filename) {
+                        if (post.photo_filename) {
                             if (window.USING_SPACES === true && window.SPACES_URL) {
-                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="${window.SPACES_URL}/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
+                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="${window.SPACES_URL}/thumbnail/${post.photo_filename}" alt="${post.title}" class="post-thumb"></a>`;
                             } else {
-                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.image_filename}" alt="${post.title}" class="post-thumb"></a>`;
+                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.photo_filename}" alt="${post.title}" class="post-thumb"></a>`;
                             }
                         }
                         article.innerHTML = `

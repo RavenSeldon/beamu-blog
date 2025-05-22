@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ post.title }} - the Neurascape{% endblock %}
+{% block title %}{{ post.title }} - Ben Amuwo's Neurascape{% endblock %}
 
 {% block content %}
 <article class="single-post">
@@ -16,20 +16,20 @@
         </div>
     </header>
 
-    {% if post.image_filename %}
+    {% if post.photo and post.photo.filename %}
     <div class="post-image">
         <!-- Responsive image with srcset -->
         {% set alt_text = post.photo.description if post.photo and post.photo.description else post.title %}
         {% if USING_SPACES %}
-        <img src="{{ SPACES_URL }}/medium/{{ post.image_filename }}"
-             srcset="{{ get_srcset(post.image_filename) }}"
+        <img src="{{ SPACES_URL }}/medium/{{ post.photo.filename }}"
+             srcset="{{ get_srcset(post.photo.filename) }}"
              sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
              alt="{{ alt_text }}"
              class="post-feature-img"
              loading="eager">
         {% else %}
-        <img src="{{ url_for('static', filename='images/medium/' + post.image_filename) }}"
-             srcset="{{ get_srcset(post.image_filename) }}"
+        <img src="{{ url_for('static', filename='images/medium/' + post.photo.filename) }}"
+             srcset="{{ get_srcset(post.photo.filename) }}"
              sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
              alt="{{ alt_text }}"
              class="post-feature-img"

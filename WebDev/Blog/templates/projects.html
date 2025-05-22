@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% block title %}Projects - the Neurascape{% endblock %}
+{% block title %}Projects - Ben Amuwo's Neurascape{% endblock %}
 {% block content %}
-<h1>Projects</h1>
+<h1><i class="fa-solid fa-sun"></i> Projects</h1>
 {% if projects %}
 <div class="projects-list">
     {% for project in projects %}
     <div class="project-card visible" id="project-{{ project.id }}">
         <h3><a href="{{ url_for('project_detail', project_id=project.id) }}">{{ project.title }}</a></h3>
-        {% if project.image_filename %}
+        {% if project.photo and project.photo.filename %}
         <a href="{{ url_for('project_detail', project_id=project.id) }}">
             {% if USING_SPACES %}
-            <img src="{{ SPACES_URL }}/medium/{{ project.image_filename }}"
+            <img src="{{ SPACES_URL }}/medium/{{ project.photo.filename }}"
                  alt="{{ project.title }}">
             {% else %}
-            <img src="{{ url_for('static', filename='images/medium/' + project.image_filename) }}"
+            <img src="{{ url_for('static', filename='images/medium/' + project.photo.filename) }}"
                  alt="{{ project.title }}">
             {% endif %}
         </a>
@@ -39,4 +39,10 @@
     <p>No projects have been added yet. Check back later!</p>
 </div>
 {% endif %}
+
+    {% if current_user.is_authenticated %}
+    <div class="admin-actions" style="margin-top: 2em; text-align: center;">
+        <a href="{{ url_for('new_project') }}" class="hero-btn"><i class="fa-solid fa-plus-circle"></i> Add New Project</a>
+    </div>
+    {% endif %}
 {% endblock %}

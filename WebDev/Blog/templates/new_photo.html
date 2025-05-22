@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Add a New Photo – Ben Amuwo's Neurascape{% endblock %}
+
+{% block content %}
+<section class="newpost-wrap">
+  <h1><i class="fa-solid fa-camera-retro"></i> New Photo</h1>
+
+  <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label class="file-input has-preview full">
+        <i class="fa-solid fa-image"></i> Photo File
+        <input id="photo-image-upload" type="file" name="image" accept="image/*" required>
+        <span class="file-name">No file chosen...</span>
+        <img class="preview" style="display:none;" alt="Image preview" src="">
+    </label>
+
+    <label for="description" class="full">
+      <span>Description <small>(optional)</small></span>
+      <textarea id="description" name="description"
+                rows="4"
+                maxlength="512"
+                placeholder="A brief description of the photo..."></textarea>
+    </label>
+
+    <button type="submit" class="send-btn">
+      <i class="fa-solid fa-upload"></i> Upload Photo
+    </button>
+  </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* image preview */
+(function () {
+  const input = document.getElementById('photo-image-upload');
+  if (!input) return;
+
+  const label = input.closest('.file-input');
+  const fileNameEl = label.querySelector('.file-name');
+  const previewEl = label.querySelector('.preview');
+
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) {
+      fileNameEl.textContent = 'No file chosen…';
+      previewEl.style.display = 'none';
+      previewEl.src = '';
+      return;
+    }
+    fileNameEl.textContent = file.name;
+    if (file.type.startsWith('image/')) {
+      previewEl.src = URL.createObjectURL(file);
+      previewEl.style.display = 'block';
+      previewEl.onload = () => URL.revokeObjectURL(previewEl.src); // free memory
+    } else {
+      previewEl.style.display = 'none';
+      previewEl.src = '';
+    }
+  });
+})();
+</script>
+{% endblock %}

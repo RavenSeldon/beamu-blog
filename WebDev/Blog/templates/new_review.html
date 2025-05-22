@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}New Review - Ben Amuwo's Neurascape{% endblock %}
+
+{% block content %}
+<section class="newpost-wrap">
+  <h1><i class="fa-solid fa-pen-fancy"></i> Write a New Review</h1>
+
+  <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <label for="title">
+      <span>Review Headline/Title</span>
+      <input type="text" id="title" name="title" maxlength="120" placeholder="e.g., A Masterpiece of Modern Cinema" required>
+    </label>
+
+    <label for="item_title">
+      <span>Title of Item Being Reviewed</span>
+      <input type="text" id="item_title" name="item_title" maxlength="256" placeholder="e.g., Dune: Part Two" required>
+    </label>
+
+    <div class="flex-row">
+        <label for="category" class="flex-grow">
+            <span>Category</span>
+            <select id="category" name="category" required>
+                <option value="" disabled selected>Select category...</option>
+                <option value="movie">Movie</option>
+                <option value="book">Book</option>
+                <option value="tv_show">TV Show</option>
+                <option value="game">Game</option>
+                <option value="album">Album/Music</option>
+                <option value="product">Product</option>
+                <option value="service">Service</option>
+                <option value="other">Other</option>
+            </select>
+        </label>
+        <label for="rating" class="flex-grow">
+            <span>Rating <small>(e.g., 5/5 Stars, A+, 92%)</small></span>
+            <input type="text" id="rating" name="rating" maxlength="50" placeholder="Your Rating">
+        </label>
+    </div>
+
+    <div class="flex-row">
+        <label for="year_released" class="flex-grow">
+            <span>Year Released <small>(optional)</small></span>
+            <input type="number" id="year_released" name="year_released" placeholder="e.g., 2024">
+        </label>
+        <label for="director_author" class="flex-grow">
+            <span>Director/Author/Creator <small>(optional)</small></span>
+            <input type="text" id="director_author" name="director_author" maxlength="120" placeholder="e.g., Denis Villeneuve">
+        </label>
+    </div>
+
+    <label for="content" class="full">
+      <span>Full Review Content <small>(Markdown OK)</small></span>
+      <textarea id="content" name="content" rows="10" maxlength="20000"
+                placeholder="Your detailed thoughts..."></textarea>
+    </label>
+
+    <label for="item_link">
+        <span>Link to Item <small>(e.g., IMDb, Goodreads, Product Page - optional)</small></span>
+        <input type="url" id="item_link" name="item_link" placeholder="https://...">
+    </label>
+
+    <div class="flex-row">
+        <label class="file-input has-preview flex-grow">
+            <i class="fa-solid fa-image"></i> Cover/Poster Image <small>(optional)</small>
+            <input id="post-image" type="file" name="image" accept="image/*">
+            <span class="file-name">No file chosen...</span>
+            <img class="preview" style="display:none;" alt="Image preview" src="">
+        </label>
+
+        <label for="project_id" class="flex-grow">
+            <span>Associated Project <small>(optional)</small></span>
+            <select id="project_id" name="project_id" class="form-control">
+            <option value="">-- None --</option>
+            {% for project in projects %}
+            <option value="{{ project.id }}">{{ project.title }}</option>
+            {% endfor %}
+            </select>
+        </label>
+    </div>
+
+    <button type="submit" class="send-btn">
+      <i class="fa-solid fa-rocket"></i> Publish Review
+    </button>
+  </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* image preview */
+(function () {
+  const input = document.getElementById('post-image');
+  if (!input) return;
+  const label = input.closest('.file-input');
+  const fileNameEl = label.querySelector('.file-name');
+  const previewEl = label.querySelector('.preview');
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) {
+      fileNameEl.textContent = 'No file chosen…';
+      previewEl.style.display = 'none'; previewEl.src = ''; return;
+    }
+    fileNameEl.textContent = file.name;
+    if (file.type.startsWith('image/')) {
+      previewEl.src = URL.createObjectURL(file);
+      previewEl.style.display = 'block';
+      previewEl.onload = () => URL.revokeObjectURL(previewEl.src);
+    } else {
+      previewEl.style.display = 'none'; previewEl.src = '';
+    }
+  });
+})();
+</script>
+{% endblock %}

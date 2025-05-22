@@ -95,6 +95,8 @@ def markdown_safe_filter(text):
     """
     Converts Markdown text to sanitized HTML.
     """
+    if not text:
+        return Markup('')
     # Convert Markdown to HTML
     html_content = markdown.markdown(text, extensions=['fenced_code', 'tables', 'codehilite']) # Enable extensions if desired
 
@@ -123,8 +125,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 # Models
-class User(UserMixin, db.Model):
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+Base = db.Model
+
+class User(UserMixin, Base):
+    __tablename__ = "user"
+    id: so.Mapped[int] = so.mapped_column(sa.Integer, primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(64), unique=True, nullable=False)
     password_hash: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False)
 
@@ -135,36 +140,92 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 
-class Photo(db.Model):
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+class Photo(Base):
+    __tablename__ = "photos"
+    id: so.Mapped[int] = so.mapped_column(sa.Integer, primary_key=True)
     filename: so.Mapped[str] = so.mapped_column(sa.String(120), nullable=False, unique=True)
-    description: so.Mapped[Optional[str]] = so.mapped_column(sa.String(510), nullable=True)
+    description: so.Mapped[Optional[str]] = so.mapped_column(sa.String(512), nullable=True)
 
-    posts: so.Mapped[list["Post"]] = so.relationship("Post", back_populates="photo", foreign_keys="Post.image_filename")
-    projects: so.Mapped[list["Project"]] = so.relationship("Project", back_populates="photo", foreign_keys="Project.image_filename")
+    # Back-references: Posts/Projects that use this Photo as their primary image
+    linked_posts: so.Mapped[list["Post"]] = so.relationship("Post", foreign_keys="Post.photo_id", back_populates="photo")
+    linked_projects: so.Mapped[list["Project"]] = so.relationship("Project", foreign_keys="Project.photo_id", back_populates="photo")
 
 
-class Project(db.Model):
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+
+class Project(Base):
+    __tablename__ = "projects"
+    id: so.Mapped[int] = so.mapped_column(sa.Integer, primary_key=True)
     title: so.Mapped[str] = so.mapped_column(sa.String(120), nullable=False)
-    description: so.Mapped[Optional[str]] = so.mapped_column(db.Text, nullable=True)
-    date_posted: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
-    image_filename: so.Mapped[Optional[str]] = so.mapped_column(sa.ForeignKey(Photo.filename, ondelete="SET NULL"), nullable=True)
-    photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", foreign_keys=[image_filename], back_populates="projects", innerjoin=False)
-    github_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255), nullable=True)
-    posts: so.Mapped[list["Post"]] = so.relationship("Post", back_populates="project", cascade="all, delete-orphan")
+    description: so.Mapped[Optional[str]] = so.mapped_column(sa.Text, nullable=True)
+    date_posted: so.Mapped[datetime] = so.mapped_column(sa.DateTime(timezone=True), index=True, default=lambda: datetime.now(timezone.utc))
+    github_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256), nullable=True)
+
+    photo_id: so.Mapped[Optional[int]] = so.mapped_column(sa.ForeignKey("photos.id", name=naming_convention["fk"] % {"table_name": "projects", "column_0_name": "photo_id", "referred_table_name": "photos"}, ondelete="SET NULL"), nullable=True, index=True)
+    photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", foreign_keys=[photo_id], back_populates="linked_projects", innerjoin=False)
+    items: so.Mapped[list["Post"]] = so.relationship("Post", back_populates="project", cascade="all, delete-orphan")
 
 
-class Post(db.Model):
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+class Post(Base):
+    # Base post model (polymorphic). Subclasses: MusicItem, Video, Review.
+    __tablename__ = "posts"
+    id: so.Mapped[int] = so.mapped_column(sa.Integer, primary_key=True)
+    type: so.Mapped[str] = so.mapped_column(sa.String(50), index=True)
     title: so.Mapped[str] = so.mapped_column(sa.String(120), nullable=False)
-    content: so.Mapped[str] = so.mapped_column(db.Text, nullable=False)
-    date_posted: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
-    image_filename: so.Mapped[Optional[str]] = so.mapped_column(sa.ForeignKey(Photo.filename, ondelete="SET NULL"), nullable=True)
-    photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", foreign_keys=[image_filename], back_populates="posts", innerjoin=False)
-    github_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255), nullable=True)
-    project_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Project.id, name="fk_post_project"), nullable=True, index=True)
-    project: so.Mapped[Optional["Project"]] = so.relationship("Project", back_populates="posts")
+    content: so.Mapped[Optional[str]] = so.mapped_column(sa.Text, nullable=True)
+    date_posted: so.Mapped[datetime] = so.mapped_column(sa.DateTime(timezone=True), index=True, default=lambda: datetime.now(timezone.utc))
+    github_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256), nullable=True)
+
+    photo_id: so.Mapped[Optional[int]] = so.mapped_column(sa.ForeignKey("photos.id", name=naming_convention["fk"] % {"table_name": "posts", "column_0_name": "photo_id", "referred_table_name": "photos"}, ondelete="SET NULL"), nullable=True)
+    photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", back_populates="linked_posts", foreign_keys=[photo_id], innerjoin=False)
+
+    project_id: so.Mapped[Optional[int]] = so.mapped_column(sa.ForeignKey("projects.id", name=naming_convention["fk"] % {"table_name": "posts", "column_0_name": "project_id", "referred_table_name": "projects"}, ondelete="SET NULL"), nullable=True, index=True)
+    project: so.Mapped[Optional["Project"]] = so.relationship("Project", back_populates="items", foreign_keys=[project_id])
+
+    __mapper_args__ = {
+        "polymorphic_on": type,
+        "polymorphic_identity": "post",
+        "with_polymorphic": "*",
+    }
+
+
+class MusicItem(Post):
+    # A music specific post.
+    __tablename__ = "music_items"
+    id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("posts.id", name=naming_convention["fk"] % {"table_name": "music_items", "column_0_name": "id", "referred_table_name": "posts"}, ondelete="CASCADE"), primary_key=True)
+    item_type: so.Mapped[str] = so.mapped_column(sa.String(50), nullable=False, index=True)
+    artist: so.Mapped[Optional[str]] = so.mapped_column(sa.String(120), nullable=True)
+    album_title: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256), nullable=True)
+    spotify_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256), nullable=True)
+    youtube_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256), nullable=True)
+
+    __mapper_args__ = {"polymorphic_identity": "music_item"}
+
+
+class Video(Post):
+    # A video-specific post with URL/embed and duration data.
+    __tablename__ = "videos"
+    id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("posts.id", name=naming_convention["fk"] % {"table_name": "videos", "column_0_name": "id", "referred_table_name": "posts"}, ondelete="CASCADE"), primary_key=True)
+
+    video_url: so.Mapped[Optional[str]] = so.mapped_column(sa.String(512), nullable=True)
+    embed_code: so.Mapped[Optional[str]] = so.mapped_column(sa.Text, nullable=True)
+    source_type: so.Mapped[Optional[str]] = so.mapped_column(sa.String(50), index=True, nullable=True)
+    duration: so.Mapped[Optional[str]] = so.mapped_column(sa.String(20), nullable=True)
+
+    __mapper_args__ = {"polymorphic_identity": "video"}
+
+
+class Review(Post):
+    # A review-specific post.
+    __tablename__ = "reviews"
+    id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("posts.id", name=naming_convention["fk"] % {"table_name": "reviews", "column_0_name": "id", "referred_table_name": "posts"}, ondelete="CASCADE"), primary_key=True)
+    item_title: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False)
+    category: so.Mapped[str] = so.mapped_column(sa.String(50), nullable=False, index=True)
+    rating: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256), nullable=True)
+    year_released: so.Mapped[Optional[int]] = so.mapped_column(sa.Integer, nullable=True)
+    director_author: so.Mapped[Optional[str]] = so.mapped_column(sa.String(120), nullable=True)
+    item_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256), nullable=True)
+
+    __mapper_args__ = {"polymorphic_identity": "review"}
 
 # Helper Functions
 def allowed_file(filename):
@@ -186,6 +247,7 @@ def create_admin_user():
         admin.set_password(admin_password)
         db.session.add(admin)
         db.session.commit()
+        app.logger.info("Admin user 'beamu' created/ensured.")
         print("Admin user created. Please change the default password!")
 
 
@@ -210,7 +272,10 @@ def optimization_utils():
 
 @app.shell_context_processor
 def make_shell_context():
-    return {"sa": sa, "so": so, "db": db, "Project": Project, "Post": Post, "User": User}
+    return {
+        "sa": sa, "so": so, "db": db, "Project": Project, "Post": Post, "User": User,
+        "MusicItem" : MusicItem, "Video": Video, "Review": Review
+    }
 
 # Cookie Handling
 @app.before_request
@@ -299,7 +364,7 @@ def projects():
 
         # Debug information about each project
         for project in projects_list:
-            app.logger.info(f"Project ID: {project.id}, Title: {project.title}, Image: {project.image_filename}")
+            app.logger.info(f"Project ID: {project.id}, Title: {project.title}, Image: {project.photo_id}")
 
         return render_template('projects.html', projects=projects_list)
     except Exception as e:
@@ -309,12 +374,24 @@ def projects():
 
 @app.route('/post/<int:post_id>')
 def post(post_id):
-    post = Post.query.get_or_404(post_id)
-    return render_template('post.html', post=post)
+    post_item = db.session.get(Post, post_id)
+    if not post_item:
+        return redirect(url_for('page_not_found_error', path=f'post/{post_id}'))
+
+    if post_item.type == 'music_item':
+        return render_template('music_item_detail.html', item=post_item)
+    elif post_item.type == 'video':
+        return render_template('video_detail.html', item=post_item)
+    elif post_item.type == 'review':
+        return render_template('review_detail.html', item=post_item)
+    else:
+        return render_template('post.html', post=post_item)
 
 @app.route('/project/<int:project_id>')
 def project_detail(project_id):
-    project = Project.query.get_or_404(project_id)
+    project = db.session.get(Project, project_id)
+    if not project:
+        return redirect(url_for('page_not_found_error', path=f'project/{project_id}'))
     return render_template('project_detail.html', project=project)
 
 
@@ -326,8 +403,7 @@ def new_post():
         content = request.form['content'][:20000]
         github_link = request.form.get('github_link', '')
         project_id = request.form.get('project_id')
-        image = request.files.get('image')
-        image_filename = None
+        image_file = request.files.get('image')
         photo = None
 
         # Create the post first without the image
@@ -335,19 +411,20 @@ def new_post():
             title=title,
             content=content,
             github_link=github_link if github_link else None,
-            project_id=project_id if project_id else None
+            project_id=project_id if project_id else None,
+            type='post'
         )
         db.session.add(post)
         db.session.flush()  # This gives post an ID
 
         # Process image if provided
-        if image and allowed_file(image.filename):
+        if image_file and allowed_file(image_file.filename):
             # Generate a unique filename to prevent collisions
-            base_name, ext = os.path.splitext(secure_filename(image.filename))
+            base_name, ext = os.path.splitext(secure_filename(image_file.filename))
             unique_filename = f"{uuid4().hex}{ext.lower()}"
 
             # Process and optimize the image
-            image_paths = process_upload_image(image, app.config['UPLOAD_FOLDER'], unique_filename)
+            image_paths = process_upload_image(image_file, app.config['UPLOAD_FOLDER'], unique_filename)
             app.logger.info(f"Photo successfully processed {unique_filename}")
 
             if image_paths:
@@ -365,7 +442,7 @@ def new_post():
                     app.logger.info(f"Using existing photo with ID {photo.id}")
 
                 # Now establish the relationship between post and photo
-                post.image_filename = unique_filename
+                post.photo_id = photo.id
                 post.photo = photo
 
                 # Debug info
@@ -378,14 +455,14 @@ def new_post():
         db.session.refresh(post)
         if photo:
             db.session.refresh(photo)
-            app.logger.info(f"After commit: Post image_filename = {post.image_filename}")
-            app.logger.info(f"After commit: Photo posts count = {len(photo.posts)}")
+            app.logger.info(f"After commit: Post Photo_id = {post.photo_id}")
+            app.logger.info(f"After commit: Photo posts count = {len(photo.linked_posts)}")
 
         flash('Post created!', 'success')
         return redirect(url_for('index'))
 
     # For GET request
-    projects = Project.query.all()
+    projects = Project.query.order_by(Project.title).all()
     return render_template('new_post.html', projects=projects)
 
 @app.route('/new_project', methods=['GET', 'POST'])
@@ -395,18 +472,14 @@ def new_project():
         app.logger.info("Processing new project submission")
         title = request.form['title'].strip()
         description = request.form.get('description', '').strip()
-
-        # Validate essential fields
-        if not title:
-            flash('Project title is required!', 'error')
-            return redirect(url_for('new_project'))
-        if not description:
-            flash('Project description is required!', 'error')
-            return redirect(url_for('new_project'))
-
         github_link = request.form.get('github_link', '').strip() or None
         image_file = request.files.get('image')
         photo = None
+
+        # Validate essential fields
+        if not title or not description:
+            flash('Project title and description are required!', 'error')
+            return redirect(url_for('new_project'))
 
         # Start a database transaction
         try:
@@ -414,8 +487,7 @@ def new_project():
             project = Project(
                 title=title,
                 description=description,
-                github_link=github_link or None,
-                date_posted=datetime.now(timezone.utc)
+                github_link=github_link or None
             )
             db.session.add(project)
             db.session.flush()
@@ -425,8 +497,8 @@ def new_project():
                 app.logger.info(f"Processing image for project: {title}")
 
                 # Generate a unique filename
-                ext = os.path.splitext(secure_filename(image_file.filename))[1].lower()
-                unique_filename = f"{uuid4().hex}{ext}"
+                base_name, ext = os.path.splitext(secure_filename(image_file.filename))
+                unique_filename = f"{uuid4().hex}{ext.lower()}"
 
                 app.logger.info(f"Processing image: {unique_filename}")
 
@@ -435,13 +507,18 @@ def new_project():
 
                 if image_paths:
                     app.logger.info(f"Image processed successfully: {unique_filename}")
-                    # Now create and associate the photo
-                    photo = Photo(filename=unique_filename, description=title)
-                    db.session.add(photo)
-                    db.session.flush()  # This assigns an ID to the photo
+                    existing_photo = Photo.query.filter_by(filename=unique_filename).first()
+
+                    if not existing_photo:
+                        # Now create and associate the photo
+                        photo = Photo(filename=unique_filename, description=f"Cover for {title}")
+                        db.session.add(photo)
+                        db.session.flush()  # This assigns an ID to the photo
+                    else:
+                        photo = existing_photo
 
                     # Set the relationship in both directions
-                    project.image_filename = unique_filename
+                    project.photo_id = photo.id
                     project.photo = photo
 
                 # Debug info
@@ -452,9 +529,10 @@ def new_project():
 
             # Double-check the association after commit
             db.session.refresh(project)
-            db.session.refresh(photo)
-            app.logger.info(f"After commit: Project image_filename = {project.image_filename}")
-            app.logger.info(f"After commit: Photo projects count = {len(photo.projects)}")
+            if photo:
+                db.session.refresh(photo)
+            app.logger.info(f"After commit: Project photo_id = {project.photo_id}")
+            app.logger.info(f"After commit: Photo projects count = {len(photo.linked_projects)}")
 
             flash('Project created!', 'success')
             return redirect(url_for('projects'))
@@ -471,64 +549,253 @@ def new_project():
 @login_required
 def new_photo():
     if request.method == 'POST':
+        app.logger.info("Processing new photo submission")
         photo_file = request.files.get('image')
         description = request.form.get('description', '').strip()
 
-        if photo_file and allowed_file(photo_file.filename):
-            # Generate unique filename
-            ext = os.path.splitext(secure_filename(photo_file.filename))[1].lower()
-            unique_filename = f"{uuid4().hex}{ext}"
+        if not photo_file or not allowed_file(photo_file.filename):
+            flash("No photo submitted!", "error")
+            return redirect(url_for('new_photo'))
 
-            #Process and optimize the image
-            image_paths = process_upload_image(photo_file, app.config['UPLOAD_FOLDER'], unique_filename)
+        ext = os.path.splitext(secure_filename(photo_file.filename))[1].lower()
+        unique_filename = f"{uuid4().hex}{ext}"
 
-            if image_paths:
-                # Check if a photo with this file name already exists
-                existing_photo = Photo.query.filter_by(filename=unique_filename).first()
+        #Process and optimize the image
+        image_paths = process_upload_image(photo_file, app.config['UPLOAD_FOLDER'], unique_filename)
 
-                if not existing_photo:
-                    # Create new photo record
-                    photo = Photo(filename=unique_filename, description=description)
+        if image_paths:
+            # Check if a photo with this file name already exists
+            existing_photo = Photo.query.filter_by(filename=unique_filename).first()
+
+            if not existing_photo:
+                # Create new photo record
+                photo = Photo(filename=unique_filename,
+                              description=description or None
+                              )
+                db.session.add(photo)
+                db.session.flush()
+
+            else:
+                flash("Photo already exists. Change the name!", "error")
+                return redirect(url_for('new_photo'))
+
+        db.session.commit()
+
+        flash('Photo uploaded!', 'success')
+        return redirect(url_for('new_photo'))
+
+    # For the GET request
+    projects = Project.query.order_by(Project.title).all()
+    posts = Post.query.order_by(Post.title).all()
+    return render_template('new_photo.html', posts=posts, projects=projects)
+
+@app.route('/music')
+def music():
+    items = MusicItem.query.order_by(MusicItem.date_posted.desc()).all()
+    return render_template('music.html', items=items)
+
+@app.route('/new_music_item', methods=['GET', 'POST'])
+@login_required
+def new_music_item():
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form.get('content', '')
+        project_id = request.form.get('project_id') if request.form.get('project_id') else None
+
+        # MusicItem specific fields
+        item_type = request.form['item_type']
+        artist = request.form.get('artist')
+        album_title = request.form.get('album_title')
+        spotify_link = request.form.get('spotify_link')
+        youtube_link = request.form.get('youtube_link')
+
+        image_file = request.files.get('image')
+        photo = None
+
+        music_item = MusicItem(
+            title=title,
+            content=content,
+            type='music_item',
+            project_id=project_id,
+            item_type=item_type,
+            artist=artist,
+            album_title=album_title,
+            spotify_link=spotify_link or None,
+            youtube_link=youtube_link or None
+        )
+        db.session.add(music_item)
+        db.session.flush()
+
+        if image_file and allowed_file(image_file.filename):
+            base, ext = os.path.splitext(secure_filename(image_file.filename))
+            unique_filename = f"{uuid4().hex}{ext.lower()}"
+            paths = process_upload_image(image_file, app.config['UPLOAD_FOLDER'], unique_filename)
+            if paths:
+                photo = Photo.query.filter_by(filename=unique_filename).first()
+                if not photo:
+                    photo = Photo(filename=unique_filename, description=f"Cover for {title}")
                     db.session.add(photo)
                     db.session.flush()
+                music_item.photo_id = photo.id
 
-            db.session.commit()
+        db.session.commit()
+        flash('Music item added!', 'success')
+        return redirect(url_for('music'))
 
-            flash('Photo uploaded!', 'success')
-            return redirect(url_for('new_photo'))
+    projects = Project.query.order_by(Project.title).all()
+    return render_template('new_music_item.html', projects=projects)
 
-        else:
-            flash(f'Error, photo required to be uploaded!', 'error')
-            return redirect(url_for('new_photo'))
 
-    return render_template('new_photo.html')
+@app.route('/videos')
+def videos():
+    video_items = Video.query.order_by(Video.date_posted.desc()).all()
+    return render_template('videos.html', videos=video_items)
+
+@app.route('/new_video_item', methods=['GET', 'POST'])
+@login_required
+def new_video_item():
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form.get('content', '')
+        project_id = request.form.get('project_id') if request.form.get('project_id') else None
+
+        # Video Specific entries
+        video_url = request.form.get('video_url')
+        embed_code = request.form.get('embed_code')
+        source_type = request.form.get('source_type')
+        duration = request.form.get('duration')
+
+        image_file = request.files.get('image')
+        photo = None
+
+        video_item = Video(
+            title=title,
+            content=content,
+            type='video',
+            project_id=project_id,
+            video_url=video_url or None,
+            embed_code=embed_code or None,
+            source_type=source_type or None,
+            duration=duration or None
+        )
+        db.session.add(video_item)
+        db.session.flush()
+
+        if image_file and allowed_file(image_file.filename):
+            base, ext = os.path.splitext(secure_filename(image_file.filename))
+            unique_filename = f"{uuid4().hex}{ext.lower()}"
+            paths = process_upload_image(image_file, app.config['UPLOAD_FOLDER'], unique_filename)
+            if paths:
+                photo = Photo.query.filter_by(filename=unique_filename).first()
+                if not photo:
+                    photo = Photo(filename=unique_filename, description=f"Thumbnail for {title}")
+                    db.session.add(photo)
+                    db.session.flush()
+                video_item.photo_id = photo.id
+
+        db.session.commit()
+        flash('Video item added!', 'success')
+        return redirect(url_for('videos'))
+
+    projects = Project.query.order_by(Project.title).all()
+    return render_template('new_video_item.html', projects=projects)
+
+@app.route('/reviews')
+def reviews():
+    review_items = Review.query.order_by(Review.date_posted.desc()).all()
+    return render_template('reviews.html', reviews=review_items)
+
+@app.route('/new_review', methods=['GET', 'POST'])
+@login_required
+def new_review():
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form.get('content', '')
+        project_id = request.form.get('project_id') if request.form.get('project_id') else None
+
+        item_title = request.form['item_title']
+        category = request.form['category']
+        rating = request.form.get('rating') if request.form.get('rating') else None
+        year_released_str = request.form.get('year_released')
+        year_released = int(year_released_str) if year_released_str and year_released_str.isdigit() else None
+        director_author = request.form.get('director_author')
+        item_link = request.form.get('item_link')
+
+        image_file = request.files.get('image')
+        photo = None
+
+        review_item = Review(
+            title=title,
+            content=content,
+            type='review',
+            project_id=project_id,
+            item_title=item_title,
+            category=category,
+            rating=rating,
+            year_released=year_released,
+            director_author=director_author or None,
+            item_link=item_link or None
+        )
+        db.session.add(review_item)
+        db.session.flush()
+
+        if image_file and allowed_file(image_file.filename):
+            base, ext = os.path.splitext(secure_filename(image_file.filename))
+            unique_filename = f"{uuid4().hex}{ext.lower()}"
+            paths = process_upload_image(image_file, app.config['UPLOAD_FOLDER'], unique_filename)
+            if paths:
+                photo = Photo.query.filter_by(filename=unique_filename).first()
+                if not photo:
+                    photo = Photo(filename=unique_filename, description=f"Cover for{item_title}")
+                    db.session.add(photo)
+                    db.session.flush()
+                review_item.photo_id = photo.id
+
+        db.session.commit()
+        flash('Review added!', 'success')
+        return redirect(url_for('reviews'))
+
+    projects = Project.query.order_by(Project.title).all()
+    return render_template('new_review.html', projects=projects )
+
+
 
 @app.route('/delete_post/<int:post_id>', methods=['POST'])
 @login_required
 def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
 
+    if not post:
+        flash('Post not found.', 'error')
+        return redirect(url_for('index'))
+
     db.session.delete(post)
     db.session.commit()
 
-    flash('Post deleted successfully', 'success')
+    flash(f'{post.type.capitalize()} deleted successfully', 'success')
     return redirect(url_for('index'))
 
 @app.route('/delete_project/<int:project_id>', methods=['POST'])
 @login_required
 def delete_project(project_id):
     project = Project.query.get_or_404(project_id)
+    if not project:
+        flash('Project not found.', 'error')
+        return redirect(url_for('projects'))
 
     db.session.delete(project)
     db.session.commit()
 
-    flash('Project deleted successfully', 'success')
+    flash('Project and all associated items deleted successfully', 'success')
     return redirect(url_for('projects'))
 
 @app.route('/delete_photo/<int:photo_id>', methods=['POST'])
 @login_required
 def delete_photo(photo_id):
     photo = Photo.query.get_or_404(photo_id)
+    if not photo:
+        flash('Photo not found.', 'error')
+        return redirect(url_for('photo_album'))
 
     filename = photo.filename
 
@@ -615,10 +882,12 @@ def contact():
 
 @app.errorhandler(404)
 def page_not_found(e):
+    app.logger.warning(f"404 Not Found: {request.path}")
     return render_template('404.html'), 404
 
 @app.errorhandler(500)
-def site_error(e):
+def internal_server_error(e):
+    app.logger.error(f'500 Internal Server Error.: {request.path} - {str(e)}')
     return render_template('500.html'), 500
 
 @app.errorhandler(CSRFError)
@@ -901,33 +1170,71 @@ def test_logging():
 def api_posts():
     page = int(request.args.get('page', 1))
     per_page = 10
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=per_page, error_out=False)
-    data = []
-    for post in posts.items:
-        data.append({
-            'id': post.id,
-            'title': post.title,
-            'content': post.content[:300] + ('...' if len(post.content) > 300 else ''),
-            'date_posted': post.date_posted.strftime('%Y-%m-%d'),
-            'image_filename': post.image_filename,
-            'github_link': post.github_link
-        })
-    return {'posts': data, 'has_next': posts.has_next}
 
-# API endpoint for image optimization info
-@app.route('/api/image-info/<path:filename>')
-def image_info(filename):
-    """Return responsive image information for a given filename"""
-    if not filename:
-        return jsonify({'error': 'No filename provided'}), 400
+    query = Post.query.order_by(Post.date_posted.desc())
+    posts_pagination = query.paginate(page=page, per_page=per_page, error_out=False)
 
-    # Verify file exists
-    if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], 'medium', filename)):
-        return jsonify({'error': 'Image not found'}), 404
+    serialized_posts = []
+    for post_item in posts_pagination.items:
+        item_data = {
+            'id': post_item.id,
+            'type': post_item.type,
+            'title': post_item.title,
+            'content': (post_item.content or '')[:300] + ('...' if post_item.content and len(post_item.content) > 300 else ''),
+            'date_posted': post_item.date_posted.strftime('%Y-%m-%d'),
+            'photo_filename': post_item.photo.filename if post_item.photo else None,
+            'github_link': post_item.github_link,
+            'project_id' : post_item.project_id,
+            'project_title': post_item.project.title if post_item.project else None
+        }
+        # Add type-specific fields
+        if post_item.type == 'music_item':
+            item_data.update({
+                'item_type': post_item.item_type,
+                'artist': post_item.artist,
+                'album_title': post_item.album_title,
+                'spotify_link': post_item.spotify_link,
+                'youtube_link': post_item.youtube_link,
+            })
+        elif post_item.type == 'video':
+            item_data.update({
+                'video_url': post_item.video_url,
+                'embed_code': post_item.embed_code,
+                'source_type': post_item.source_type,
+                'duration': post_item.duration,
+            })
+        elif post_item.type == 'review':
+            item_data.update({
+                'item_title': post_item.item_title,
+                'category': post_item.category,
+                'rating': post_item.rating,
+                'year_released': post_item.year_released,
+                'director_author': post_item.director_author,
+                'item_link': post_item.item_link,
+            })
+        serialized_posts.append(item_data)
 
     return jsonify({
-        'filename': filename,
-        'srcset': get_srcset(filename),
+        'posts': serialized_posts,
+        'has_next': posts_pagination.has_next,
+        'current_page': posts_pagination.page,
+        'total_pages': posts_pagination.pages
+    })
+
+
+# API endpoint for image optimization info
+@app.route('/api/image-info/<int:photo_id>')
+def image_info(photo_id):
+    """Return responsive image information for a given filename"""
+    photo = db.session.get(Photo, photo_id)
+    if not photo:
+        return jsonify({'error': 'No file found'}), 404
+
+    return jsonify({
+        'photo_id': photo.id,
+        'filename': photo.filename,
+        'description': photo.description,
+        'srcset': get_srcset(photo.filename),
         'sizes': '(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 800px'
     })
 
