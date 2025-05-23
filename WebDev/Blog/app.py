@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 from io import BytesIO
+import base64
 from PIL import Image, ImageDraw
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
@@ -21,12 +22,14 @@ from typing import Optional
 import markdown
 import bleach
 import time
+import requests
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 from markupsafe import Markup
 from flask_mail import Mail, Message
 from datetime import datetime, timezone, timedelta
 from uuid import uuid4
+from urllib.parse import urlencode, quote
 from pathlib import Path
 from utils.image_utils import process_upload_image, get_srcset, USING_SPACES, SPACES_URL, IMAGE_SIZES
 from utils.minify_utils import asset_url
@@ -88,6 +91,12 @@ file_handler.setFormatter(formatter)
 app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.INFO)
 app.logger.info(f"Flask application startup - logs going to {log_path}")
+
+# Spotify SDK Variables
+SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
+SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
+SPOTIFY_API_BASE_URL = "https://api.spotify.com/v1"
+VISITOR_SPOTIFY_SCOPES = "streaming user-read-email user-read-private user-read-playback-state user-modify-playback-state user-read-currently-playing"
 
 # Custom Jinja filter
 @app.template_filter('markdown_safe')
@@ -644,6 +653,114 @@ def new_music_item():
 
     projects = Project.query.order_by(Project.title).all()
     return render_template('new_music_item.html', projects=projects)
+
+@app.route('/spotify/initiate-auth')
+def spotify_initiate_auth():
+    # Generate a CSRF state token and store it in the client's session
+    csrf_state = os.urandom(16).hex()
+    session['spotify_visitor_auth_state'] = csrf_state # Flask session
+
+    generated_redirect_uri = url_for('spotify_callback', _external=True)
+    app.logger.info(f"Generated Spotify Redirect URI: {generated_redirect_uri}")
+    print(f"Generated Spotify Redirect URI: {generated_redirect_uri}")
+
+    auth_query_parameters = {
+        "response_type": "code",
+        "redirect_uri": url_for('spotify_callback', _external=True),
+        "scope": VISITOR_SPOTIFY_SCOPES,
+        "client_id": app.config['SPOTIFY_CLIENT_ID'],
+        "state": csrf_state
+    }
+    auth_url = SPOTIFY_AUTH_URL + "?" + urlencode(auth_query_parameters)
+    app.logger.info(f"Redirecting visitor to Spotify auth: {auth_url}")
+    return redirect(auth_url)
+
+@app.route('/spotify/callback')
+def spotify_callback():
+    auth_code = request.args.get('code')
+    error = request.args.get('error')
+    state = request.args.get('state') # Sent back by Spotify
+
+    # Validate the state parameter against the one stored in the client's session
+    stored_state = session.pop('spotify_visitor_auth_state', None)
+    if not state or state != stored_state:
+        flash("Spotify authorization failed: State mismatch. Please try connecting again.", "error")
+        app.logger.warning(f"Spotify callback state mismatch. Received: {state}, Expected: {stored_state}")
+        return redirect(url_for('music'))
+
+    return render_template('spotify_callback_handler.html', auth_code=auth_code, error=error)
+
+@app.route('/api/spotify/exchange-visitor-code', methods=['POST'])
+def exchange_visitor_code():
+    data = request.get_json()
+    auth_code = data.get('code')
+
+    if not auth_code:
+        return jsonify({"error": "Authorization code is missing."}), 400
+
+    auth_str = f"{app.config['SPOTIFY_CLIENT_ID']}:{app.config['SPOTIFY_CLIENT_SECRET']}"
+    b64_auth_str = base64.b64encode(auth_str.encode()).decode()
+
+    payload = {
+        "grant_type": "authorization_code",
+        "code": str(auth_code),
+        "redirect_uri": url_for('spotify_callback', _external=True)
+    }
+    headers = {"Authorization": f"Basic {b64_auth_str}"}
+
+    try:
+        post_request = requests.post(SPOTIFY_TOKEN_URL, data=payload, headers=headers)
+        post_request.raise_for_status()
+        token_info = post_request.json()
+        # Return tokens to the client-side for storage (localStorage)
+        return jsonify({
+            "access_token": token_info["access_token"],
+            "refresh_token": token_info.get("refresh_token"),
+            "expires_in": token_info['expires_in']
+        })
+    except requests.exceptions.HTTPError as http_err:
+        error_details = post_request.json() if post_request.content else {}
+        app.logger.error(f"Spotify token exchange HTTP error: {http_err} - Response: {error_details}")
+        return jsonify({"error": "Failed to exchange code for token.", "details": error_details.get("error_description", "Unknown error")}), post_request.status_code
+    except Exception as e:
+        app.logger.error(f"Error exchanging Spotify code: {e}")
+        return jsonify({"error": "An unexpected error occurred during token exchange."}), 500
+
+
+@app.route('/api/spotify/refresh-visitor-token', methods=['POST'])
+def refresh_visitor_token():
+    data = request.get_json()
+    refresh_token_from_client = data.get('refresh_token')
+
+    if not refresh_token_from_client:
+        return jsonify({"error": "Refresh token is missing."}), 400
+
+    auth_str = f"{app.config['SPOTIFY_CLIENT_ID']}:{app.config['SPOTIFY_CLIENT_SECRET']}"
+    b64_auth_str = base64.b64encode(auth_str.encode()).decode()
+    payload = {
+        "grant_type": "refresh_token",
+        "refresh_token": refresh_token_from_client
+    }
+    headers = {"Authorization": f"Basic {b64_auth_str}"}
+
+    try:
+        r = requests.post(SPOTIFY_TOKEN_URL, data=payload, headers=headers)
+        r.raise_for_status()
+        token_info = r.json()
+        # Return new access token and potentially new refresh token to client
+        return jsonify({
+            "access_token": token_info["access_token"],
+            "expires_in": token_info["expires_in"],
+            "refresh_token": token_info.get("refresh_token")
+        })
+    except requests.exceptions.HTTPError as http_err:
+        error_details = r.json() if r.content else {}
+        app.logger.error(f"Spotify token refresh HTTP error: {http_err} - Response: {error_details}")
+        return jsonify({"error": "Failed to refresh Spotify token.", "details": error_details.get("error_description",
+                                                                                                  "Refresh token may be invalid or revoked.")}), r.status_code
+    except Exception as e:
+        app.logger.error(f"Unexpected error refreshing Spotify visitor token: {e}")
+        return jsonify({"error": "Server error during token refresh."}), 500
 
 
 @app.route('/videos')

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Connecting to Spotify...</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #121212; color: #fff; text-align: center; }
+        .container { padding: 20px; border-radius: 8px; background-color: #282828; }
+        p { margin-bottom: 15px;}
+        .error { color: #f44336; }
+        .success { color: #4CAF50; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Processing Spotify Connection</h1>
+        <p id="status-message">Please wait...</p>
+    </div>
+
+    <script>
+        // This script runs on the /spotify/callback page
+        const urlParams = new URLSearchParams(window.location.search);
+        const authCode = urlParams.get('code');
+        const error = urlParams.get('error');
+        const statusMessageEl = document.getElementById('status-message');
+
+        async function exchangeCodeForTokens(code) {
+            try {
+                const response = await fetch("{{ url_for('exchange_visitor_code') }}", { // Flask's url_for generates the correct path
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ code: code }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || `Failed to exchange code: ${response.status} ${data.details || ''}`);
+                }
+
+                // Store tokens in localStorage for the client-side SDK
+                localStorage.setItem('visitor_spotify_access_token', data.access_token);
+                if (data.refresh_token) { // Refresh token might not always be sent
+                    localStorage.setItem('visitor_spotify_refresh_token', data.refresh_token);
+                }
+                // Store expiry time (current time + expires_in seconds)
+                const expiresAt = new Date().getTime() + (data.expires_in * 1000);
+                localStorage.setItem('visitor_spotify_token_expires_at', expiresAt.toString());
+
+                statusMessageEl.textContent = 'Successfully connected to Spotify! Closing this window...';
+                statusMessageEl.className = 'success';
+
+                // Notify opener window (your main app page) that auth is complete
+                if (window.opener && typeof window.opener.spotifyCallbackSuccess === 'function') {
+                    window.opener.spotifyCallbackSuccess();
+                } else {
+                     console.warn("Opener window or spotifyCallbackSuccess function not found. Manual refresh of main page might be needed.");
+                     // Fallback if popup context is lost or opener is not set up for this
+                     localStorage.setItem('spotify_auth_just_completed', 'true');
+                }
+                setTimeout(() => window.close(), 2000); // Close popup after a delay
+
+            } catch (err) {
+                console.error('Error exchanging code:', err);
+                statusMessageEl.textContent = `Error: ${err.message}. Please try again.`;
+                statusMessageEl.className = 'error';
+                if (window.opener && typeof window.opener.spotifyCallbackError === 'function') {
+                    window.opener.spotifyCallbackError(err.message);
+                }
+            }
+        }
+
+        if (error) {
+            console.error('Spotify Auth Error:', error);
+            statusMessageEl.textContent = `Spotify Authorization Error: ${error}. You can close this window.`;
+            statusMessageEl.className = 'error';
+            if (window.opener && typeof window.opener.spotifyCallbackError === 'function') {
+                window.opener.spotifyCallbackError(error);
+            }
+        } else if (authCode) {
+            statusMessageEl.textContent = 'Exchanging code for tokens...';
+            exchangeCodeForTokens(authCode);
+        } else {
+            statusMessageEl.textContent = 'No authorization code or error received. Invalid state.';
+            statusMessageEl.className = 'error';
+        }
+    </script>
+</body>
+</html>

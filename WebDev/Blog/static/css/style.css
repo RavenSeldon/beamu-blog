@@ -1515,6 +1515,599 @@ button:hover::before {
     box-shadow: 0 0 16px rgba(255, 110, 110, 0.4);
 }
 
+
+/* For responsive iframes if Spotify's default isn't enough */
+.responsive-iframe-container {
+    position: relative;
+    overflow: hidden;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    margin-bottom: 1.5em;
+}
+
+.responsive-iframe-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.video-player-container {
+    margin-bottom: 1.5em;
+}
+
+.video-player-container iframe { /* General style for video iframes */
+    max-width: 100%;
+    border-radius: 12px; /* Consistent with Spotify embeds */
+}
+
+.music-card .post-image img.post-thumb { /* If you use thumbnails for music cards */
+    width: 100%;
+    height: auto; /* Or a fixed height like 150px */
+    max-height: 200px;
+    object-fit: cover;
+}
+
+.review-card .post-image img.post-feature-img,
+.video-card .post-image img.post-feature-img {
+    max-height: 250px; /* Or adjust as needed for card lists */
+    object-fit: cover;
+}
+
+.review-item-title h2 {
+    font-size: 1.4em;
+    color: var(--text);
+    margin-bottom: 0.5em;
+    font-weight: 500;
+}
+
+.review-full-content {
+    margin-top: 1.5em;
+}
+
+/* ============================================= */
+/* === SPOTIFY & MUSIC FEATURES STYLES START === */
+/* ============================================= */
+/*
+
+  TABLE OF CONTENTS:
+  ------------------
+  1. Music Page General (List & Detail)
+     - Music Item Type Meta (.music-item-type, .music-item-type-detail)
+     - Music Links (.music-links)
+  2. Spotify Embeds
+     - Compact Embed (List View - .spotify-embed-compact)
+     - Full Embed (Detail View - .spotify-embed-wrapper)
+  3. Spotify Player Controls Container
+  4. Spotify Action Buttons
+     - Quick Play Button (List View - .quick-play-btn)
+     - Standalone Play Button (Detail View - .standalone-play-btn)
+     - Visitor Connect Button (Footer - .spotify-connect-btn)
+  5. Spotify Mini Player (Footer - .mini-player)
+     - Player Structure & Info
+     - Player Controls
+     - Player Progress Bar
+  6. Spotify Status Messages & Notifications (.spotify-status-message)
+  7. Responsive Design for Spotify Buttons
+
+*/
+
+/* --- 1. Music Page General (List & Detail) --- */
+
+.post-meta .music-item-type {
+    font-style: italic;
+    opacity: 0.9;
+}
+
+.post-meta .music-item-type i {
+    margin-right: 0.4em;
+}
+
+/* Shared by music detail, review detail, video detail etc. */
+.music-item-type-detail,
+.review-category-detail,
+.video-source-type-detail,
+.video-duration-detail {
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.music-item-type-detail i,
+.review-category-detail i,
+.video-source-type-detail i,
+.video-duration-detail i {
+    margin-right: 0.3em;
+}
+
+.music-links a {
+    margin-right: 10px;
+}
+
+
+/* --- 2. Spotify Embeds --- */
+
+.spotify-embed-compact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1em;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
+}
+
+.spotify-embed-compact iframe {
+    display: block;
+    border-radius: 12px;
+}
+
+.spotify-embed-compact:hover {
+    box-shadow: 0 6px 25px rgba(29, 185, 84, 0.3);
+}
+
+.spotify-embed-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 75%;
+    height: 0; /* Required for padding-bottom aspect ratio trick */
+    overflow: hidden;
+    margin-bottom: 2em;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Consistent shadow */
+    transition: box-shadow 0.3s ease; /* Consistent transition */
+}
+
+.spotify-embed-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px; /* Match wrapper's rounding */
+}
+
+.spotify-embed-wrapper:hover {
+    box-shadow: 0 6px 25px rgba(29, 185, 84, 0.3); /* Consistent hover shadow */
+}
+
+
+/* --- 3. Spotify Player Controls Container --- */
+
+.spotify-player-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em 0;
+    margin-top: 0.5em;
+}
+
+
+/* --- 4. Spotify Action Buttons --- */
+
+.quick-play-btn { /* Used in music.html, list view, below compact embed */
+    display: none; /* JS handles visibility */
+    gap: 0.5em;
+    background: linear-gradient(90deg, #1DB954, #1ED760);
+    color: white;
+    border: none;
+    border-radius: 25%; /* Round for icon-only button */
+    width: 40px;
+    height: 40px;
+    padding: 0.8em 1.5em;
+    font-size: 0.7em;
+    font-weight: 600;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.4);
+    min-width: 160px; /* Consistent width */
+}
+
+.quick-play-btn:hover {
+    background: linear-gradient(90deg, #1ED760, #1DB954);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.6);
+}
+
+.quick-play-btn i {
+    font-size: 1em;
+}
+
+.standalone-play-btn { /* Used in music_item_detail.html, below main content/embed */
+    display: none; /* JS handles visibility */
+    align-items: center;
+    gap: 0.5em;
+    background: linear-gradient(90deg, #1DB954, #1ED760);
+    color: white;
+    border: none;
+    border-radius: 8px; /* Slightly less rounded than pill */
+    padding: 1em 2em;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.4);
+    transition: all 0.3s ease;
+    min-width: 180px;
+    justify-content: center;
+}
+
+.standalone-play-btn:hover {
+    background: linear-gradient(90deg, #1ED760, #1DB954);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.6);
+    transform: translateY(-2px);
+}
+
+.standalone-play-btn i {
+    font-size: 1.1em;
+}
+
+/* Generic Spotify Play Button - if used elsewhere or as a fallback */
+.general-spotify-play-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.6em 1.2em;
+    background: #1DB954;
+    color: white;
+    border: none;
+    border-radius: 20px; /* Pill shape */
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.general-spotify-play-btn:hover {
+    background: #1ed760;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+
+.spotify-connect-btn { /* In footer, for visitor to connect their Spotify */
+    display: none; /* JS controls visibility */
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #1DB954;
+    color: white;
+    border: none;
+    padding: 0.8em 1.5em;
+    border-radius: 25px; /* Pill shape */
+    font-size: 0.7em;
+    font-weight: 600;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.5em;
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.spotify-connect-btn:hover {
+    background: #1ed760;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
+}
+
+
+/* --- 5. Spotify Mini Player (Footer) --- */
+
+.mini-player {
+    display: none; /* Default: hidden. JS will change to 'flex' or 'block' when active */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(8, 8, 25, 0.95); /* Dark, slightly transparent */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 2px solid var(--glass-border);
+    box-shadow: 0 -4px 32px rgba(0, 255, 255, 0.1);
+    z-index: 999;
+    transition: transform 0.3s ease, opacity 0.3s ease; /* For smooth show/hide if classes are used */
+}
+
+.mini-player.visible {
+    display: flex;
+}
+
+@keyframes slideUpPlayer {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.player-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1em 2em; /* Generous padding */
+    gap: 2em;
+    max-width: 1200px; /* Max width for content within player */
+    margin: 0 auto; /* Center content */
+}
+
+.player-track-info {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    flex: 1; /* Takes available space */
+    min-width: 0; /* Important for text truncation */
+}
+
+.player-album-art {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.player-album-art:hover {
+    transform: scale(1.05);
+}
+
+.player-text-info {
+    flex: 1;
+    overflow: hidden; /* For text-overflow */
+}
+
+.player-track-name {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.95em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.2em;
+}
+
+.player-artist-name {
+    color: var(--primary);
+    font-size: 0.85em;
+    opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 1em; /* Space between control buttons */
+}
+
+.player-btn { /* Base style for prev, play/pause, next */
+    background: transparent;
+    border: 2px solid var(--glass-border);
+    color: var(--primary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Round buttons */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1em; /* For icon scaling */
+}
+
+.player-btn:hover {
+    background: rgba(55, 180, 248, 0.2);
+    color: var(--accent);
+    transform: scale(1.1);
+}
+
+.player-btn:active {
+    transform: scale(0.95);
+}
+
+#player-play-pause-btn.player-play-btn {
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    color: #111; /* Dark icon for light background */
+    font-size: 1.1rem;
+    width: 45px;
+    height: 45px;
+    border: none; /* Override border from .player-btn */
+}
+
+#player-play-pause-btn.player-play-btn:hover {
+    background: linear-gradient(90deg, var(--accent), var(--primary));
+    color: #000;
+    box-shadow: 0 0 15px rgba(126, 249, 255, 0.5);
+}
+
+.player-progress { /* Container for time, bar, duration */
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+    flex: 1;
+    max-width: 300px;
+}
+
+.player-time {
+    font-size: 0.85em;
+    color: var(--text);
+    opacity: 0.8;
+    min-width: 40px; /* Prevents time text from squishing bar */
+    text-align: center;
+}
+
+.player-progress .progress-bar {
+    flex: 1; /* Bar takes available space in .player-progress */
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1); /* Darker track */
+    border-radius: 2px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+}
+
+.player-progress .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 2px;
+    transition: width 0.1s linear; /* Smooth fill updates, was 0.3s ease, linear often better for progress */
+    box-shadow: 0 0 6px rgba(126, 249, 255, 0.5);
+}
+
+.player-progress .progress-bar:hover .progress-fill {
+    box-shadow: 0 0 10px rgba(126, 249, 255, 0.8);
+}
+
+/* Footer adjustment when mini-player is visible */
+body:has(.mini-player[style*="flex"]) footer, /* If JS sets display:flex directly */
+body:has(.mini-player.visible) footer {      /* If JS adds a .visible class that sets display:flex */
+    padding-bottom: calc(4em + 70px);
+}
+
+
+/* --- 6. Spotify Status Messages & Notifications --- */
+
+.spotify-status-message { /* Used by JS functions in music.html and music_item_detail.html */
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(8, 8, 25, 0.95);
+    border: 1px solid var(--glass-border);
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.9rem;
+    z-index: 1001; /* Above most elements, but below modals if any */
+    opacity: 0;
+    transform: translateX(100%); /* Start off-screen to the right */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transition */
+}
+
+.spotify-status-message.show {
+    opacity: 1;
+    transform: translateX(0); /* Slide in from the right */
+}
+
+.spotify-status-message.success {
+    border-color: #1DB954; /* Spotify green for success */
+    background: rgba(29, 185, 84, 0.2); /* Light green background */
+    color: #1DB954; /* Green text */
+}
+
+.spotify-status-message.error {
+    border-color: #ff6e6e; /* Red for error */
+    background: rgba(255, 110, 110, 0.2); /* Light red background */
+    color: #ff6e6e; /* Red text */
+}
+
+/* --- 7. Responsive Design for Spotify Buttons --- */
+
+@media (max-width: 768px) {
+    .spotify-connect-btn {
+        bottom: 70px;
+        left: 10px;
+        padding: 0.6em 1.2em;
+        font-size: 0.85em;
+    }
+
+    .quick-play-btn {
+        padding: 0.7em 1.2em;
+        font-size: 0.85em;
+        min-width: 140px;
+    }
+
+    .standalone-play-btn {
+        padding: 0.8em 1.5em;
+        font-size: 0.9em;
+        min-width: 160px;
+    }
+
+    .spotify-player-controls {
+        padding: 0.8em 0;
+    }
+
+    .player-content {
+        padding: 0.8em 1em;
+        flex-wrap: wrap;
+        gap: 1em;
+    }
+
+    .player-track-info {
+        flex: 1 1 100%;
+        order: 1;
+    }
+
+    .player-controls {
+        order: 2;
+    }
+
+    .player-progress {
+        flex: 1 1 100%;
+        order: 3;
+        max-width: none;
+    }
+
+    .player-album-art {
+        width: 40px;
+        height: 40px;
+    }
+
+    .player-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9em;
+    }
+
+    #player-play-pause {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 500px) {
+    .quick-play-btn {
+        padding: 0.6em 1em;
+        font-size: 0.8em;
+        min-width: 120px;
+    }
+
+    .standalone-play-btn {
+        padding: 0.7em 1.2em;
+        font-size: 0.85em;
+        min-width: 140px;
+    }
+
+    .spotify-player-controls {
+        padding: 0.6em 0;
+    }
+
+    .player-content {
+        padding: 0.6em 0.8em;
+    }
+
+    .player-track-name,
+    .player-artist-name {
+        font-size: 0.85em;
+    }
+
+    .spotify-status-message {
+        right: 10px;
+        left: 10px;
+        font-size: 0.9em;
+    }
+}
+
+/* =========================================== */
+/* === SPOTIFY & MUSIC FEATURES STYLES END === */
+/* =========================================== */
+
 /* Footer */
 footer {
     display: flex;
@@ -1706,6 +2299,7 @@ select:focus {
     transform: translateY(-2px);
 }
 
+
 /* Responsive Design */
 @media (max-width: 900px) {
     main {
@@ -1806,6 +2400,7 @@ select:focus {
         padding: 1.2em 1em;
     }
 }
+
 
 /* Media queries for responsive toggle button */
 @media (max-width: 500px) {

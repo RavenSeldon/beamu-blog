@@ -66,7 +66,7 @@
                 </div>
                 {% endif %}
                 <div class="post-excerpt">
-                    {{ post_item.content[:150] ~ '...' if post_item.content|length > 150 else post_item.content|markdown_safe }}
+                    {{ (post_item.content[:150] ~ '...' if post_item.content|length > 150 else post_item.content)|markdown_safe }}
                 </div>
                 <a href="{{ url_for('post', post_id=post_item.id) }}" class="read-more">Read more</a>
             </div>

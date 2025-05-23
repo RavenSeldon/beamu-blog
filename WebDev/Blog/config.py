@@ -94,6 +94,10 @@ MAIL_PASSWORD = get_env_var('MAIL_PASSWORD')
 MAIL_DEFAULT_SENDER = get_env_var('MAIL_DEFAULT_SENDER')
 MAIL_RECIPIENT = get_env_var('MAIL_RECIPIENT')
 
+#Spotify SDK
+SPOTIFY_CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')
+SPOTIFY_CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET')
+SPOTIFY_REDIRECT_URI = os.environ.get('SPOTIFY_REDIRECT_URI', 'https://benamuwo.me/spotify/callback')
 # Print active configuration (without sensitive info) to help with debugging
 if ENV == 'development':
     print(f"Active configuration: ENV={ENV}, Database={SQLALCHEMY_DATABASE_URI.split('@')[0]}@...")

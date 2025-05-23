@@ -54,11 +54,31 @@
                 {{ item.content | markdown_safe | truncate(250) }}
             </div>
 
+            {% if item.spotify_link %}
+                    {% set embed_url = item.spotify_link.replace("open.spotify.com/", "open.spotify.com/embed/") %}
+                    <div class ="spotify-embed-compact">
+                        <iframe style="border-radius:12px"
+                                src="{{ embed_url }}?utm_source=generator&theme=0"
+                                width="100%"
+                                height="152"
+                                frameBorder="0"
+                                allowfullscreen=""
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                loading="lazy"></iframe>
+
+                        <!-- Quick play button for web player -->
+                        <div class="spotify-player-controls">
+                            <button class="quick-play-btn" onclick="quickPlay('{{ item.spotify_link }}')"
+                                    title="Play with Web Player" style="display: none;">
+                                <i class="fa-solid fa-play"></i>
+                                <span>Play with Web Player</span>
+                            </button>
+                        </div>
+                    </div>
+            {% endif %}
+
             <div class="post-links">
                 <a href="{{ url_for('post', post_id=item.id) }}" class="read-more">Read More <i class="fa-solid fa-angles-right"></i></a>
-                {% if item.spotify_link %}
-                <a href="{{ item.spotify_link }}" target="_blank" class="external-link"><i class="fa-brands fa-spotify"></i> Spotify</a>
-                {% endif %}
                 {% if item.youtube_link %}
                 <a href="{{ item.youtube_link }}" target="_blank" class="external-link"><i class="fa-brands fa-youtube"></i> YouTube</a>
                 {% endif %}
@@ -78,4 +98,86 @@
     </div>
     {% endif %}
 </section>
+
+<script>
+// Quick play function for music list
+function quickPlay(spotifyUrl) {
+    if (window.spotifyPlayer && window.spotifyPlayer.isReady) {
+        const uri = getSpotifyUri(spotifyUrl);
+        if (uri) {
+            if (uri.includes('track:')) {
+                window.spotifyPlayer.playTrack(uri);
+            } else {
+                window.spotifyPlayer.playContext(uri);
+            }
+            showStatusMessage('Starting playback...', 'success');
+        } else {
+            showStatusMessage('Invalid Spotify URL', 'error');
+        }
+    } else {
+        showStatusMessage('Connect Spotify to use Web Player', 'error');
+    }
+}
+
+// Utility function to extract Spotify URI from URL
+function getSpotifyUri(url) {
+    const regex = /spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/;
+    const match = url.match(regex);
+    if (match) {
+        return `spotify:${match[1]}:${match[2]}`;
+    }
+    return null;
+}
+
+// Show status messages
+function showStatusMessage(message, type = 'info') {
+    // Remove existing message
+    const existing = document.querySelector('.spotify-status-message');
+    if (existing) {
+        existing.remove();
+    }
+
+    // Create new message
+    const messageEl = document.createElement('div');
+    messageEl.className = `spotify-status-message ${type}`;
+    messageEl.textContent = message;
+    document.body.appendChild(messageEl);
+
+    // Show message
+    setTimeout(() => messageEl.classList.add('show'), 100);
+
+    // Hide message after 3 seconds
+    setTimeout(() => {
+        messageEl.classList.remove('show');
+        setTimeout(() => messageEl.remove(), 300);
+    }, 3000);
+}
+
+// Show/hide web player buttons based on connection status
+document.addEventListener('DOMContentLoaded', function() {
+    function updatePlayerButtons() {
+        const quickPlayBtns = document.querySelectorAll('.quick-play-btn');
+
+        if (window.spotifyPlayer && window.spotifyPlayer.isReady) {
+            quickPlayBtns.forEach(btn => btn.style.display = 'flex');
+        } else {
+            quickPlayBtns.forEach(btn => btn.style.display = 'none');
+        }
+    }
+
+    // Check periodically for player readiness
+    const checkPlayer = setInterval(() => {
+        updatePlayerButtons();
+        if (window.spotifyPlayer && window.spotifyPlayer.isReady) {
+            clearInterval(checkPlayer);
+        }
+    }, 1000);
+
+    // Stop checking after 30 seconds
+    setTimeout(() => clearInterval(checkPlayer), 30000);
+
+    // Also listen for custom events if the player becomes ready later
+    document.addEventListener('spotifyPlayerReady', updatePlayerButtons);
+});
+</script>
 {% endblock %}
