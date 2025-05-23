@@ -11,7 +11,8 @@ class SpotifyWebPlayer {
         this.progressInterval = null;
         this.stateCheckInterval = null;
         this.saveStateTimeout = null;
-        this.currentContext = null; // Track the current playback context
+        this.currentContext = null; // Track the current playback context { uri: string, type: 'album' | 'playlist' | 'artist' | 'unknown' }
+        this.isRestoringState = false; // Flag to prevent multiple restore attempts
 
         // UI Elements
         this.connectBtn = null;
@@ -35,7 +36,6 @@ class SpotifyWebPlayer {
             this.initUI();
             this.checkStoredTokens();
 
-            // Set up Spotify SDK when it's ready
             if (window.Spotify) {
                 this.initSpotifySDK();
             } else {
@@ -47,12 +47,15 @@ class SpotifyWebPlayer {
 
         // Save state before page unload
         window.addEventListener('beforeunload', () => {
-            this.savePlaybackState();
+            // Save state only if not in the middle of restoring
+            if (!this.isRestoringState) {
+                this.savePlaybackState();
+            }
         });
 
-        // Save state periodically
+        // Periodic save as a fallback, ensure not to run during restoration
         setInterval(() => {
-            if (this.isReady && this.currentTrack) {
+            if (this.isReady && this.currentTrack && !this.isRestoringState) {
                 this.savePlaybackState();
             }
         }, 5000); // Save every 5 seconds
@@ -73,95 +76,49 @@ class SpotifyWebPlayer {
         this.currentTimeEl = document.getElementById('player-current-time');
         this.durationEl = document.getElementById('player-duration');
 
-        // Set up event listeners
-        if (this.connectBtn) {
-            this.connectBtn.addEventListener('click', () => this.initiateSpotifyAuth());
-        }
+        if (this.connectBtn) this.connectBtn.addEventListener('click', () => this.initiateSpotifyAuth());
+        if (this.playPauseBtn) this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
+        if (this.prevBtn) this.prevBtn.addEventListener('click', () => this.previousTrack());
+        if (this.nextBtn) this.nextBtn.addEventListener('click', () => this.nextTrack());
+        if (this.progressBar) this.progressBar.addEventListener('click', (e) => this.seekToPosition(e));
 
-        if (this.playPauseBtn) {
-            this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
-        }
+        const musicPageBtn = document.getElementById('player-music-page-btn');
+        if (musicPageBtn) musicPageBtn.addEventListener('click', () => { window.location.href = '/music'; });
 
-        if (this.prevBtn) {
-            this.prevBtn.addEventListener('click', () => this.previousTrack());
-        }
+        const disconnectBtn = document.getElementById('player-disconnect-btn');
+        if (disconnectBtn) disconnectBtn.addEventListener('click', () => { if (confirm('Are you sure you want to disconnect from Spotify?')) this.disconnectSpotify(); });
 
-        if (this.nextBtn) {
-            this.nextBtn.addEventListener('click', () => this.nextTrack());
-        }
-
-        // Progress bar click handling
-        if (this.progressBar) {
-            this.progressBar.addEventListener('click', (e) => this.seekToPosition(e));
-        }
-
-        // Handle successful Spotify auth callback
-        window.spotifyCallbackSuccess = () => {
-            console.log('Spotify auth successful, checking tokens...');
-            setTimeout(() => this.checkStoredTokens(), 1000);
-        };
-
-        window.spotifyCallbackError = (error) => {
-            console.error('Spotify auth error:', error);
-            this.showConnectButton();
-        };
-
-        // Check for auth completion flag (fallback if popup context is lost)
-        if (localStorage.getItem('spotify_auth_just_completed') === 'true') {
-            localStorage.removeItem('spotify_auth_just_completed');
-            setTimeout(() => this.checkStoredTokens(), 500);
-        }
+        window.spotifyCallbackSuccess = () => { console.log('Spotify auth successful, checking tokens...'); setTimeout(() => this.checkStoredTokens(), 1000); };
+        window.spotifyCallbackError = (error) => { console.error('Spotify auth error:', error); this.showConnectButton(); };
+        if (localStorage.getItem('spotify_auth_just_completed') === 'true') { localStorage.removeItem('spotify_auth_just_completed'); setTimeout(() => this.checkStoredTokens(), 500); }
     }
 
-    // Show loading state
     showLoadingState() {
-        if (this.playerContainer) {
-            this.playerContainer.classList.add('reconnecting');
-        }
-
-        if (this.trackNameEl) {
-            this.trackNameEl.textContent = 'Reconnecting...';
-        }
-
-        if (this.artistNameEl) {
-            this.artistNameEl.textContent = 'Restoring playback state';
-        }
+        if (this.playerContainer) this.playerContainer.classList.add('reconnecting');
+        if (this.trackNameEl) this.trackNameEl.textContent = 'Reconnecting...';
+        if (this.artistNameEl) this.artistNameEl.textContent = 'Restoring playback state';
     }
 
-    // Hide loading state
     hideLoadingState() {
-        if (this.playerContainer) {
-            this.playerContainer.classList.remove('reconnecting');
-        }
+        if (this.playerContainer) this.playerContainer.classList.remove('reconnecting');
     }
 
-    // Enhanced status message method
     showStatusMessage(message, type = 'info') {
-        // Remove existing message
         const existing = document.querySelector('.spotify-status-message');
-        if (existing) {
-            existing.remove();
-        }
-
-        // Create new message
+        if (existing) existing.remove();
         const messageEl = document.createElement('div');
         messageEl.className = `spotify-status-message ${type}`;
         messageEl.textContent = message;
         document.body.appendChild(messageEl);
-
-        // Show message
         setTimeout(() => messageEl.classList.add('show'), 100);
-
-        // Hide message after 3 seconds
-        setTimeout(() => {
-            messageEl.classList.remove('show');
-            setTimeout(() => messageEl.remove(), 300);
-        }, 3000);
+        setTimeout(() => { messageEl.classList.remove('show'); setTimeout(() => messageEl.remove(), 300); }, 3000);
     }
 
-    // Save current playback state to localStorage
     savePlaybackState() {
-        if (!this.currentTrack || !this.isReady) return;
+        if (!this.isReady || !this.currentTrack || this.isRestoringState) {
+            // console.log('Conditions not met for saving state, or restoring in progress.');
+            return;
+        }
 
         const state = {
             currentTrack: {
@@ -173,992 +130,472 @@ class SpotifyWebPlayer {
             },
             isPlaying: this.isPlaying,
             position: this.position,
-            duration: this.duration,
+            duration: this.currentTrack.duration_ms, // Ensure this is from the track itself
             timestamp: Date.now(),
-            currentContext: this.currentContext // Save the context
+            currentContext: this.currentContext
         };
 
         localStorage.setItem('spotify_playback_state', JSON.stringify(state));
         console.log('Saved playback state:', state);
     }
 
-    // Restore playback state from localStorage
     async restorePlaybackState() {
-        const savedState = localStorage.getItem('spotify_playback_state');
-        if (!savedState) {
-            console.log('No saved playback state found');
+        const savedStateJSON = localStorage.getItem('spotify_playback_state');
+        if (!savedStateJSON) {
+            console.log('No saved playback state found.');
+            this.isRestoringState = false;
             return;
         }
 
-        try {
-            this.showLoadingState();
+        if (this.isRestoringState) {
+            console.log("Restoration already in progress.");
+            return;
+        }
 
-            const state = JSON.parse(savedState);
+        this.isRestoringState = true;
+        this.showLoadingState();
+
+        try {
+            const state = JSON.parse(savedStateJSON);
             const timeSinceSave = Date.now() - state.timestamp;
 
-            // Don't restore if state is too old (more than 30 minutes)
-            if (timeSinceSave > 30 * 60 * 1000) {
+            if (timeSinceSave > 30 * 60 * 1000) { // 30 minutes expiry
                 console.log('Saved state too old, not restoring');
                 localStorage.removeItem('spotify_playback_state');
                 this.hideLoadingState();
+                this.isRestoringState = false;
                 return;
             }
 
-            console.log('Restoring playback state:', state);
+            console.log('Attempting to restore playback state:', state);
 
-            // Set the track info immediately for UI
             this.currentTrack = state.currentTrack;
-            this.isPlaying = state.isPlaying;
-            this.duration = state.duration;
+            this.duration = state.currentTrack.duration_ms; // Use track's duration
             this.currentContext = state.currentContext || null;
 
-            // Calculate current position (add elapsed time if was playing)
             if (state.isPlaying) {
-                this.position = Math.min(state.position + timeSinceSave, state.duration);
+                // Adjust position for time passed only if it was playing, but don't exceed duration
+                this.position = Math.min(state.position + timeSinceSave, this.duration);
+                this.isPlaying = true;
             } else {
                 this.position = state.position;
+                this.isPlaying = false;
             }
 
-            // Update UI immediately
             this.updateUI();
             this.showPlayer();
 
-            // Always transfer playback to our device first
-            await this.transferPlayback();
+            const transferred = await this.transferPlayback(state.isPlaying); // Pass play state to transfer
 
-            // Wait a moment for transfer to complete
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, transferred ? 1000 : 500)); // Shorter delay, or slightly longer if transfer happened
 
-            // Restore with context if available
-            if (this.currentContext && this.currentContext.uri) {
-                console.log('Restoring with context:', this.currentContext);
-                await this.resumeWithContext(this.currentContext, state.currentTrack.uri, this.position);
-            } else if (state.currentTrack && state.currentTrack.uri) {
-                console.log('Starting playback of saved track...');
-                await this.resumeTrackFromPosition(state.currentTrack.uri, this.position);
+            let restoredSuccessfully = false;
+            if (this.currentContext && this.currentContext.uri && state.currentTrack && state.currentTrack.uri) {
+                console.log('Attempting to restore with context:', this.currentContext.uri, 'track:', state.currentTrack.uri);
+                restoredSuccessfully = await this.resumeWithContext(this.currentContext, state.currentTrack.uri, this.position);
             }
 
-            // If it was paused, pause it after starting
-            if (!state.isPlaying) {
-                setTimeout(async () => {
-                    await this.player.pause();
-                    this.isPlaying = false;
-                    this.updateUI();
-                }, 2000);
+            if (!restoredSuccessfully && state.currentTrack && state.currentTrack.uri) {
+                console.log('Context restore failed or no context, attempting to restore single track:', state.currentTrack.uri);
+                restoredSuccessfully = await this.resumeTrackFromPosition(state.currentTrack.uri, this.position);
             }
 
-            this.hideLoadingState();
-            this.showStatusMessage('Playback restored', 'success');
+            if (restoredSuccessfully) {
+                if (!state.isPlaying) {
+                    setTimeout(async () => {
+                        if (this.player) {
+                           await this.player.pause();
+                           this.isPlaying = false;
+                           this.updateUI();
+                           console.log("Playback restored to paused state.");
+                        }
+                    }, 1500);
+                }
+                this.showStatusMessage('Playback restored successfully!', 'success');
+                localStorage.removeItem('spotify_playback_state');
+            } else {
+                console.error('Failed to restore playback via context or single track.');
+                this.showStatusMessage('Could not restore previous session.', 'error');
+                localStorage.removeItem('spotify_playback_state');
+            }
 
         } catch (error) {
-            console.error('Error restoring playback state:', error);
+            console.error('Critical error restoring playback state:', error);
             localStorage.removeItem('spotify_playback_state');
+            this.showStatusMessage('Error restoring session. Starting fresh.', 'error');
+        } finally {
             this.hideLoadingState();
-            this.showStatusMessage('Failed to restore playback', 'error');
+            this.isRestoringState = false;
         }
     }
 
-    // Resume playback with context
-    async resumeWithContext(context, trackUri, position) {
-        if (!this.player || !this.isReady || !this.accessToken) {
-            console.log('Cannot resume with context: player not ready');
-            return;
+    async resumeWithContext(context, trackUri, positionMs) {
+        if (!this.player || !this.isReady || !this.accessToken || !this.deviceId) {
+            console.warn('Player not ready, no token, or no device ID for resumeWithContext.');
+            return false;
+        }
+        if (!context || !context.uri) {
+            console.warn('resumeWithContext called without a valid context URI.');
+            return false;
         }
 
         try {
-            let body = {
-                context_uri: context.uri
+            const body = {
+                context_uri: context.uri,
+                position_ms: Math.max(0, Math.floor(positionMs))
             };
 
-            // Find the track position in the context
-            if (trackUri && context.type === 'album') {
-                const trackId = trackUri.split(':')[2];
-                const albumId = context.uri.split(':')[2];
+            if (trackUri) {
+                if (context.type === 'album') {
+                    const trackId = trackUri.split(':').pop();
+                    const albumId = context.uri.split(':').pop();
 
-                // Get album tracks to find position
-                const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks?limit=50`, {
-                    headers: {
-                        'Authorization': `Bearer ${this.accessToken}`
-                    }
-                });
+                    console.log(`Workspaceing tracks for album ${albumId} to find index for track ${trackId}`);
+                    const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks?limit=50`, {
+                        headers: { 'Authorization': `Bearer ${this.accessToken}` }
+                    });
 
-                if (albumResponse.ok) {
-                    const albumData = await albumResponse.json();
-                    const trackIndex = albumData.items.findIndex(t => t.id === trackId);
-                    if (trackIndex !== -1) {
-                        body.offset = { position: trackIndex };
+                    if (albumResponse.ok) {
+                        const albumData = await albumResponse.json();
+                        const trackIndex = albumData.items.findIndex(t => t.id === trackId || t.uri === trackUri);
+                        if (trackIndex !== -1) {
+                            body.offset = { position: trackIndex };
+                            console.log(`Offset for album: position ${trackIndex}`);
+                        } else {
+                            console.warn(`Track URI ${trackUri} not found in album ${context.uri}. Playback will start from the beginning of the album at the specified position.`);
+                        }
+                    } else {
+                        console.warn(`Failed to fetch album tracks for ${context.uri}. Playback might start from the beginning of the album.`);
                     }
+                } else if (context.type === 'playlist') {
+                    body.offset = { uri: trackUri }; // Crucial for playlists
+                    console.log(`Offset for playlist: uri ${trackUri}`);
+                } else {
+                    console.log(`Context type ${context.type} does not support specific track offset in this implementation. Playing context from start.`);
                 }
             }
 
-            body.position_ms = Math.max(0, Math.floor(position));
-
+            console.log('Resuming with context - Play API Body:', body);
             const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.deviceId}`, {
                 method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Authorization': `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
 
             if (response.ok || response.status === 204) {
-                console.log('Successfully resumed playback with context');
-                return true;
-            } else {
-                console.error('Failed to resume with context:', response.status);
-                // Fallback to single track
-                return await this.resumeTrackFromPosition(trackUri, position);
-            }
-        } catch (error) {
-            console.error('Error resuming with context:', error);
-            return false;
-        }
-    }
-
-    // Sync with Spotify's current playback state
-    async syncWithSpotifyState() {
-        if (!this.accessToken) return;
-
-        try {
-            const response = await fetch('https://api.spotify.com/v1/me/player', {
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`
-                }
-            });
-
-            if (response.status === 200) {
-                const spotifyState = await response.json();
-
-                if (spotifyState && spotifyState.item) {
-                    console.log('Synced with Spotify state:', spotifyState);
-
-                    // Update our state with Spotify's current state
-                    this.currentTrack = {
-                        uri: spotifyState.item.uri,
-                        name: spotifyState.item.name,
-                        artists: spotifyState.item.artists,
-                        album: spotifyState.item.album,
-                        duration_ms: spotifyState.item.duration_ms
-                    };
-
-                    this.isPlaying = spotifyState.is_playing;
-                    this.position = spotifyState.progress_ms;
-                    this.duration = spotifyState.item.duration_ms;
-
-                    // Update context information
-                    if (spotifyState.context) {
-                        this.currentContext = {
-                            type: spotifyState.context.type,
-                            uri: spotifyState.context.uri
-                        };
-                    }
-
-                    this.updateUI();
-
-                    if (this.isPlaying) {
-                        this.startProgressTimer();
-                    }
-                }
-            } else if (response.status === 204) {
-                // No active playback
-                console.log('No active Spotify playback');
-            }
-        } catch (error) {
-            console.error('Error syncing with Spotify state:', error);
-        }
-    }
-
-    // Resume a specific track from a specific position
-    async resumeTrackFromPosition(uri, position) {
-        if (!this.player || !this.isReady || !this.accessToken) {
-            console.log('Cannot resume track: player not ready');
-            return;
-        }
-
-        try {
-            console.log(`Resuming track ${uri} from position ${position}ms`);
-
-            const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.deviceId}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    uris: [uri],
-                    position_ms: Math.max(0, Math.floor(position))
-                })
-            });
-
-            if (response.ok || response.status === 204) {
-                console.log('Successfully resumed playback');
+                console.log('Successfully resumed playback with context.');
                 return true;
             } else {
                 const errorText = await response.text();
-                console.error('Failed to resume playback:', response.status, errorText);
-
-                // If we get a 404, the device might not be active, try transferring first
-                if (response.status === 404) {
-                    console.log('Device not found, trying to transfer playback...');
-                    const transferred = await this.transferPlayback();
-                    if (transferred) {
-                        // Retry after a short delay
-                        setTimeout(() => this.resumeTrackFromPosition(uri, position), 2000);
-                    }
-                }
+                console.error('Failed to resume with context:', response.status, errorText);
                 return false;
             }
-
         } catch (error) {
-            console.error('Error resuming playback:', error);
+            console.error('Error in resumeWithContext:', error);
             return false;
         }
+    }
+
+    async syncWithSpotifyState() {
+        if (!this.accessToken || this.isRestoringState) return;
+        try {
+            const response = await fetch('https://api.spotify.com/v1/me/player', { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
+            if (response.status === 200) {
+                const spotifyState = await response.json();
+                if (spotifyState && spotifyState.item) {
+                    console.log('Synced with Spotify state:', spotifyState);
+                    this.currentTrack = { uri: spotifyState.item.uri, name: spotifyState.item.name, artists: spotifyState.item.artists, album: spotifyState.item.album, duration_ms: spotifyState.item.duration_ms };
+                    this.isPlaying = spotifyState.is_playing;
+                    this.position = spotifyState.progress_ms;
+                    this.duration = spotifyState.item.duration_ms;
+                    if (spotifyState.context && spotifyState.context.uri) {
+                        let type = 'unknown';
+                        if (spotifyState.context.uri.includes(':album:')) type = 'album';
+                        else if (spotifyState.context.uri.includes(':playlist:')) type = 'playlist';
+                        else if (spotifyState.context.uri.includes(':artist:')) type = 'artist';
+                        this.currentContext = { type: type, uri: spotifyState.context.uri };
+                    } else {
+                        this.currentContext = null;
+                    }
+                    this.updateUI();
+                    if (this.isPlaying) this.startProgressTimer(); else this.stopProgressTimer();
+                }
+            } else if (response.status === 204) { console.log('No active Spotify playback for sync.'); }
+        } catch (error) { console.error('Error syncing with Spotify state:', error); }
+    }
+
+    async resumeTrackFromPosition(uri, positionMs) {
+        if (!this.player || !this.isReady || !this.accessToken || !this.deviceId) { console.warn('Player not ready for resumeTrackFromPosition.'); return false; }
+        try {
+            console.log(`Resuming single track ${uri} from position ${positionMs}ms`);
+            const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.deviceId}`, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ uris: [uri], position_ms: Math.max(0, Math.floor(positionMs)) })
+            });
+            if (response.ok || response.status === 204) { console.log('Successfully resumed single track playback.'); return true; }
+            else {
+                const errorText = await response.text(); console.error('Failed to resume single track:', response.status, errorText);
+                if (response.status === 404) { if (await this.transferPlayback(true)) { await new Promise(r => setTimeout(r, 1000)); return await this.resumeTrackFromPosition(uri, positionMs); } }
+                return false;
+            }
+        } catch (error) { console.error('Error resuming single track:', error); return false; }
     }
 
     checkStoredTokens() {
         const accessToken = localStorage.getItem('visitor_spotify_access_token');
         const expiresAt = localStorage.getItem('visitor_spotify_token_expires_at');
-
         if (accessToken && expiresAt) {
-            const now = new Date().getTime();
-            const expiry = parseInt(expiresAt);
-
-            if (now < expiry) {
-                console.log('Valid Spotify token found, initializing player...');
-                this.accessToken = accessToken;
-                this.initSpotifySDK();
-                return;
-            } else {
-                console.log('Spotify token expired, attempting refresh...');
-                this.refreshAccessToken();
-                return;
-            }
+            if (new Date().getTime() < parseInt(expiresAt)) { this.accessToken = accessToken; this.initSpotifySDK(); return; }
+            else { this.refreshAccessToken(); return; }
         }
-
-        console.log('No valid Spotify tokens found');
         this.showConnectButton();
     }
-
     async refreshAccessToken() {
         const refreshToken = localStorage.getItem('visitor_spotify_refresh_token');
-
-        if (!refreshToken) {
-            console.log('No refresh token available');
-            this.showConnectButton();
-            return;
-        }
-
+        if (!refreshToken) { this.showConnectButton(); return; }
         try {
-            const response = await fetch('/api/spotify/refresh-visitor-token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ refresh_token: refreshToken })
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
+            const response = await fetch('/api/spotify/refresh-visitor-token', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: refreshToken }) });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-
-            // Store new tokens
             localStorage.setItem('visitor_spotify_access_token', data.access_token);
-            const expiresAt = new Date().getTime() + (data.expires_in * 1000);
-            localStorage.setItem('visitor_spotify_token_expires_at', expiresAt.toString());
-
-            if (data.refresh_token) {
-                localStorage.setItem('visitor_spotify_refresh_token', data.refresh_token);
-            }
-
-            this.accessToken = data.access_token;
-            this.initSpotifySDK();
-
-        } catch (error) {
-            console.error('Error refreshing Spotify token:', error);
-            this.clearStoredTokens();
-            this.showConnectButton();
-        }
+            localStorage.setItem('visitor_spotify_token_expires_at', (new Date().getTime() + (data.expires_in * 1000)).toString());
+            if (data.refresh_token) localStorage.setItem('visitor_spotify_refresh_token', data.refresh_token);
+            this.accessToken = data.access_token; this.initSpotifySDK();
+        } catch (error) { console.error('Error refreshing token:', error); this.clearStoredTokens(); this.showConnectButton(); }
     }
-
     clearStoredTokens() {
         localStorage.removeItem('visitor_spotify_access_token');
         localStorage.removeItem('visitor_spotify_refresh_token');
         localStorage.removeItem('visitor_spotify_token_expires_at');
         localStorage.removeItem('spotify_playback_state');
     }
-
-    showConnectButton() {
-        if (this.connectBtn) {
-            this.connectBtn.style.display = 'block';
-        }
-        if (this.playerContainer) {
-            this.playerContainer.style.display = 'none';
-        }
+    disconnectSpotify() {
+        if (this.isPlaying && this.player) this.player.pause();
+        if (this.player) this.player.disconnect();
+        this.clearStoredTokens();
+        this.player = null; this.deviceId = null; this.accessToken = null; this.isReady = false; this.currentTrack = null; this.isPlaying = false; this.position = 0; this.duration = 0; this.currentContext = null;
+        this.stopProgressTimer(); this.stopStateCheck();
+        if (this.playerContainer) this.playerContainer.style.display = 'none';
+        this.showConnectButton(); this.showStatusMessage('Disconnected from Spotify', 'info');
     }
-
-    hideConnectButton() {
-        if (this.connectBtn) {
-            this.connectBtn.style.display = 'none';
-        }
-    }
-
-    showPlayer() {
-        if (this.playerContainer) {
-            this.playerContainer.style.display = 'flex';
-            // Add animation class
-            this.playerContainer.style.animation = 'slideUpPlayer 0.5s ease-out';
-        }
-        this.hideConnectButton();
-    }
-
+    showConnectButton() { if (this.connectBtn) this.connectBtn.style.display = 'block'; if (this.playerContainer) this.playerContainer.style.display = 'none';}
+    hideConnectButton() { if (this.connectBtn) this.connectBtn.style.display = 'none'; }
+    showPlayer() { if (this.playerContainer) { this.playerContainer.style.display = 'flex'; this.playerContainer.style.animation = 'slideUpPlayer 0.5s ease-out';} this.hideConnectButton(); }
     initiateSpotifyAuth() {
-        // Open auth popup
-        const authUrl = '/spotify/initiate-auth';
-        const popup = window.open(authUrl, 'spotify-auth', 'width=500,height=600,scrollbars=yes,resizable=yes');
-
-        // Monitor popup
-        const checkClosed = setInterval(() => {
-            if (!popup || popup.closed) {
-                clearInterval(checkClosed);
-                // Check for tokens after popup closes
-                setTimeout(() => this.checkStoredTokens(), 1000);
-            }
-        }, 1000);
+        const authUrl = '/spotify/initiate-auth'; const popup = window.open(authUrl, 'spotify-auth', 'width=500,height=600,scrollbars=yes,resizable=yes');
+        const checkClosed = setInterval(() => { if (!popup || popup.closed) { clearInterval(checkClosed); setTimeout(() => this.checkStoredTokens(), 1000);}}, 1000);
     }
 
     initSpotifySDK() {
-        if (!this.accessToken || !window.Spotify) {
-            console.log('Cannot initialize Spotify SDK - missing token or SDK not loaded');
-            return;
-        }
-
+        if (!this.accessToken || !window.Spotify) { console.log('Cannot init SDK - no token or SDK not loaded'); return; }
         console.log('Initializing Spotify Web Playback SDK...');
+        this.player = new Spotify.Player({ name: 'Ben\'s Neurascape Web Player', getOAuthToken: (cb) => { cb(this.accessToken); }, volume: 0.5 });
 
-        this.player = new Spotify.Player({
-            name: 'Ben\'s Neurascape Web Player',
-            getOAuthToken: (cb) => {
-                cb(this.accessToken);
-            },
-            volume: 0.5
-        });
+        this.player.addListener('initialization_error', ({ message }) => console.error('SDK Init Error:', message));
+        this.player.addListener('authentication_error', ({ message }) => { console.error('SDK Auth Error:', message); this.refreshAccessToken(); });
+        this.player.addListener('account_error', ({ message }) => { console.error('SDK Account Error:', message); this.showStatusMessage('Spotify account error. Premium might be required.', 'error');});
+        this.player.addListener('playback_error', ({ message }) => { console.error('SDK Playback Error:', message); if (!message.includes('no list was loaded')) this.showStatusMessage('Playback error: ' + message, 'error');});
 
-        // Error handling
-        this.player.addListener('initialization_error', ({ message }) => {
-            console.error('Spotify initialization error:', message);
-        });
-
-        this.player.addListener('authentication_error', ({ message }) => {
-            console.error('Spotify authentication error:', message);
-            this.refreshAccessToken();
-        });
-
-        this.player.addListener('account_error', ({ message }) => {
-            console.error('Spotify account error:', message);
-            this.showStatusMessage('Spotify account error. Premium required.', 'error');
-        });
-
-        this.player.addListener('playback_error', ({ message }) => {
-            console.error('Spotify playback error:', message);
-
-            // Handle specific error cases
-            if (message.includes('no list was loaded')) {
-                console.log('No active playback context - this is normal when restoring state');
-            } else {
-                this.showStatusMessage('Playback error: ' + message, 'error');
-            }
-        });
-
-        // Playback status updates
         this.player.addListener('player_state_changed', (state) => {
             console.log('Player state changed:', state);
+            if (!state || this.isRestoringState) { console.log('No state or restoring, skipping update.'); return; }
 
-            if (!state) {
-                console.log('No state - playback might have stopped');
-                // Don't clear UI immediately, might just be a temporary state
-                return;
-            }
-
-            // Update our internal state
             this.currentTrack = state.track_window.current_track;
             this.isPlaying = !state.paused;
             this.position = state.position;
-            this.duration = state.duration;
+            this.duration = state.duration; // SDK provides duration of current track
 
-            // Update context if available
-            if (state.context) {
-                this.currentContext = {
-                    type: state.context.metadata?.context_description || 'unknown',
-                    uri: state.context.uri
-                };
-            }
-
-            console.log('Updated state:', {
-                track: this.currentTrack?.name,
-                isPlaying: this.isPlaying,
-                position: this.position,
-                duration: this.duration,
-                context: this.currentContext
-            });
-
-            this.updateUI();
-
-            // Handle progress updates
-            if (this.isPlaying) {
-                this.startProgressTimer();
+            if (state.context && state.context.uri) {
+                let type = 'unknown';
+                const uri = state.context.uri;
+                if (uri.includes(':album:')) type = 'album';
+                else if (uri.includes(':playlist:')) type = 'playlist';
+                else if (uri.includes(':artist:')) type = 'artist';
+                // Add more types if needed, e.g., show, episode
+                this.currentContext = { type: type, uri: uri };
             } else {
-                this.stopProgressTimer();
-            }
-
-            // Save state when it changes (but not too frequently)
-            clearTimeout(this.saveStateTimeout);
-            this.saveStateTimeout = setTimeout(() => {
-                this.savePlaybackState();
-            }, 1000);
-        });
-
-        // Ready
-        this.player.addListener('ready', ({ device_id }) => {
-            console.log('Spotify Web Player ready with Device ID:', device_id);
-            this.deviceId = device_id;
-            this.isReady = true;
-            this.showPlayer();
-
-            // Dispatch custom event
-            document.dispatchEvent(new Event('spotifyPlayerReady'));
-
-            // Restore previous playback state after a delay
-            setTimeout(() => this.restorePlaybackState(), 2000);
-
-            // Start periodic state checking
-            this.startStateCheck();
-        });
-
-        // Not ready
-        this.player.addListener('not_ready', ({ device_id }) => {
-            console.log('Spotify Web Player not ready with Device ID:', device_id);
-            this.isReady = false;
-            this.stopStateCheck();
-        });
-
-        // Connect to the player
-        this.player.connect().then(success => {
-            if (success) {
-                console.log('Successfully connected to Spotify Web Player');
-            } else {
-                console.error('Failed to connect to Spotify Web Player');
-                this.showStatusMessage('Failed to connect to Spotify', 'error');
-            }
-        });
-    }
-
-    // Periodically check Spotify's state to stay in sync
-    startStateCheck() {
-        this.stopStateCheck();
-        this.stateCheckInterval = setInterval(() => {
-            this.syncWithSpotifyState();
-        }, 30000);
-    }
-
-    stopStateCheck() {
-        if (this.stateCheckInterval) {
-            clearInterval(this.stateCheckInterval);
-            this.stateCheckInterval = null;
-        }
-    }
-
-    startProgressTimer() {
-        this.stopProgressTimer(); // Clear any existing timer
-
-        this.progressInterval = setInterval(() => {
-            if (this.isPlaying && this.duration > 0) {
-                this.position += 1000; // Add 1 second
-
-                // Clamp position to duration
-                if (this.position > this.duration) {
-                    this.position = this.duration;
-                }
-
-                this.updateProgress();
-            }
-        }, 1000);
-    }
-
-    stopProgressTimer() {
-        if (this.progressInterval) {
-            clearInterval(this.progressInterval);
-            this.progressInterval = null;
-        }
-    }
-
-    updateUI() {
-        if (!this.currentTrack) return;
-
-        // Update track info
-        if (this.trackNameEl) {
-            this.trackNameEl.textContent = this.currentTrack.name;
-            this.trackNameEl.classList.add('updating');
-            setTimeout(() => this.trackNameEl.classList.remove('updating'), 500);
-        }
-
-        if (this.artistNameEl) {
-            this.artistNameEl.textContent = this.currentTrack.artists.map(artist => artist.name).join(', ');
-        }
-
-        if (this.albumArtEl && this.currentTrack.album.images.length > 0) {
-            this.albumArtEl.src = this.currentTrack.album.images[0].url;
-            this.albumArtEl.alt = `${this.currentTrack.album.name} album art`;
-        }
-
-        // Update play/pause button
-        if (this.playPauseBtn) {
-            const icon = this.playPauseBtn.querySelector('i');
-            if (icon) {
-                icon.className = this.isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play';
-            }
-            this.playPauseBtn.title = this.isPlaying ? 'Pause' : 'Play';
-        }
-
-        // Update progress
-        this.updateProgress();
-    }
-
-    updateProgress() {
-        if (this.duration > 0) {
-            const progressPercent = (this.position / this.duration) * 100;
-
-            if (this.progressFill) {
-                this.progressFill.style.width = `${progressPercent}%`;
-            }
-
-            if (this.currentTimeEl) {
-                this.currentTimeEl.textContent = this.formatTime(this.position);
-            }
-
-            if (this.durationEl) {
-                this.durationEl.textContent = this.formatTime(this.duration);
-            }
-        }
-    }
-
-    formatTime(ms) {
-        const seconds = Math.floor(ms / 1000);
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }
-
-    seekToPosition(e) {
-        if (!this.player || !this.isReady || !this.duration) return;
-
-        const rect = this.progressBar.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
-        const position = Math.floor(percent * this.duration);
-
-        this.player.seek(position).catch(error => {
-            console.error('Error seeking:', error);
-        });
-    }
-
-    async togglePlayPause() {
-        if (!this.player || !this.isReady) {
-            console.log('Player not ready');
-            return;
-        }
-
-        try {
-            if (this.isPlaying) {
-                console.log('Pausing playback...');
-                await this.player.pause();
-            } else {
-                console.log('Resuming playback...');
-                // First check if we have an active context
-                const context = await this.getCurrentPlaybackContext();
-
-                if (!context || !context.item) {
-                    this.showStatusMessage('No track loaded. Try playing a track first.', 'error');
-                    return;
-                }
-
-                await this.player.resume();
-            }
-        } catch (error) {
-            console.error('Error toggling playback:', error);
-            await this.handlePlaybackError(error, 'togglePlayPause');
-
-            // If controls fail, try to get current state and restart if needed
-            setTimeout(() => this.syncWithSpotifyState(), 1000);
-        }
-    }
-
-    async previousTrack() {
-        if (!this.player || !this.isReady || !this.accessToken) {
-            console.log('Player not ready or no access token');
-            return;
-        }
-
-        try {
-            console.log('Going to previous track...');
-
-            // Ensure device is active first
-            const deviceActive = await this.ensureDeviceActive();
-            if (!deviceActive) {
-                this.showStatusMessage('Failed to activate player device', 'error');
-                return;
-            }
-
-            // Try using the Web API
-            const response = await fetch('https://api.spotify.com/v1/me/player/previous', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.ok || response.status === 204) {
-                console.log('Successfully went to previous track');
-                // Sync state after a short delay
-                setTimeout(() => this.syncWithSpotifyState(), 1000);
-            } else if (response.status === 404) {
-                // Device not found - try to reactivate
-                console.log('Device not found, reactivating...');
-                await this.transferPlayback();
-                setTimeout(() => this.previousTrack(), 1000);
-            } else if (response.status === 403) {
-                // No previous track available
-                this.showStatusMessage('No previous track available', 'info');
-            } else {
-                console.error('Failed to go to previous track:', response.status);
-                this.showStatusMessage('Cannot go to previous track. Try playing an album or playlist.', 'error');
-            }
-        } catch (error) {
-            console.error('Error going to previous track:', error);
-            this.showStatusMessage('Error changing track', 'error');
-        }
-    }
-
-    async nextTrack() {
-        if (!this.player || !this.isReady || !this.accessToken) {
-            console.log('Player not ready or no access token');
-            return;
-        }
-
-        try {
-            console.log('Going to next track...');
-
-            // Ensure device is active first
-            const deviceActive = await this.ensureDeviceActive();
-            if (!deviceActive) {
-                this.showStatusMessage('Failed to activate player device', 'error');
-                return;
-            }
-
-            // Try using the Web API
-            const response = await fetch('https://api.spotify.com/v1/me/player/next', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.ok || response.status === 204) {
-                console.log('Successfully went to next track');
-                // Sync state after a short delay
-                setTimeout(() => this.syncWithSpotifyState(), 1000);
-            } else if (response.status === 404) {
-                // Device not found - try to reactivate
-                console.log('Device not found, reactivating...');
-                await this.transferPlayback();
-                setTimeout(() => this.nextTrack(), 1000);
-            } else if (response.status === 403) {
-                // No next track available
-                this.showStatusMessage('No next track available', 'info');
-            } else {
-                console.error('Failed to go to next track:', response.status);
-                this.showStatusMessage('Cannot go to next track. Try playing an album or playlist.', 'error');
-            }
-        } catch (error) {
-            console.error('Error going to next track:', error);
-            this.showStatusMessage('Error changing track', 'error');
-        }
-    }
-
-    // Method to play a specific track (can be called from music pages)
-    async playTrack(uri) {
-        if (!this.player || !this.isReady || !this.accessToken) {
-            console.log('Player not ready or no access token');
-            return;
-        }
-
-        try {
-            console.log('Playing track:', uri);
-
-            // Always transfer playback to our device first
-            await this.transferPlayback();
-
-            // Wait a moment for transfer
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            // First, try to get the track details to find its album
-            const trackId = uri.split(':')[2];
-            let playbackBody = { uris: [uri] }; // Fallback to single track
-
-            try {
-                const trackResponse = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${this.accessToken}`
-                    }
-                });
-
-                if (trackResponse.ok) {
-                    const track = await trackResponse.json();
-                    if (track.album && track.album.uri && track.album.total_tracks > 1) {
-                        // Only use album context if it has multiple tracks
-                        const albumUri = track.album.uri;
-                        const trackNumber = track.track_number - 1; // 0-indexed
-
-                        console.log(`Playing album ${albumUri} starting at track ${trackNumber + 1}`);
-
-                        playbackBody = {
-                            context_uri: albumUri,
-                            offset: { position: trackNumber }
-                        };
-
-                        // Store the context
-                        this.currentContext = {
-                            type: 'album',
-                            uri: albumUri
-                        };
-                    } else {
-                        console.log('Single track or no album context, playing individual track');
-                        this.currentContext = null;
-                    }
-                }
-            } catch (albumError) {
-                console.log('Could not get album context, playing single track:', albumError);
                 this.currentContext = null;
             }
 
-            // Start playback with the determined context
+            console.log('Internal state updated:', { track: this.currentTrack?.name, context: this.currentContext, isPlaying: this.isPlaying });
+            this.updateUI();
+            if (this.isPlaying) this.startProgressTimer(); else this.stopProgressTimer();
+
+            clearTimeout(this.saveStateTimeout);
+            this.saveStateTimeout = setTimeout(() => {
+                if (!this.isRestoringState) this.savePlaybackState();
+            }, 1000);
+        });
+
+        this.player.addListener('ready', async ({ device_id }) => {
+            console.log('Spotify Player Ready with Device ID:', device_id);
+            this.deviceId = device_id;
+            this.isReady = true;
+            this.showPlayer();
+            document.dispatchEvent(new Event('spotifyPlayerReady'));
+
+            await this.restorePlaybackState();
+
+            this.startStateCheck();
+        });
+
+        this.player.addListener('not_ready', ({ device_id }) => { console.log('Device Not Ready:', device_id); this.isReady = false; this.stopStateCheck();});
+        this.player.connect().then(success => { if (success) console.log('SDK connected.'); else { console.error('SDK failed to connect.'); this.showStatusMessage('Failed to connect to Spotify', 'error');}});
+    }
+
+    startStateCheck() { this.stopStateCheck(); this.stateCheckInterval = setInterval(() => { if (!this.isRestoringState) this.syncWithSpotifyState(); }, 30000); }
+    stopStateCheck() { if (this.stateCheckInterval) { clearInterval(this.stateCheckInterval); this.stateCheckInterval = null; } }
+    startProgressTimer() { this.stopProgressTimer(); this.progressInterval = setInterval(() => { if (this.isPlaying && this.duration > 0) { this.position += 1000; if (this.position > this.duration) this.position = this.duration; this.updateProgress();}}, 1000); }
+    stopProgressTimer() { if (this.progressInterval) { clearInterval(this.progressInterval); this.progressInterval = null; }}
+
+    updateUI() {
+        if (!this.currentTrack) return;
+        if (this.trackNameEl) { this.trackNameEl.textContent = this.currentTrack.name; /* ... animation ... */ }
+        if (this.artistNameEl) this.artistNameEl.textContent = this.currentTrack.artists.map(a => a.name).join(', ');
+        if (this.albumArtEl && this.currentTrack.album?.images?.[0]?.url) this.albumArtEl.src = this.currentTrack.album.images[0].url;
+        if (this.playPauseBtn) { const i = this.playPauseBtn.querySelector('i'); if(i) i.className = this.isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play'; this.playPauseBtn.title = this.isPlaying ? 'Pause':'Play';}
+        this.duration = this.currentTrack.duration_ms;
+        this.updateProgress();
+    }
+    updateProgress() { if (this.duration > 0) { const p = (this.position / this.duration) * 100; if(this.progressFill) this.progressFill.style.width = `${p}%`; if(this.currentTimeEl) this.currentTimeEl.textContent = this.formatTime(this.position); if(this.durationEl) this.durationEl.textContent = this.formatTime(this.duration); } else { if(this.progressFill) this.progressFill.style.width = '0%'; if(this.currentTimeEl) this.currentTimeEl.textContent = '0:00'; if(this.durationEl) this.durationEl.textContent = '0:00';}}
+    formatTime(ms) { const s = Math.floor(ms/1000); const m = Math.floor(s/60); const rs = s % 60; return `${m}:${rs.toString().padStart(2,'0')}`; }
+    seekToPosition(e) { if (!this.player || !this.isReady || !this.duration) return; const r=this.progressBar.getBoundingClientRect(); const p=(e.clientX-r.left)/r.width; this.player.seek(Math.floor(p*this.duration)).catch(err => console.error('Seek err:',err));}
+
+    async togglePlayPause() {
+        if (!this.player || !this.isReady) return;
+        try { if (this.isPlaying) await this.player.pause(); else { const ctx = await this.getCurrentPlaybackContext(); if (!ctx || !ctx.item) { this.showStatusMessage('No track loaded.', 'error'); return; } await this.player.resume();}}
+        catch (error) { console.error('Toggle err:', error); this.handlePlaybackError(error, 'togglePlayPause'); setTimeout(() => this.syncWithSpotifyState(), 1000); }
+    }
+    async previousTrack() {
+        if (!this.player || !this.isReady || !this.accessToken) return;
+        try { if (!(await this.ensureDeviceActive())) {this.showStatusMessage('Player device not active','error'); return;}
+            const r = await fetch('https://api.spotify.com/v1/me/player/previous',{method:'POST',headers:{'Authorization':`Bearer ${this.accessToken}`}});
+            if (r.ok || r.status === 204) { setTimeout(()=>this.syncWithSpotifyState(), 500); }
+            else if (r.status === 404) { await this.transferPlayback(true); setTimeout(()=>this.previousTrack(), 1000); }
+            else if (r.status === 403) { this.showStatusMessage('No previous track.', 'info'); }
+            else { this.showStatusMessage('Cannot go to previous track.', 'error');}
+        } catch (e) { console.error('Prev track err:',e); this.showStatusMessage('Error changing track.','error');}
+    }
+    async nextTrack() {
+        if (!this.player || !this.isReady || !this.accessToken) return;
+        try { if (!(await this.ensureDeviceActive())) {this.showStatusMessage('Player device not active','error'); return;}
+            const r = await fetch('https://api.spotify.com/v1/me/player/next',{method:'POST',headers:{'Authorization':`Bearer ${this.accessToken}`}});
+            if (r.ok || r.status === 204) { setTimeout(()=>this.syncWithSpotifyState(), 500); }
+            else if (r.status === 404) { await this.transferPlayback(true); setTimeout(()=>this.nextTrack(), 1000); }
+            else if (r.status === 403) { this.showStatusMessage('No next track.', 'info'); }
+            else { this.showStatusMessage('Cannot go to next track.', 'error');}
+        } catch (e) { console.error('Next track err:',e); this.showStatusMessage('Error changing track.','error');}
+    }
+
+    async playTrack(uri) {
+        if (!this.player || !this.isReady || !this.accessToken || !this.deviceId) { this.showStatusMessage('Player not ready.', 'error'); return; }
+        try {
+            console.log('playTrack called with URI:', uri);
+            await this.transferPlayback(true);
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            const trackId = uri.split(':').pop();
+            let playbackBody = { uris: [uri] };
+            this.currentContext = null;
+
+            const trackResponse = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, { headers: { 'Authorization': `Bearer ${this.accessToken}` } });
+            if (trackResponse.ok) {
+                const trackData = await trackResponse.json();
+                if (trackData.album && trackData.album.uri) { // Always prefer album context if available
+                    playbackBody = { context_uri: trackData.album.uri, offset: { uri: uri } };
+                    this.currentContext = { type: 'album', uri: trackData.album.uri };
+                    console.log(`Playing track within album context: ${trackData.album.uri}`);
+                }
+            } else {
+                console.warn('Could not fetch track details to determine album context. Playing as single track.');
+            }
+
             const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.deviceId}`, {
                 method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Authorization': `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(playbackBody)
             });
-
-            if (response.ok || response.status === 204) {
-                console.log('Started playback for:', uri);
-                this.showStatusMessage('Starting playback...', 'success');
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to start playback:', response.status, errorText);
-                this.showStatusMessage('Failed to start playback', 'error');
-            }
-        } catch (error) {
-            console.error('Error starting playback:', error);
-            this.showStatusMessage('Failed to start playback', 'error');
-        }
+            if (!response.ok && response.status !== 204) { const err = await response.text(); throw new Error(`Playback API error: ${response.status} ${err}`); }
+            this.showStatusMessage('Starting playback...', 'success');
+        } catch (error) { console.error('Error in playTrack:', error); this.showStatusMessage(`Failed to play track: ${error.message}`, 'error'); }
     }
 
-    // Method to play an album or playlist
     async playContext(contextUri, offset = 0) {
-        if (!this.player || !this.isReady || !this.accessToken) {
-            console.log('Player not ready or no access token');
-            return;
-        }
-
+        if (!this.player || !this.isReady || !this.accessToken || !this.deviceId) { this.showStatusMessage('Player not ready.', 'error'); return; }
         try {
-            console.log('Playing context:', contextUri);
-
-            // Always transfer playback to our device first
-            await this.transferPlayback();
-
-            // Wait a moment for transfer
-            await new Promise(resolve => setTimeout(resolve, 500));
+            console.log('playContext called with URI:', contextUri, "Offset:", offset);
+            await this.transferPlayback(true);
+            await new Promise(resolve => setTimeout(resolve, 300));
 
             const body = { context_uri: contextUri };
-            if (offset > 0) {
+            // Handle both numeric offset (for albums generally) and URI offset (for playlists/tracks in albums)
+            if (typeof offset === 'number' && offset >= 0) { // Ensure offset is not negative
                 body.offset = { position: offset };
+            } else if (typeof offset === 'string' && offset.startsWith('spotify:track:')) {
+                body.offset = { uri: offset };
             }
 
-            // Store the context
-            this.currentContext = {
-                type: contextUri.includes('album') ? 'album' : 'playlist',
-                uri: contextUri
-            };
+            let contextType = 'unknown';
+            if (contextUri.includes(':album:')) contextType = 'album';
+            else if (contextUri.includes(':playlist:')) contextType = 'playlist';
+            this.currentContext = { type: contextType, uri: contextUri };
 
             const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.deviceId}`, {
                 method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Authorization': `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
-
-            if (response.ok || response.status === 204) {
-                console.log('Started context playback for:', contextUri);
-                this.showStatusMessage('Starting playback...', 'success');
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to start context playback:', response.status, errorText);
-                this.showStatusMessage('Failed to start playback', 'error');
-            }
-        } catch (error) {
-            console.error('Error starting context playback:', error);
-            this.showStatusMessage('Failed to start playback', 'error');
-        }
+            if (!response.ok && response.status !== 204) { const err = await response.text(); throw new Error(`Playback API error: ${response.status} ${err}`); }
+            this.showStatusMessage('Starting playback...', 'success');
+        } catch (error) { console.error('Error in playContext:', error); this.showStatusMessage(`Failed to play: ${error.message}`, 'error');}
     }
 
-    // Transfer playback to this device
-    async transferPlayback() {
-        if (!this.deviceId || !this.accessToken) {
-            console.log('Cannot transfer playback: missing device ID or access token');
-            return false;
-        }
-
+    async transferPlayback(play = false) {
+        if (!this.deviceId || !this.accessToken) { console.warn('Cannot transfer playback: no device ID or token.'); return false; }
         try {
-            console.log('Transferring playback to web player...');
+            console.log(`Transferring playback to ${this.deviceId}, play: ${play}`);
             const response = await fetch('https://api.spotify.com/v1/me/player', {
                 method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    device_ids: [this.deviceId],
-                    play: false
-                })
+                headers: { 'Authorization': `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ device_ids: [this.deviceId], play: play })
             });
-
-            if (response.ok || response.status === 204) {
-                console.log('Playback transferred to web player');
-                return true;
-            } else {
-                console.error('Failed to transfer playback:', response.status);
-                return false;
-            }
-        } catch (error) {
-            console.error('Error transferring playback:', error);
-            return false;
-        }
+            if (response.ok || response.status === 204) { console.log('Playback transferred.'); return true; }
+            else { console.error('Failed to transfer playback:', response.status, await response.text()); return false; }
+        } catch (error) { console.error('Error transferring playback:', error); return false; }
     }
 
-    // Ensure device is active before making control requests
     async ensureDeviceActive() {
-        if (!this.deviceId || !this.accessToken) {
-            return false;
-        }
-
+        if (!this.deviceId || !this.accessToken) return false;
         try {
-            // Check current playback state
-            const response = await fetch('https://api.spotify.com/v1/me/player', {
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`
-                }
-            });
-
-            if (response.status === 200) {
-                const state = await response.json();
-                // Check if our device is the active device
-                if (state.device && state.device.id === this.deviceId) {
-                    return true;
-                }
-            }
-
-            // If not active, transfer playback
-            console.log('Device not active, transferring playback...');
-            return await this.transferPlayback();
-        } catch (error) {
-            console.error('Error ensuring device active:', error);
-            return false;
-        }
+            const r = await fetch('https://api.spotify.com/v1/me/player',{headers:{'Authorization':`Bearer ${this.accessToken}`}});
+            if (r.status === 200) { const s = await r.json(); if (s.device && s.device.id === this.deviceId && s.device.is_active) return true; }
+            console.log('Device not active or not this one, transferring...');
+            return await this.transferPlayback(this.isPlaying);
+        } catch (e) { console.error('Err ensureDeviceActive:',e); return false;}
     }
+    async handlePlaybackError(error, context = '') { console.error(`Playback error in ${context}:`, error); if (error.message?.includes('404')) this.showStatusMessage('No active playback. Play a track first.','error'); else if (error.message?.includes('403')) this.showStatusMessage('Premium required for this feature.','error'); else this.showStatusMessage(`Playback error: ${error.message || 'Unknown'}`,'error');}
+    async addToQueue(uri) { if(!this.accessToken)return false; try{const r=await fetch(`https://api.spotify.com/v1/me/player/queue?uri=${encodeURIComponent(uri)}`,{method:'POST',headers:{'Authorization':`Bearer ${this.accessToken}`}}); if(r.ok||r.status===204)return true; else return false;}catch(e){return false;}}
+    async getCurrentPlaybackContext() { if(!this.accessToken)return null; try{const r=await fetch('https://api.spotify.com/v1/me/player',{headers:{'Authorization':`Bearer ${this.accessToken}`}}); if(r.ok)return await r.json(); return null;}catch(e){return null;}}
 
-    // Enhanced method to handle playback errors gracefully
-    async handlePlaybackError(error, context = '') {
-        console.error(`Playback error in ${context}:`, error);
-
-        if (error.message && error.message.includes('404')) {
-            this.showStatusMessage('No active playback session. Try playing a track first.', 'error');
-        } else if (error.message && error.message.includes('403')) {
-            this.showStatusMessage('Premium account required for this feature.', 'error');
-        } else {
-            this.showStatusMessage(`Playback error: ${error.message || 'Unknown error'}`, 'error');
-        }
-    }
-
-    // Add tracks to queue (alternative approach for better context)
-    async addToQueue(uri) {
-        if (!this.accessToken) {
-            console.log('No access token for queue management');
-            return false;
-        }
-
-        try {
-            const response = await fetch(`https://api.spotify.com/v1/me/player/queue?uri=${encodeURIComponent(uri)}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`
-                }
-            });
-
-            if (response.ok || response.status === 204) {
-                console.log('Added to queue:', uri);
-                return true;
-            } else {
-                console.error('Failed to add to queue:', response.status);
-                return false;
-            }
-        } catch (error) {
-            console.error('Error adding to queue:', error);
-            return false;
-        }
-    }
-
-    // Get current playback context for better error handling
-    async getCurrentPlaybackContext() {
-        if (!this.accessToken) return null;
-
-        try {
-            const response = await fetch('https://api.spotify.com/v1/me/player', {
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`
-                }
-            });
-
-            if (response.ok) {
-                return await response.json();
-            }
-            return null;
-        } catch (error) {
-            console.error('Error getting playback context:', error);
-            return null;
-        }
-    }
-
-    // Cleanup method
     disconnect() {
         this.stopProgressTimer();
         this.stopStateCheck();
-        this.savePlaybackState();
+        if (!this.isRestoringState) {
+             this.savePlaybackState();
+        }
         if (this.player) {
             this.player.disconnect();
+            console.log("Spotify Player instance disconnected.");
         }
+        this.isReady = false;
     }
 }
 
-// Global instance
 window.spotifyPlayer = new SpotifyWebPlayer();
 
-// Cleanup on page unload
-window.addEventListener('beforeunload', () => {
+window.addEventListener('unload', () => {
     if (window.spotifyPlayer) {
-        window.spotifyPlayer.stopProgressTimer();
+        window.spotifyPlayer.disconnect();
     }
 });

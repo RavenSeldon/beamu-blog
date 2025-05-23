@@ -1584,6 +1584,7 @@ button:hover::before {
      - Quick Play Button (List View - .quick-play-btn)
      - Standalone Play Button (Detail View - .standalone-play-btn)
      - Visitor Connect Button (Footer - .spotify-connect-btn)
+     - Player Action Buttons (Footer - .player-action-btn)
   5. Spotify Mini Player (Footer - .mini-player)
      - Player Structure & Info
      - Player Controls
@@ -1793,6 +1794,48 @@ button:hover::before {
     box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
 }
 
+/* Player Action Buttons */
+.player-actions {
+    display: flex;
+    gap: 0.8em;
+    align-items: center;
+}
+
+.player-action-btn {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+    opacity: 0.7;
+}
+
+.player-action-btn:hover {
+    opacity: 1;
+    background: rgba(55, 180, 248, 0.15);
+    color: var(--primary);
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+#player-music-page-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(196, 181, 226, 0.15);
+}
+
+#player-disconnect-btn:hover {
+    color: #ff6e6e;
+    border-color: #ff6e6e;
+    background: rgba(255, 110, 110, 0.15);
+}
 
 /* --- 5. Spotify Mini Player (Footer) --- */
 

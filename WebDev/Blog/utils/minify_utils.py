@@ -99,7 +99,7 @@ def try_terser_minify(js_content, output_path):
                 '--mangle',
                 '--output', output_path,
                 '--ecma', '2020',
-                '--format', 'ascii_only=true,quote_style=3'
+                '--format', 'ascii_only=true'
             ], capture_output=True, text=True)
 
             if result.returncode == 0:
