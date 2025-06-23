@@ -1464,7 +1464,7 @@ button:hover::before {
 .project-card a {
     display: inline-block;
     padding: 0.6em 1.2em;
-    background: linear-gradient(90deg, rgba(126, 249, 255, 0.2), rgba(243, 249, 157, 0.2));
+    background: linear-gradient(90deg, rgba(126, 249, 255, 0.2), rgba(243, 249, 157, 0.01));
     border-radius: 8px;
     color: var(--primary);
     font-weight: 600;
@@ -1506,8 +1506,11 @@ button:hover::before {
     background: linear-gradient(90deg, #ff6e6e, #ff9e9e);
     padding: 0.5em 1em;
     margin-top: 1em;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     color: #111;
-    width: 100%;
+    width: 15%;
 }
 
 .delete-btn:hover {
