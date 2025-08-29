@@ -1,0 +1,462 @@
+2025-05-10 06:20:46,894 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-10 06:23:14,094 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-10 07:00:28,089 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-10 07:01:05,233 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-10 07:04:15,108 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-10 07:08:57,564 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-10 07:09:44,839 - app - INFO - Retrieved 10 projects
+2025-05-10 07:09:44,840 - app - INFO - Project ID: 13, Title: Let's GO:), Image: d7d56d7b49b54e0c93d5b95373591282.png
+2025-05-10 07:09:44,840 - app - INFO - Project ID: 12, Title: the Last Test, Image: 4e4d7d659fed411e8e25caefb4008903.png
+2025-05-10 07:09:44,840 - app - INFO - Project ID: 11, Title: HELLO FRIEND, Image: 916e818cf9f747c5b6e4dfb9c8ff99b0.jpeg
+2025-05-10 07:09:44,841 - app - INFO - Project ID: 10, Title: Check Now, Image: f18ad8279f95495e8dfd835f8046d9e8.jpg
+2025-05-10 07:09:44,841 - app - INFO - Project ID: 9, Title: Eat, Image: None
+2025-05-10 07:09:44,841 - app - INFO - Project ID: 8, Title: Pic2, Image: None
+2025-05-10 07:09:44,842 - app - INFO - Project ID: 7, Title: pic1, Image: fad42bf150894a0d94061a135ee38969.png
+2025-05-10 07:09:44,842 - app - INFO - Project ID: 6, Title: Project Photo Test, Image: None
+2025-05-10 07:09:44,842 - app - INFO - Project ID: 5, Title: Test Test, Image: None
+2025-05-10 07:09:44,843 - app - INFO - Project ID: 4, Title: Test1, Image: None
+2025-05-10 07:17:36,053 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-11 08:24:24,670 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-11 08:27:21,117 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-12 06:45:55,570 - app - INFO - Processing new project submission
+2025-05-12 06:45:55,576 - app - INFO - Processing image for project: Image Test 2
+2025-05-12 06:45:55,576 - app - INFO - Processing image: 7a5b3de3a7364821811564ddaef8757c.jpg
+2025-05-12 06:45:55,676 - app - INFO - Image processed successfully: 7a5b3de3a7364821811564ddaef8757c.jpg
+2025-05-12 06:45:55,677 - app - INFO - Created photo with ID 14 and filename 7a5b3de3a7364821811564ddaef8757c.jpg
+2025-05-12 06:45:55,677 - app - INFO - Associated with project ID 14
+2025-05-12 06:45:55,680 - app - INFO - After commit: Project image_filename = 7a5b3de3a7364821811564ddaef8757c.jpg
+2025-05-12 06:45:55,681 - app - INFO - After commit: Photo projects count = 1
+2025-05-12 06:45:55,687 - app - INFO - Retrieved 11 projects
+2025-05-12 06:45:55,687 - app - INFO - Project ID: 14, Title: Image Test 2, Image: 7a5b3de3a7364821811564ddaef8757c.jpg
+2025-05-12 06:45:55,687 - app - INFO - Project ID: 13, Title: Let's GO:), Image: d7d56d7b49b54e0c93d5b95373591282.png
+2025-05-12 06:45:55,687 - app - INFO - Project ID: 12, Title: the Last Test, Image: 4e4d7d659fed411e8e25caefb4008903.png
+2025-05-12 06:45:55,687 - app - INFO - Project ID: 11, Title: HELLO FRIEND, Image: 916e818cf9f747c5b6e4dfb9c8ff99b0.jpeg
+2025-05-12 06:45:55,687 - app - INFO - Project ID: 10, Title: Check Now, Image: f18ad8279f95495e8dfd835f8046d9e8.jpg
+2025-05-12 06:45:55,687 - app - INFO - Project ID: 9, Title: Eat, Image: None
+2025-05-12 06:45:55,687 - app - INFO - Project ID: 8, Title: Pic2, Image: None
+2025-05-12 06:45:55,687 - app - INFO - Project ID: 7, Title: pic1, Image: fad42bf150894a0d94061a135ee38969.png
+2025-05-12 06:45:55,687 - app - INFO - Project ID: 6, Title: Project Photo Test, Image: None
+2025-05-12 06:45:55,687 - app - INFO - Project ID: 5, Title: Test Test, Image: None
+2025-05-12 06:45:55,687 - app - INFO - Project ID: 4, Title: Test1, Image: None
+2025-05-12 07:10:48,464 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-12 07:41:45,446 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-12 07:51:41,819 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-12 07:51:57,534 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:16:19,589 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:16:22,165 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:16:22,444 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:17:12,636 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:17:16,695 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:17:16,964 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:40:09,614 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:40:11,847 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:40:12,125 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:53:10,448 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:53:12,764 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:53:13,062 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:53:47,654 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:53:50,721 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:53:50,996 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:56:34,107 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:56:36,846 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:56:37,167 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-13 05:57:46,979 - app - INFO - Retrieved 11 projects
+2025-05-13 05:57:46,980 - app - INFO - Project ID: 14, Title: Image Test 2, Image: 7a5b3de3a7364821811564ddaef8757c.jpg
+2025-05-13 05:57:46,980 - app - INFO - Project ID: 13, Title: Let's GO:), Image: d7d56d7b49b54e0c93d5b95373591282.png
+2025-05-13 05:57:46,980 - app - INFO - Project ID: 12, Title: the Last Test, Image: 4e4d7d659fed411e8e25caefb4008903.png
+2025-05-13 05:57:46,980 - app - INFO - Project ID: 11, Title: HELLO FRIEND, Image: 916e818cf9f747c5b6e4dfb9c8ff99b0.jpeg
+2025-05-13 05:57:46,980 - app - INFO - Project ID: 10, Title: Check Now, Image: f18ad8279f95495e8dfd835f8046d9e8.jpg
+2025-05-13 05:57:46,980 - app - INFO - Project ID: 9, Title: Eat, Image: None
+2025-05-13 05:57:46,980 - app - INFO - Project ID: 8, Title: Pic2, Image: None
+2025-05-13 05:57:46,980 - app - INFO - Project ID: 7, Title: pic1, Image: fad42bf150894a0d94061a135ee38969.png
+2025-05-13 05:57:46,980 - app - INFO - Project ID: 6, Title: Project Photo Test, Image: None
+2025-05-13 05:57:46,980 - app - INFO - Project ID: 5, Title: Test Test, Image: None
+2025-05-13 05:57:46,980 - app - INFO - Project ID: 4, Title: Test1, Image: None
+2025-05-18 11:07:16,523 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-18 11:07:16,959 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-18 12:22:55,371 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-18 12:40:56,218 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 06:02:53,844 - app - INFO - Retrieved 11 projects
+2025-05-21 06:02:53,845 - app - INFO - Project ID: 14, Title: Image Test 2, Image: 7a5b3de3a7364821811564ddaef8757c.jpg
+2025-05-21 06:02:53,845 - app - INFO - Project ID: 13, Title: Let's GO:), Image: d7d56d7b49b54e0c93d5b95373591282.png
+2025-05-21 06:02:53,845 - app - INFO - Project ID: 12, Title: the Last Test, Image: 4e4d7d659fed411e8e25caefb4008903.png
+2025-05-21 06:02:53,845 - app - INFO - Project ID: 11, Title: HELLO FRIEND, Image: 916e818cf9f747c5b6e4dfb9c8ff99b0.jpeg
+2025-05-21 06:02:53,845 - app - INFO - Project ID: 10, Title: Check Now, Image: f18ad8279f95495e8dfd835f8046d9e8.jpg
+2025-05-21 06:02:53,846 - app - INFO - Project ID: 9, Title: Eat, Image: None
+2025-05-21 06:02:53,846 - app - INFO - Project ID: 8, Title: Pic2, Image: None
+2025-05-21 06:02:53,846 - app - INFO - Project ID: 7, Title: pic1, Image: fad42bf150894a0d94061a135ee38969.png
+2025-05-21 06:02:53,846 - app - INFO - Project ID: 6, Title: Project Photo Test, Image: None
+2025-05-21 06:02:53,846 - app - INFO - Project ID: 5, Title: Test Test, Image: None
+2025-05-21 06:02:53,846 - app - INFO - Project ID: 4, Title: Test1, Image: None
+2025-05-21 07:18:51,564 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 07:19:12,387 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 07:19:31,092 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 07:23:07,496 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 08:50:34,462 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 08:59:09,140 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 09:02:42,379 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 09:21:46,181 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 09:24:41,537 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 09:26:47,152 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 09:37:55,989 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 09:39:11,920 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 09:43:24,571 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 09:47:56,660 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 09:59:11,678 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 10:01:28,707 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 10:02:27,133 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 10:03:09,284 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 13:06:51,453 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 13:07:52,009 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 13:16:30,582 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 13:16:41,195 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 13:18:09,875 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 13:18:43,736 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 14:52:40,074 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 14:53:21,233 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 15:12:45,418 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 15:25:36,680 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 15:37:25,319 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 15:48:31,573 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 15:50:17,840 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 19:53:49,730 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 22:13:49,290 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 22:23:47,808 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 22:33:45,847 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 22:35:32,004 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 22:40:46,603 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-21 22:41:49,145 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 01:33:18,394 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 01:36:56,643 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 01:46:33,505 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 01:49:07,900 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:03:17,485 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:06:14,281 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:06:19,089 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:06:22,892 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:06:26,377 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:06:36,138 - app - INFO - Retrieved 0 projects
+2025-05-22 02:07:37,551 - app - INFO - Processing new photo submission
+2025-05-22 02:07:46,353 - app - INFO - Retrieved 0 projects
+2025-05-22 02:08:10,300 - app - INFO - Processing new project submission
+2025-05-22 02:08:10,303 - app - INFO - Processing image for project: Test1
+2025-05-22 02:08:10,304 - app - INFO - Processing image: 4413f3f1752f44e3b14afa2b74c6cc4f.jpg
+2025-05-22 02:08:10,315 - app - INFO - Image processed successfully: 4413f3f1752f44e3b14afa2b74c6cc4f.jpg
+2025-05-22 02:08:10,317 - app - INFO - Created photo with ID 2 and filename 4413f3f1752f44e3b14afa2b74c6cc4f.jpg
+2025-05-22 02:08:10,317 - app - INFO - Associated with project ID 1
+2025-05-22 02:08:10,322 - app - INFO - After commit: Project photo_id = 2
+2025-05-22 02:08:10,324 - app - INFO - After commit: Photo projects count = 1
+2025-05-22 02:08:10,335 - app - INFO - Retrieved 1 projects
+2025-05-22 02:08:10,335 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 02:08:28,768 - app - INFO - Retrieved 1 projects
+2025-05-22 02:08:28,768 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 02:08:32,437 - app - INFO - Retrieved 1 projects
+2025-05-22 02:08:32,438 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 02:10:28,363 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:10:31,869 - app - INFO - Retrieved 1 projects
+2025-05-22 02:10:31,869 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 02:10:36,328 - app - INFO - Retrieved 0 projects
+2025-05-22 02:10:58,177 - app - INFO - Processing new project submission
+2025-05-22 02:10:58,178 - app - INFO - Processing image for project: Test1
+2025-05-22 02:10:58,178 - app - INFO - Processing image: d8f835401a894ea78ef42efcd13a1cd3.jpg
+2025-05-22 02:10:58,485 - app - INFO - Image processed successfully: d8f835401a894ea78ef42efcd13a1cd3.jpg
+2025-05-22 02:10:58,488 - app - INFO - Created photo with ID 2 and filename d8f835401a894ea78ef42efcd13a1cd3.jpg
+2025-05-22 02:10:58,488 - app - INFO - Associated with project ID 1
+2025-05-22 02:10:58,491 - app - INFO - After commit: Project photo_id = 2
+2025-05-22 02:10:58,491 - app - INFO - After commit: Photo projects count = 1
+2025-05-22 02:10:58,499 - app - INFO - Retrieved 1 projects
+2025-05-22 02:10:58,499 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 02:12:16,955 - app - INFO - Retrieved 1 projects
+2025-05-22 02:12:16,955 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 02:12:50,741 - app - INFO - Retrieved 1 projects
+2025-05-22 02:12:50,741 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 02:13:16,772 - app - INFO - Processing new project submission
+2025-05-22 02:13:16,774 - app - INFO - Processing image for project: Test2
+2025-05-22 02:13:16,775 - app - INFO - Processing image: edd948ff5463458bb0b5112f2903e818.jpg
+2025-05-22 02:13:16,786 - app - INFO - Image processed successfully: edd948ff5463458bb0b5112f2903e818.jpg
+2025-05-22 02:13:16,788 - app - INFO - Created photo with ID 3 and filename edd948ff5463458bb0b5112f2903e818.jpg
+2025-05-22 02:13:16,788 - app - INFO - Associated with project ID 2
+2025-05-22 02:13:16,792 - app - INFO - After commit: Project photo_id = 3
+2025-05-22 02:13:16,793 - app - INFO - After commit: Photo projects count = 1
+2025-05-22 02:13:16,802 - app - INFO - Retrieved 2 projects
+2025-05-22 02:13:16,802 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-05-22 02:13:16,802 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 02:16:02,488 - app - INFO - Retrieved 2 projects
+2025-05-22 02:16:02,488 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-05-22 02:16:02,488 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 02:19:05,047 - app - INFO - Photo successfully processed 2b95828637a845bdb0d3c5a391a1eea3.jpg
+2025-05-22 02:19:05,050 - app - INFO - Associated post ID 1 with photo ID 4
+2025-05-22 02:19:05,054 - app - INFO - After commit: Post Photo_id = 4
+2025-05-22 02:19:05,054 - app - INFO - After commit: Photo posts count = 1
+2025-05-22 02:27:44,647 - app - INFO - Retrieved 2 projects
+2025-05-22 02:27:44,647 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-05-22 02:27:44,647 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 02:29:58,567 - app - INFO - Retrieved 2 projects
+2025-05-22 02:29:58,567 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-05-22 02:29:58,567 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 02:32:49,669 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:32:51,798 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:32:52,082 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:34:07,864 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:34:09,404 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:34:09,781 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:35:28,691 - app - INFO - Photo successfully processed f48379f772244fbfa20b9a7e637cda5b.jpg
+2025-05-22 02:35:28,693 - app - INFO - Associated post ID 2 with photo ID 5
+2025-05-22 02:35:28,696 - app - INFO - After commit: Post Photo_id = 5
+2025-05-22 02:35:28,698 - app - INFO - After commit: Photo posts count = 1
+2025-05-22 02:42:53,834 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:42:55,826 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 02:42:56,145 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 03:18:14,474 - app - INFO - Processing new photo submission
+2025-05-22 03:31:05,575 - app - INFO - Retrieved 2 projects
+2025-05-22 03:31:05,575 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-05-22 03:31:05,575 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 03:32:05,508 - app - INFO - Retrieved 2 projects
+2025-05-22 03:32:05,508 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-05-22 03:32:05,508 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 03:35:20,837 - app - INFO - Retrieved 2 projects
+2025-05-22 03:35:20,838 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-05-22 03:35:20,838 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 03:37:14,071 - app - INFO - Retrieved 2 projects
+2025-05-22 03:37:14,071 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-05-22 03:37:14,071 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 03:37:19,972 - app - INFO - Retrieved 2 projects
+2025-05-22 03:37:19,972 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-05-22 03:37:19,972 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 05:32:43,043 - app - INFO - Retrieved 2 projects
+2025-05-22 05:32:43,043 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-05-22 05:32:43,043 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 05:33:16,506 - app - INFO - Retrieved 2 projects
+2025-05-22 05:33:16,506 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-05-22 05:33:16,506 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-05-22 07:54:00,545 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 07:54:02,799 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 07:54:03,140 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 08:13:13,857 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 08:13:15,738 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 08:13:16,052 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 09:00:27,769 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 09:00:49,554 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 10:57:57,982 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 11:03:30,840 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 16:29:42,677 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 16:29:46,788 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 16:29:47,091 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 22:08:25,058 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 22:12:22,823 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 22:28:53,403 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 22:29:14,106 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 22:29:14,409 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 22:46:19,428 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 22:49:58,522 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 22:50:45,516 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 22:52:23,096 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 23:00:40,638 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 23:12:31,996 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 23:12:32,298 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 23:12:41,982 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=7ffcfd88be0aa41c1dd499f2763a0bef
+2025-05-22 23:16:00,993 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=5c4d9db9d8346622baf7bb378a9f594d
+2025-05-22 23:18:12,792 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 23:18:14,188 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=341a794a1e34ecd9b3fd22f7d1a422d7
+2025-05-22 23:18:21,888 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=ee1bea63258fd979f0ee44bed1bee3f2
+2025-05-22 23:18:36,568 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 23:19:05,516 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=0e8c0182ca904be4d9563bd553f4bda6
+2025-05-22 23:21:01,977 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 23:21:08,774 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 23:21:12,803 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:21:12,804 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=71dd539661630606d40bf9db08a396f4
+2025-05-22 23:22:39,428 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 23:22:39,726 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 23:22:47,901 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:22:47,902 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=f2c8fa76e41c3e36e54dedf231e1c78c
+2025-05-22 23:28:06,065 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:28:06,066 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=b033368c2e9e22bae64f8e85de7bac6e
+2025-05-22 23:28:13,480 - app - WARNING - CSRF Error: 400 Bad Request: The CSRF token is missing. on /api/spotify/exchange-visitor-code from 127.0.0.1
+2025-05-22 23:33:07,254 - app - WARNING - Spotify callback state mismatch. Received: b033368c2e9e22bae64f8e85de7bac6e, Expected: None
+2025-05-22 23:33:10,699 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:33:10,699 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=a58326529d9e04643406a3f7c3ef1ba1
+2025-05-22 23:33:19,723 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 23:33:24,922 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 23:33:57,216 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 23:33:57,571 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-22 23:34:51,175 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:34:51,175 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=93677a28323c0929e08c8f0cb5290b8a
+2025-05-22 23:36:15,635 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:36:15,636 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=ad811bae2f337898489197961b507832
+2025-05-22 23:36:38,904 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:36:38,904 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=39e23155fdc1503a80d3355ce70ea837
+2025-05-22 23:38:35,315 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 23:43:18,559 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 23:44:42,715 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-22 23:50:06,399 - app - WARNING - 404 Not Found: /apple-touch-icon-precomposed.png
+2025-05-22 23:50:06,403 - app - WARNING - 404 Not Found: /apple-touch-icon.png
+2025-05-22 23:50:06,404 - app - WARNING - 404 Not Found: /favicon.ico
+2025-05-22 23:50:27,677 - app - WARNING - 404 Not Found: /apple-touch-icon-precomposed.png
+2025-05-22 23:50:27,681 - app - WARNING - 404 Not Found: /favicon.ico
+2025-05-22 23:50:27,737 - app - WARNING - 404 Not Found: /apple-touch-icon.png
+2025-05-22 23:50:31,186 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:50:31,186 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=fa9345cdc1196390e0c3f700c26a98fe
+2025-05-22 23:51:47,999 - app - WARNING - Spotify callback state mismatch. Received: fa9345cdc1196390e0c3f700c26a98fe, Expected: None
+2025-05-22 23:51:51,304 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:51:51,304 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=334a22040fcf696e85c1e0c4ed039b3c
+2025-05-22 23:51:51,464 - app - WARNING - Spotify callback state mismatch. Received: 334a22040fcf696e85c1e0c4ed039b3c, Expected: None
+2025-05-22 23:52:00,242 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:52:00,242 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=2b06babb3bdbbdde38f3793497aa22d9
+2025-05-22 23:52:00,389 - app - WARNING - Spotify callback state mismatch. Received: 2b06babb3bdbbdde38f3793497aa22d9, Expected: None
+2025-05-22 23:52:48,160 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:52:48,160 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=66ec279878518b35312b234bb9f8fad1
+2025-05-22 23:52:48,309 - app - WARNING - Spotify callback state mismatch. Received: 66ec279878518b35312b234bb9f8fad1, Expected: None
+2025-05-22 23:53:47,809 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-22 23:53:47,810 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=3c9e8f85269880520f11a0fe7eb5ad38
+2025-05-22 23:53:47,948 - app - WARNING - Spotify callback state mismatch. Received: 3c9e8f85269880520f11a0fe7eb5ad38, Expected: None
+2025-05-23 00:03:52,864 - app - WARNING - 404 Not Found: /favicon.ico
+2025-05-23 00:03:54,896 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-23 00:03:54,896 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=213eadca6f7628d568cedf9b839ffa64
+2025-05-23 00:04:52,871 - app - WARNING - 404 Not Found: /favicon.ico
+2025-05-23 00:05:01,055 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-23 00:05:01,055 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=f61c1ca439f1c859ea924b33d8bfadb3
+2025-05-23 00:05:01,378 - app - WARNING - 404 Not Found: /favicon.ico
+2025-05-23 05:47:44,562 - app - WARNING - Spotify callback state mismatch. Received: None, Expected: None
+2025-05-23 05:47:44,849 - app - WARNING - CSRF Error: 400 Bad Request: The CSRF token is missing. on /api/spotify/refresh-visitor-token from 127.0.0.1
+2025-05-23 05:47:57,544 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-23 05:47:57,544 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=7890cca25fc49fd740c67632520f070a
+2025-05-23 06:22:15,102 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-23 06:51:14,962 - app - WARNING - CSRF Error: 400 Bad Request: The CSRF token is missing. on /api/spotify/refresh-visitor-token from 127.0.0.1
+2025-05-23 07:30:44,552 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-23 07:31:08,099 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-23 07:31:11,181 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-23 07:31:11,508 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-23 07:41:46,110 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-23 07:41:46,111 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=c22afa3aebb9fc7e2f27e5ed82dec126
+2025-05-23 07:44:33,559 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-23 07:54:47,083 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-23 07:55:28,791 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2025-05-23 08:32:08,017 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-23 08:32:08,385 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-23 08:32:50,391 - app - WARNING - CSRF Error: 400 Bad Request: The CSRF token is missing. on /api/spotify/refresh-visitor-token from 127.0.0.1
+2025-05-23 08:32:50,438 - app - WARNING - 404 Not Found: /favicon.ico
+2025-05-23 10:36:45,912 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-23 10:46:43,800 - app - WARNING - CSRF Error: 400 Bad Request: The CSRF token is missing. on /api/spotify/refresh-visitor-token from 127.0.0.1
+2025-05-23 10:47:01,400 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-23 10:47:01,401 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=66fb8a16962100f43bdd9100715be972
+2025-05-23 10:47:14,224 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-23 10:47:14,581 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-05-23 10:56:39,027 - app - INFO - Generated Spotify Redirect URI: http://127.0.0.1:5000/spotify/callback
+2025-05-23 10:56:39,027 - app - INFO - Redirecting visitor to Spotify auth: https://accounts.spotify.com/authorize?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fspotify%2Fcallback&scope=streaming+user-read-email+user-read-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&client_id=92ef0c623b6b4f7d841fc2ebb1021a4d&state=3a3ebda88c381ec84600f74c06c2ada8
+2025-05-23 17:46:40,648 - app - WARNING - Spotify callback state mismatch. Received: f61c1ca439f1c859ea924b33d8bfadb3, Expected: None
+2025-05-23 17:46:40,925 - app - WARNING - 404 Not Found: /favicon.ico
+2025-05-25 01:16:11,604 - app - INFO - Photo successfully processed 5fba89543a584a5fbd3a8a2d9d71ea21.jpg
+2025-05-25 01:16:11,607 - app - INFO - Associated post ID 9 with photo ID 10
+2025-05-25 01:16:11,611 - app - INFO - After commit: Post Photo_id = 10
+2025-05-25 01:16:11,611 - app - INFO - After commit: Photo posts count = 1
+2025-06-23 10:26:14,983 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-06-23 10:26:15,430 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-06-23 10:26:18,260 - app - WARNING - 404 Not Found: /favicon.ico
+2025-06-23 10:29:32,367 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-06-23 10:47:15,210 - app - INFO - Retrieved 2 projects
+2025-06-23 10:47:15,210 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-06-23 10:47:15,210 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-06-23 10:52:59,304 - app - INFO - Retrieved 2 projects
+2025-06-23 10:52:59,304 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-06-23 10:52:59,304 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-06-23 10:54:13,606 - app - INFO - Retrieved 2 projects
+2025-06-23 10:54:13,607 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-06-23 10:54:13,607 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-06-23 10:54:58,127 - app - INFO - Retrieved 2 projects
+2025-06-23 10:54:58,127 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-06-23 10:54:58,127 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-06-23 10:55:09,931 - app - INFO - Retrieved 2 projects
+2025-06-23 10:55:09,931 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-06-23 10:55:09,931 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-06-23 10:55:23,330 - app - INFO - Retrieved 2 projects
+2025-06-23 10:55:23,330 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-06-23 10:55:23,330 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-08-28 09:41:01,869 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-28 09:41:02,298 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-28 09:41:04,436 - app - WARNING - 404 Not Found: /favicon.ico
+2025-08-28 17:51:44,983 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-28 17:54:22,177 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-28 17:56:03,224 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:00:55,409 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:00:55,767 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:00:57,146 - app - ERROR - Database connection error: (sqlite3.OperationalError) no such column: projects.is_featured
+[SQL: SELECT projects.id AS projects_id, projects.title AS projects_title, projects.description AS projects_description, projects.date_posted AS projects_date_posted, projects.github_link AS projects_github_link, projects.is_featured AS projects_is_featured, projects.photo_id AS projects_photo_id 
+FROM projects 
+WHERE projects.is_featured = 1
+ LIMIT ? OFFSET ?]
+[parameters: (1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-29 07:04:51,370 - app - ERROR - Database connection error: (sqlite3.OperationalError) no such column: projects.is_featured
+[SQL: SELECT projects.id AS projects_id, projects.title AS projects_title, projects.description AS projects_description, projects.date_posted AS projects_date_posted, projects.github_link AS projects_github_link, projects.is_featured AS projects_is_featured, projects.photo_id AS projects_photo_id 
+FROM projects 
+WHERE projects.is_featured = 1
+ LIMIT ? OFFSET ?]
+[parameters: (1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-29 07:04:56,885 - app - ERROR - Database connection error: (sqlite3.OperationalError) no such column: projects.is_featured
+[SQL: SELECT projects.id AS projects_id, projects.title AS projects_title, projects.description AS projects_description, projects.date_posted AS projects_date_posted, projects.github_link AS projects_github_link, projects.is_featured AS projects_is_featured, projects.photo_id AS projects_photo_id 
+FROM projects 
+WHERE projects.is_featured = 1
+ LIMIT ? OFFSET ?]
+[parameters: (1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-29 07:05:32,506 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:05:37,450 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:05:44,527 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:05:58,050 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:05:58,399 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:05:59,538 - app - ERROR - Database connection error: (sqlite3.OperationalError) no such column: projects.is_featured
+[SQL: SELECT projects.id AS projects_id, projects.title AS projects_title, projects.description AS projects_description, projects.date_posted AS projects_date_posted, projects.github_link AS projects_github_link, projects.is_featured AS projects_is_featured, projects.photo_id AS projects_photo_id 
+FROM projects 
+WHERE projects.is_featured = 1
+ LIMIT ? OFFSET ?]
+[parameters: (1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-29 07:06:05,788 - app - ERROR - Error retrieving projects: (sqlite3.OperationalError) no such column: projects.is_featured
+[SQL: SELECT projects.id AS projects_id, projects.title AS projects_title, projects.description AS projects_description, projects.date_posted AS projects_date_posted, projects.github_link AS projects_github_link, projects.is_featured AS projects_is_featured, projects.photo_id AS projects_photo_id 
+FROM projects ORDER BY projects.date_posted DESC]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-29 07:06:47,533 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:06:47,881 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:06:49,391 - app - ERROR - Database connection error: (sqlite3.OperationalError) no such column: projects.is_featured
+[SQL: SELECT projects.id AS projects_id, projects.title AS projects_title, projects.description AS projects_description, projects.date_posted AS projects_date_posted, projects.github_link AS projects_github_link, projects.is_featured AS projects_is_featured, projects.photo_id AS projects_photo_id 
+FROM projects 
+WHERE projects.is_featured = 1
+ LIMIT ? OFFSET ?]
+[parameters: (1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-29 07:06:53,661 - app - ERROR - Error retrieving projects: (sqlite3.OperationalError) no such column: projects.is_featured
+[SQL: SELECT projects.id AS projects_id, projects.title AS projects_title, projects.description AS projects_description, projects.date_posted AS projects_date_posted, projects.github_link AS projects_github_link, projects.is_featured AS projects_is_featured, projects.photo_id AS projects_photo_id 
+FROM projects ORDER BY projects.date_posted DESC]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-29 07:07:24,978 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:16:29,010 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:36:41,910 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:37:09,315 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:37:26,386 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:37:30,469 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:37:36,014 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:37:36,385 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:37:46,427 - app - INFO - Retrieved 2 projects
+2025-08-29 07:37:46,427 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-08-29 07:37:46,428 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-08-29 07:38:16,306 - app - INFO - Retrieved 2 projects
+2025-08-29 07:38:16,306 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-08-29 07:38:16,306 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-08-29 07:38:19,940 - app - INFO - Retrieved 2 projects
+2025-08-29 07:38:19,940 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-08-29 07:38:19,940 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-08-29 07:39:15,236 - app - INFO - Retrieved 2 projects
+2025-08-29 07:39:15,236 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-08-29 07:39:15,236 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-08-29 07:39:16,548 - app - INFO - Retrieved 2 projects
+2025-08-29 07:39:16,548 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-08-29 07:39:16,549 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-08-29 07:48:58,242 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:48:58,714 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2025-08-29 07:49:46,540 - app - INFO - Retrieved 2 projects
+2025-08-29 07:49:46,540 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-08-29 07:49:46,540 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2025-08-29 07:49:50,792 - app - INFO - Retrieved 2 projects
+2025-08-29 07:49:50,792 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2025-08-29 07:49:50,792 - app - INFO - Project ID: 1, Title: Test1, Image: 2

@@ -168,6 +168,7 @@ class Project(Base):
     description: so.Mapped[Optional[str]] = so.mapped_column(sa.Text, nullable=True)
     date_posted: so.Mapped[datetime] = so.mapped_column(sa.DateTime(timezone=True), index=True, default=lambda: datetime.now(timezone.utc))
     github_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256), nullable=True)
+    is_featured: so.Mapped[bool] = so.mapped_column(sa.Boolean, nullable=False, default=False, server_default=sa.false(), index=True)
 
     photo_id: so.Mapped[Optional[int]] = so.mapped_column(sa.ForeignKey("photos.id", name=naming_convention["fk"] % {"table_name": "projects", "column_0_name": "photo_id", "referred_table_name": "photos"}, ondelete="SET NULL"), nullable=True, index=True)
     photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", foreign_keys=[photo_id], back_populates="linked_projects", innerjoin=False)
@@ -316,7 +317,8 @@ def loading():
 def index():
     try:
         posts = retry_database_operation(lambda: Post.query.order_by(Post.date_posted.desc()).all())
-        return render_template('index.html', posts=posts)
+        featured_project = Project.query.filter_by(is_featured=True).first()
+        return render_template('index.html', posts=posts, featured_project=featured_project)
     except OperationalError as e:
         app.logger.error(f"Database connection error: {str(e)}")
         flash('Database connection issue. Please try again in a moment.', 'error')
@@ -553,6 +555,29 @@ def new_project():
             return redirect(url_for('new_project'))
 
     return render_template('new_project.html')
+
+@app.route('/set_featured_project/<int:project_id>', methods=['POST'])
+@login_required
+def set_featured_project(project_id):
+    project = Project.query.get_or_404(project_id)
+
+    # Remove featured status from all projects
+    Project.query.update({'is_featured': False})
+
+    project.is_featured = True
+    db.session.commit()
+
+    flash(f'"{project.title}" is now featured on the Home Page!', 'success')
+    return redirect(url_for('projects'))
+
+@app.route('/unset_featured_project', methods=['POST'])
+@login_required
+def unset_featured_project():
+    Project.query.update({'is_featured': False})
+    db.session.commit()
+
+    flash('Featured project removed', 'success')
+    return redirect(url_for('projects'))
 
 @app.route('/new_photo', methods=['GET', 'POST'])
 @login_required

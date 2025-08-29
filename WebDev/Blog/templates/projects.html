@@ -2,10 +2,35 @@
 {% block title %}Projects - Ben Amuwo's Neurascape{% endblock %}
 {% block content %}
 <h1><i class="fa-solid fa-sun"></i> Projects</h1>
+
+{% if current_user.is_authenticated %}
+<!-- Featured Project Admin Controls -->
+<div class="admin-featured-controls" style="margin: 1.5em 0; padding: 1em; background: rgba(20, 20, 50, 0.5); border-radius: 12px; border: 1px solid var(--glass-border);">
+    <h3 style="margin-top: 0;"><i class="fa-solid fa-star"></i> Featured Project Management</h3>
+    {% set featured_project = projects|selectattr("is_featured", "equalto", true)|first %}
+    {% if featured_project %}
+    <p>Currently featuring: <strong>{{ featured_project.title }}</strong></p>
+    <form method="post" action="{{ url_for('unset_featured_project') }}" style="display: inline-block;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="admin-btn" style="background: #ff6e6e; padding: 0.5em 1em; border-radius: 8px; border: none; color: #fff; cursor: pointer;">
+            <i class="fa-solid fa-star-xmark"></i> Remove Featured
+        </button>
+    </form>
+    {% else %}
+    <p>No project is currently featured.</p>
+    {% endif %}
+</div>
+{% endif %}
+
 {% if projects %}
 <div class="projects-list">
     {% for project in projects %}
-    <div class="project-card visible" id="project-{{ project.id }}">
+    <div class="project-card visible {% if project.is_featured %}featured-card{% endif %}" id="project-{{ project.id }}">
+        {% if project.is_featured %}
+        <span class="featured-indicator" style="position: absolute; top: 10px; right: 10px; background: var(--accent); color: var(--bg-dark); padding: 0.3em 0.8em; border-radius: 20px; font-size: 0.8em; font-weight: bold;">
+            <i class="fa-solid fa-star"></i> Featured
+        </span>
+        {% endif %}
         <h3><a href="{{ url_for('project_detail', project_id=project.id) }}">{{ project.title }}</a></h3>
         {% if project.photo and project.photo.filename %}
         <a href="{{ url_for('project_detail', project_id=project.id) }}">
@@ -31,6 +56,19 @@
             <a href="{{ project.github_link }}" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
             {% endif %}
         </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="project-admin-actions" style="margin-top: 1em; padding-top: 1em; border-top: 1px solid rgba(255,255,255,0.1);">
+            {% if not project.is_featured %}
+            <form method="post" action="{{ url_for('set_featured_project', project_id=project.id) }}" style="display: inline-block;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="feature-btn" style="background: var(--accent); color: var(--bg-dark); padding: 0.4em 1em; border-radius: 6px; border: none; cursor: pointer; font-size: 0.9em;">
+                    <i class="fa-solid fa-star"></i> Set as Featured
+                </button>
+            </form>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
     {% endfor %}
 </div>
@@ -40,9 +78,9 @@
 </div>
 {% endif %}
 
-    {% if current_user.is_authenticated %}
-    <div class="admin-actions" style="margin-top: 2em; text-align: center;">
-        <a href="{{ url_for('new_project') }}" class="hero-btn"><i class="fa-solid fa-plus-circle"></i> Add New Project</a>
-    </div>
-    {% endif %}
+{% if current_user.is_authenticated %}
+<div class="admin-actions" style="margin-top: 2em; text-align: center;">
+    <a href="{{ url_for('new_project') }}" class="hero-btn"><i class="fa-solid fa-plus-circle"></i> Add New Project</a>
+</div>
+{% endif %}
 {% endblock %}

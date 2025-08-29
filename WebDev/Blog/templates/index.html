@@ -6,8 +6,49 @@
     <h1 class="hero-title">Welcome to the Neurascape</h1>
     <p class="hero-tagline">
       Mental Playground and Digital sanctuary of Ben Amuwo.
-      <br><br><span style="color:DarkSlateBlue"><i>I've implemented a fun new easy listening feature.
-      <br>Connect your Spotify with the button below, head over to the Music page, then try clicking the <a href="{{ url_for('music') }}">Play with Web Player</a> button :)</i>
+    </p>
+
+    {% if featured_project %}
+    <div class="featured-project-insert">
+      <div class="featured-divider"></div>
+      <div class="featured-badge"><i class="fa-solid fa-star"></i> Featured Project</div>
+      <h2 class="featured-title">{{ featured_project.title }}</h2>
+      {% if featured_project.photo and featured_project.photo.filename %}
+      <div class="featured-project-image">
+        {% if USING_SPACES %}
+        <img src="{{ SPACES_URL }}/medium/{{ featured_project.photo.filename }}"
+             alt="{{ featured_project.title }}"
+             class="featured-img">
+        {% else %}
+        <img src="{{ url_for('static', filename='images/medium/' + featured_project.photo.filename) }}"
+             alt="{{ featured_project.title }}"
+             class="featured-img">
+        {% endif %}
+      </div>
+      {% endif %}
+      {% if featured_project.description %}
+      <p class="featured-description">
+          {{ featured_project.description|truncate(200) }}
+      </p>
+      {% endif %}
+
+      <div class="featured-project-links">
+        <a href="{{ url_for('project_detail', project_id=featured_project.id) }}" class="featured-btn">
+          <i class="fa-solid fa-eye"></i> View Project
+        </a>
+        {% if featured_project.github_link %}
+        <a href="{{ featured_project.github_link }}" target="_blank" class="featured-btn featured-btn-secondary">
+          <i class="fa-brands fa-github"></i> GitHub
+        </a>
+        {% endif %}
+      </div>
+      <div class="featured-divider"></div>
+    </div>
+    {% endif %}
+     <span style="color:Orchid"><i>The HUMA-N Donation Drive was concluded to a resounding success!
+      <br>To learn more about the donation drive and to see all the wonderful human beings that contributed to its success, click the <a href="https://humanproject.vercel.app" style="color:MediumSeaGreen">Digital Scrapbook</a> button :)</i></span>
+     <span style="color:DarkSlateBlue"><i>I've implemented an easy listening feature so you can check out my crazy playlists.
+      <br>Connect your Spotify with the button below, head over to the Music page, then try clicking the <a href="{{ url_for('music') }}">Play with Web Player</a> button :)</i></span>
     </p>
     <a href="#posts" class="hero-btn">Start Exploring</a>
   </div>
