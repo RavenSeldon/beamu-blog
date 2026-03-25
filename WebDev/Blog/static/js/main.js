@@ -157,13 +157,23 @@ document.addEventListener('DOMContentLoaded', function() {
             var parent = postsContainer.parentNode || document.querySelector('main');
             if (parent) parent.insertBefore(loader, postsContainer.nextSibling);
         }
-        if (loader) loader.style.display = 'none';
+        if (loader) {
+            loader.style.display = 'block';
+            loader.style.visibility = 'hidden'; // Keep geometry, hide visually
+        }
 
         function hideLoader() {
-            if (loader) { loader.style.display = 'none'; loader.classList.remove('pulsing'); }
+            if (loader) {
+                loader.style.visibility = 'hidden';
+                loader.classList.remove('pulsing');
+            }
         }
         function showLoader() {
-            if (loader) { loader.style.display = 'block'; loader.classList.add('pulsing'); }
+            if (loader) {
+                loader.style.display = 'block';
+                loader.style.visibility = 'visible';
+                loader.classList.add('pulsing');
+            }
         }
         function removeLoader() {
             if (loader && loader.parentNode) { loader.parentNode.removeChild(loader); loader = null; }
