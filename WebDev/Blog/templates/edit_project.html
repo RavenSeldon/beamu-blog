@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Edit Project – Ben Amuwo's Neurascape{% endblock %}
+{% block extra_css %}{% include '_easymde_head.html' %}{% endblock %}
+{% block content %}
+<section class="newpost-wrap">
+  <h1><i class="fa-solid fa-pen-to-square"></i> Edit Project</h1>
+
+  <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>
+      <span>Title</span>
+      <input type="text" name="title" maxlength="120" value="{{ project.title }}" required>
+    </label>
+
+    <label class="full">
+      <span>Description</span>
+      <textarea name="description" rows="8" maxlength="5000" data-easymde>{{ project.description or '' }}</textarea>
+    </label>
+
+    <div class="flex-row">
+      {% set current_photo = project.photo %}
+      {% include '_current_image.html' %}
+
+      <label class="file-input has-preview">
+        <i class="fa-solid fa-image"></i> Replace Cover Image <small>(optional)</small>
+        <input id="post-image" type="file" name="image" accept="image/*">
+        <span class="file-name">No file chosen...</span>
+        <img class="preview" style="display:none;" alt="Image preview" src="">
+      </label>
+
+      <label class="flex-grow">
+        <span>GitHub URL <small>(optional)</small></span>
+        <input type="url" name="github_link" value="{{ project.github_link or '' }}" placeholder="https://github.com/user/repo">
+      </label>
+    </div>
+
+    <div style="display: flex; gap: 1em; align-items: center;">
+      <button type="submit" class="send-btn"><i class="fa-solid fa-check"></i> Save Changes</button>
+      <a href="{{ url_for('project_detail', project_id=project.id) }}" style="color: var(--accent); text-decoration: none;">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% include '_easymde_init.html' %}
+{% include '_image_preview.html' %}
+{% endblock %}

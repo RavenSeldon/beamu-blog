@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Edit Review – Ben Amuwo's Neurascape{% endblock %}
+{% block extra_css %}{% include '_easymde_head.html' %}{% endblock %}
+{% block content %}
+<section class="newpost-wrap">
+  <h1><i class="fa-solid fa-pen-to-square"></i> Edit Review</h1>
+
+  <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <label for="title">
+      <span>Review Headline/Title</span>
+      <input type="text" id="title" name="title" maxlength="120" value="{{ item.title }}" required>
+    </label>
+
+    <label for="item_title">
+      <span>Title of Item Being Reviewed</span>
+      <input type="text" id="item_title" name="item_title" maxlength="256" value="{{ item.item_title }}" required>
+    </label>
+
+    <div class="flex-row">
+      <label for="category" class="flex-grow">
+        <span>Category</span>
+        <select id="category" name="category" required>
+          <option value="" disabled>Select category...</option>
+          {% for val, label in [('movie','Movie'),('book','Book'),('tv_show','TV Show'),('game','Game'),('album','Album/Music'),('product','Product'),('service','Service'),('other','Other')] %}
+          <option value="{{ val }}" {% if item.category == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label for="rating" class="flex-grow">
+        <span>Rating</span>
+        <input type="text" id="rating" name="rating" maxlength="50" value="{{ item.rating or '' }}">
+      </label>
+    </div>
+
+    <div class="flex-row">
+      <label for="year_released" class="flex-grow">
+        <span>Year Released <small>(optional)</small></span>
+        <input type="number" id="year_released" name="year_released" value="{{ item.year_released or '' }}">
+      </label>
+      <label for="director_author" class="flex-grow">
+        <span>Director/Author/Creator <small>(optional)</small></span>
+        <input type="text" id="director_author" name="director_author" maxlength="120" value="{{ item.director_author or '' }}">
+      </label>
+    </div>
+
+    <label for="content" class="full">
+      <span>Full Review Content <small>(Markdown OK)</small></span>
+      <textarea id="content" name="content" rows="10" maxlength="20000" data-easymde>{{ item.content or '' }}</textarea>
+    </label>
+
+    <label for="item_link">
+      <span>Link to Item <small>(optional)</small></span>
+      <input type="url" id="item_link" name="item_link" value="{{ item.item_link or '' }}">
+    </label>
+
+    <div class="flex-row">
+      <div class="flex-grow">
+        {% set current_photo = item.photo %}
+        {% include '_current_image.html' %}
+
+        <label class="file-input has-preview">
+          <i class="fa-solid fa-image"></i> Replace Cover Image <small>(optional)</small>
+          <input id="post-image" type="file" name="image" accept="image/*">
+          <span class="file-name">No file chosen...</span>
+          <img class="preview" style="display:none;" alt="Image preview" src="">
+        </label>
+      </div>
+
+      <label for="project_id" class="flex-grow">
+        <span>Associated Project <small>(optional)</small></span>
+        <select id="project_id" name="project_id" class="form-control">
+          <option value="">-- None --</option>
+          {% for project in projects %}
+          <option value="{{ project.id }}" {% if item.project_id == project.id %}selected{% endif %}>{{ project.title }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <div style="display: flex; gap: 1em; align-items: center;">
+      <button type="submit" class="send-btn"><i class="fa-solid fa-check"></i> Save Changes</button>
+      <a href="{{ url_for('post', post_id=item.id) }}" style="color: var(--accent); text-decoration: none;">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
+{% block extra_js %}
+{% include '_easymde_init.html' %}
+{% include '_image_preview.html' %}
+{% endblock %}

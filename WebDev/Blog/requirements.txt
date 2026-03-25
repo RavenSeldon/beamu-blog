@@ -9,6 +9,8 @@ click==8.1.8
 csscompressor==0.9.5
 Deprecated==1.2.18
 Flask==3.1.0
+Flask-Caching==2.3.1
+Flask-Compress==1.17
 Flask-Limiter==3.12
 Flask-Login==0.6.3
 Flask-Mail==0.10.0
@@ -37,6 +39,7 @@ python-dotenv==1.1.0
 requests==2.32.3
 rich==13.9.4
 s3transfer==0.12.0
+sentry-sdk[flask]==2.19.2
 sib-api-v3-sdk==7.6.0
 six==1.17.0
 SQLAlchemy==2.0.40

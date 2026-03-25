@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Projects - Ben Amuwo's Neurascape{% endblock %}
+{% block meta_description %}Browse Ben Amuwo's software projects — web applications, creative tools, and technical experiments from the Neurascape workshop.{% endblock %}
 {% block content %}
 <h1><i class="fa-solid fa-sun"></i> Projects</h1>
 
@@ -34,13 +35,10 @@
         <h3><a href="{{ url_for('project_detail', project_id=project.id) }}">{{ project.title }}</a></h3>
         {% if project.photo and project.photo.filename %}
         <a href="{{ url_for('project_detail', project_id=project.id) }}">
-            {% if USING_SPACES %}
-            <img src="{{ SPACES_URL }}/medium/{{ project.photo.filename }}"
-                 alt="{{ project.title }}">
-            {% else %}
-            <img src="{{ url_for('static', filename='images/medium/' + project.photo.filename) }}"
-                 alt="{{ project.title }}">
-            {% endif %}
+            {% set pic = get_picture_data(project.photo.filename, project.photo.lqip) %}
+            {% set img_alt = project.title %}
+            {% set img_sizes = '(max-width: 600px) 100vw, 50vw' %}
+            {% include '_responsive_image.html' %}
         </a>
         {% endif %}
         <p>

@@ -1,5 +1,38 @@
 {% extends "base.html" %}
 {% block title %}{{ post.title }} - Ben Amuwo's Neurascape{% endblock %}
+{% block meta_description %}{{ post.content|striptags|truncate(155, end='...') }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% if post.photo and post.photo.filename %}
+{% block og_image %}{{ request.host_url.rstrip('/') }}{{ get_picture_data(post.photo.filename).src }}{% endblock %}
+{% endif %}
+
+{% block extra_js %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": {{ post.title|tojson }},
+  "datePublished": "{{ post.date_posted.isoformat() }}",
+  "author": {
+    "@type": "Person",
+    "name": "Ben Amuwo",
+    "url": "https://benamuwo.me/about"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Ben Amuwo"
+  },
+  "description": {{ (post.content|striptags|truncate(155, end='...'))|tojson }},
+  "url": "{{ request.url }}"
+  {% if post.photo and post.photo.filename %}
+  ,"image": "{{ request.host_url.rstrip('/') }}{{ get_picture_data(post.photo.filename).src }}"
+  {% endif %}
+  {% if post.tags %}
+  ,"keywords": {{ post.tags|map(attribute='name')|list|tojson }}
+  {% endif %}
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <article class="single-post">
@@ -14,27 +47,22 @@
             </span>
             {% endif %}
         </div>
+        {% if post.tags %}
+        <div class="post-tags" style="display:flex; gap:0.5em; flex-wrap:wrap; margin-top:0.8em;">
+            {% for tag in post.tags %}
+            <span style="background:rgba(55,180,248,0.12); color:var(--primary); padding:0.25em 0.75em; border-radius:12px; font-size:0.85em; border:1px solid rgba(55,180,248,0.2);">#{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
     </header>
 
     {% if post.photo and post.photo.filename %}
     <div class="post-image">
-        <!-- Responsive image with srcset -->
-        {% set alt_text = post.photo.description if post.photo and post.photo.description else post.title %}
-        {% if USING_SPACES %}
-        <img src="{{ SPACES_URL }}/medium/{{ post.photo.filename }}"
-             srcset="{{ get_srcset(post.photo.filename) }}"
-             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
-             alt="{{ alt_text }}"
-             class="post-feature-img"
-             loading="eager">
-        {% else %}
-        <img src="{{ url_for('static', filename='images/medium/' + post.photo.filename) }}"
-             srcset="{{ get_srcset(post.photo.filename) }}"
-             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
-             alt="{{ alt_text }}"
-             class="post-feature-img"
-             loading="eager"> <!-- Load eagerly for above-the-fold image -->
-        {% endif %}
+        {% set pic = get_picture_data(post.photo.filename, post.photo.lqip) %}
+        {% set img_alt = post.photo.description if post.photo.description else post.title %}
+        {% set img_class = 'post-feature-img' %}
+        {% set img_loading = 'eager' %}
+        {% include '_responsive_image.html' %}
     </div>
     {% endif %}
 
@@ -51,10 +79,11 @@
     {% endif %}
 
     {% if current_user.is_authenticated %}
-    <div class="post-admin">
+    <div class="post-admin" style="display: flex; gap: 1em; align-items: center; flex-wrap: wrap;">
+        <a href="{{ url_for('edit_post', post_id=post.id) }}" class="send-btn" style="display: inline-block; text-decoration: none;"><i class="fa-solid fa-pen-to-square"></i> Edit Post</a>
         <form method="post" action="{{ url_for('delete_post', post_id=post.id) }}" onsubmit="return confirm('Are you sure you want to delete this post?');">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i> Delete Post</button>
+            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i></button>
         </form>
     </div>
     {% endif %}

@@ -1,0 +1,99 @@
+{# Shared image preview + drag-and-drop script for create/edit forms.
+   Expects an input#post-image element inside a .file-input wrapper. #}
+<script>
+(function () {
+  var MAX_SIZE_MB = 10;
+  var MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
+  var input = document.getElementById('post-image');
+  if (!input) return;
+  var label = input.closest('.file-input');
+  var fileNameEl = label.querySelector('.file-name');
+  var previewEl = label.querySelector('.preview');
+
+  /* Create a warning element (hidden by default) */
+  var warnEl = document.createElement('p');
+  warnEl.className = 'upload-size-warning';
+  warnEl.style.cssText = 'display:none; color:#ff6e6e; font-size:0.85em; margin:0.4em 0 0;';
+  label.parentElement.insertBefore(warnEl, label.nextSibling);
+
+  function handleFile(file) {
+    warnEl.style.display = 'none';
+    warnEl.textContent = '';
+
+    if (!file) {
+      fileNameEl.textContent = 'No file chosen\u2026';
+      previewEl.style.display = 'none';
+      previewEl.src = '';
+      return;
+    }
+
+    /* Show file name + size */
+    var sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    fileNameEl.textContent = file.name + ' (' + sizeMB + ' MB)';
+
+    /* Warn if over limit */
+    if (file.size > MAX_SIZE_BYTES) {
+      warnEl.textContent = '\u26A0 This file is ' + sizeMB + ' MB \u2014 the server limit is ' + MAX_SIZE_MB + ' MB. It will be rejected on upload.';
+      warnEl.style.display = 'block';
+    }
+
+    /* Show thumbnail preview */
+    if (file.type.startsWith('image/')) {
+      previewEl.src = URL.createObjectURL(file);
+      previewEl.style.display = 'block';
+      previewEl.onload = function () { URL.revokeObjectURL(previewEl.src); };
+    } else {
+      previewEl.style.display = 'none';
+      previewEl.src = '';
+    }
+  }
+
+  /* Standard file picker */
+  input.addEventListener('change', function () { handleFile(input.files[0]); });
+
+  /* ── Drag-and-drop enhancement ── */
+  var dropZone = label;
+  var dragCounter = 0;
+
+  dropZone.addEventListener('dragenter', function (e) {
+    e.preventDefault();
+    dragCounter++;
+    dropZone.style.borderColor = 'var(--primary)';
+    dropZone.style.boxShadow = '0 0 16px rgba(126, 249, 255, 0.4)';
+    dropZone.style.borderStyle = 'dashed';
+  });
+
+  dropZone.addEventListener('dragover', function (e) {
+    e.preventDefault(); /* required to allow drop */
+  });
+
+  dropZone.addEventListener('dragleave', function (e) {
+    e.preventDefault();
+    dragCounter--;
+    if (dragCounter <= 0) {
+      dragCounter = 0;
+      dropZone.style.borderColor = '';
+      dropZone.style.boxShadow = '';
+      dropZone.style.borderStyle = '';
+    }
+  });
+
+  dropZone.addEventListener('drop', function (e) {
+    e.preventDefault();
+    dragCounter = 0;
+    dropZone.style.borderColor = '';
+    dropZone.style.boxShadow = '';
+    dropZone.style.borderStyle = '';
+
+    var files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].type.startsWith('image/')) {
+      /* Assign the dropped file to the real input (for form submission) */
+      var dt = new DataTransfer();
+      dt.items.add(files[0]);
+      input.files = dt.files;
+      handleFile(files[0]);
+    }
+  });
+})();
+</script>

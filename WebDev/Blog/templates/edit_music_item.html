@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Edit Music Item – Ben Amuwo's Neurascape{% endblock %}
+{% block extra_css %}{% include '_easymde_head.html' %}{% endblock %}
+{% block content %}
+<section class="newpost-wrap">
+  <h1><i class="fa-solid fa-pen-to-square"></i> Edit Music Item</h1>
+
+  <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <label for="title">
+      <span>Title</span>
+      <input type="text" id="title" name="title" maxlength="120" value="{{ item.title }}" required>
+    </label>
+
+    <label for="item_type">
+      <span>Item Type</span>
+      <select id="item_type" name="item_type" required>
+        <option value="" disabled>Select type...</option>
+        {% for val, label in [('album_release','Album Release'),('single_track','Single Track'),('music_video','Music Video'),('live_performance','Live Performance'),('dj_set','DJ Set/Mix'),('soundtrack','Soundtrack'),('playlist_feature','Playlist Feature'),('other_music_related','Other')] %}
+        <option value="{{ val }}" {% if item.item_type == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label for="artist">
+      <span>Artist</span>
+      <input type="text" id="artist" name="artist" maxlength="120" value="{{ item.artist or '' }}">
+    </label>
+
+    <label for="album_title">
+      <span>Album Title <small>(if applicable)</small></span>
+      <input type="text" id="album_title" name="album_title" maxlength="256" value="{{ item.album_title or '' }}">
+    </label>
+
+    <label for="content" class="full">
+      <span>Content/Description <small>(Markdown OK)</small></span>
+      <textarea id="content" name="content" rows="8" maxlength="20000" data-easymde>{{ item.content or '' }}</textarea>
+    </label>
+
+    <div class="flex-row">
+      <div class="flex-grow">
+        {% set current_photo = item.photo %}
+        {% include '_current_image.html' %}
+
+        <label class="file-input has-preview">
+          <i class="fa-solid fa-image"></i> Replace Cover Image <small>(optional)</small>
+          <input id="post-image" type="file" name="image" accept="image/*">
+          <span class="file-name">No file chosen...</span>
+          <img class="preview" style="display:none;" alt="Image preview" src="">
+        </label>
+      </div>
+
+      <label for="project_id" class="flex-grow">
+        <span>Associated Project <small>(optional)</small></span>
+        <select id="project_id" name="project_id" class="form-control">
+          <option value="">-- None --</option>
+          {% for project in projects %}
+          <option value="{{ project.id }}" {% if item.project_id == project.id %}selected{% endif %}>{{ project.title }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <div class="flex-row">
+      <label for="spotify_link" class="flex-grow">
+        <span>Spotify Link <small>(optional)</small></span>
+        <input type="url" id="spotify_link" name="spotify_link" value="{{ item.spotify_link or '' }}">
+      </label>
+      <label for="youtube_link" class="flex-grow">
+        <span>YouTube Link <small>(optional)</small></span>
+        <input type="url" id="youtube_link" name="youtube_link" value="{{ item.youtube_link or '' }}">
+      </label>
+    </div>
+
+    <div style="display: flex; gap: 1em; align-items: center;">
+      <button type="submit" class="send-btn"><i class="fa-solid fa-check"></i> Save Changes</button>
+      <a href="{{ url_for('post', post_id=item.id) }}" style="color: var(--accent); text-decoration: none;">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
+{% block extra_js %}
+{% include '_easymde_init.html' %}
+{% include '_image_preview.html' %}
+{% endblock %}

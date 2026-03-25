@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Contact Me - Ben Amuwo's Neurascape{% endblock %}
+{% block meta_description %}Get in touch with Ben Amuwo. Questions, thoughts, or just want to say hello — reach out through the Neurascape contact form.{% endblock %}
 {% block content %}
 <section class="contact-wrap">
   <header class="contact-head">
@@ -10,14 +11,21 @@
 
   <!-- slim icon row -->
   <ul class="contact-icons">
-    <li><a href="#" aria-label="GitHub"><i class="fa-brands fa-github"></i></a></li>
-    <li><a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a></li>
-    <li><a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a></li>
+    <li><a href="https://github.com/RavenSeldon" aria-label="GitHub"><i class="fa-brands fa-github"></i></a></li>
+    <li><a href="https://linkedin.com/in/benamuwo" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a></li>
+    <li><a href="https://www.instagram.com/beamu_/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a></li>
   </ul>
 
   <!-- full-width form -->
   <form method="post" action="{{ url_for('contact') }}" class="contact-form" novalidate>
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <!-- Honeypot: hidden from humans, bots fill it -->
+    <div style="position:absolute;left:-9999px;" aria-hidden="true">
+      <label for="website">Leave blank</label>
+      <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+    </div>
+
     <label>
       <span>Name</span>
       <input type="text" name="name" required placeholder="What should I call you?">

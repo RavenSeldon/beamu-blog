@@ -26,7 +26,7 @@ def upgrade():
 
     #with op.batch_alter_table('project', schema=None) as batch_op:
        # batch_op.add_column(sa.Column('date_posted', sa.DateTime(), nullable=False))
-       # batch_op.create_index(batch_op.f('ix_project_date_posted'), ['date_posted'], unique=False)
+       # batch_op.create_index(batch_op.~f('ix_project_date_posted'), ['date_posted'], unique=False)
        # batch_op.create_foreign_key(batch_op.f('fk_project_image_filename_photo'), 'photo', ['image_filename'], ['filename'], ondelete='SET NULL')
 
     # ### end Alembic commands ###

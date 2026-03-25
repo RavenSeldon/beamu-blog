@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark-light">
     <title>{% block title %}Ben Amuwo's Neurascape{% endblock %}</title>
+
+    <!-- SEO: Meta description -->
+    <meta name="description" content="{% block meta_description %}Neurascape — the personal blog, portfolio, and digital sanctuary of Ben Amuwo. Exploring technology, creativity, and the scenery of the mind.{% endblock %}">
+
+    <!-- SEO: Open Graph -->
+    <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ self.meta_description() }}{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:image" content="{% block og_image %}{{ request.host_url.rstrip('/') }}{{ url_for('static', filename='img/og-default.jpg') }}{% endblock %}">
+    <meta property="og:site_name" content="Ben Amuwo's Neurascape">
+
+    <!-- SEO: Canonical URL -->
+    <link rel="canonical" href="{{ request.url }}">
+
     <!-- Use minified CSS in production -->
     {% if config.ENV == 'production' %}
     <link rel="stylesheet" href="{{ asset_url('css/style.css') }}">
@@ -19,35 +34,60 @@
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Slab:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     {% block extra_css %}{% endblock %}
 
+    <!-- Analytics: drop your Plausible/Umami/etc. script tag here -->
+    {% block analytics %}{% endblock %}
+
     <script>
         window.USING_SPACES = {{ USING_SPACES|tojson }};
         window.SPACES_URL = {{ SPACES_URL|tojson if SPACES_URL is defined else 'null' }};
-
-        console.log("Base.html SCRIPT BLOCK: window.USING_SPACES defined as:", window.USING_SPACES, "(Type:", typeof window.USING_SPACES + ")");
-        console.log("Base.html SCRIPT BLOCK: window.SPACES_URL defined as:", window.SPACES_URL, "(Type:", typeof window.SPACES_URL + ")");
-
-        if (window.USING_SPACES === true && !window.SPACES_URL) { // More precise check
-            console.warn("Base.html SCRIPT BLOCK: USING_SPACES is true, but SPACES_URL is not set. Check environment variables and Flask context.");
-        } else if (window.USING_SPACES === undefined) {
-            console.error("Base.html SCRIPT BLOCK: CRITICAL - USING_SPACES is undefined. Flask context processor might not be working or variable is not passed.");
-        }
     </script>
-    <script>
-         // Only set the flag AFTER successful redirection
-        if(!localStorage.getItem('seenLoader')){
-            // first visit → jump to loader
-            window.location.replace("/loading");
-            // Don't set seenLoader here - let loader.js do it
-        }
-    </script>
+
 </head>
 <body>
+    <!-- Skip-to-content (keyboard accessibility) -->
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
     <!-- Neurascape Background Canvas -->
     <canvas id="bg-canvas"></canvas>
 
+    <!-- Tier 0: CSS-only nebula fallback (prefers-reduced-motion) -->
+    <div id="neurascape-css-bg" style="display:none;">
+        <div class="css-nebula css-nebula--1"></div>
+        <div class="css-nebula css-nebula--2"></div>
+        <div class="css-nebula css-nebula--3"></div>
+        <div class="css-nebula css-nebula--4"></div>
+    </div>
+    <style>
+        .css-nebula {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: -1;
+            will-change: transform, opacity;
+        }
+        .css-nebula--1 {
+            background: radial-gradient(ellipse 60% 50% at 25% 30%, rgba(55,180,248,0.07) 0%, transparent 70%);
+            animation: nebulaPulse1 45s ease-in-out infinite, nebulaDrift1 80s ease-in-out infinite;
+        }
+        .css-nebula--2 {
+            background: radial-gradient(ellipse 50% 60% at 75% 60%, rgba(196,181,226,0.06) 0%, transparent 70%);
+            animation: nebulaPulse2 50s ease-in-out infinite, nebulaDrift2 90s ease-in-out infinite;
+        }
+        .css-nebula--3 {
+            background: radial-gradient(ellipse 55% 45% at 50% 80%, rgba(255,204,92,0.04) 0%, transparent 65%);
+            animation: nebulaPulse1 60s ease-in-out infinite reverse, nebulaDrift1 100s ease-in-out infinite reverse;
+        }
+        .css-nebula--4 {
+            background: radial-gradient(ellipse 40% 55% at 60% 20%, rgba(126,249,255,0.05) 0%, transparent 60%);
+            animation: nebulaPulse2 55s ease-in-out infinite, nebulaDrift2 70s ease-in-out infinite;
+        }
+        @keyframes nebulaPulse1 { 0%,100%{ opacity:0.03 } 50%{ opacity:0.08 } }
+        @keyframes nebulaPulse2 { 0%,100%{ opacity:0.05 } 50%{ opacity:0.1 } }
+        @keyframes nebulaDrift1 { 0%,100%{ transform:translate(0,0) } 50%{ transform:translate(15px,-10px) } }
+        @keyframes nebulaDrift2 { 0%,100%{ transform:translate(0,0) } 50%{ transform:translate(-12px,8px) } }
+    </style>
+
     <!-- Sidebar Navigation -->
-    <div id="sidebar" class="sidebar">
-        <nav>
+    <div id="sidebar" class="sidebar" aria-hidden="true">
+        <nav aria-label="Main navigation">
             <a href="{{ url_for('index') }}"><i class="fa-solid fa-meteor"></i> Home</a>
             <a href="{{ url_for('about') }}"><i class="fa-solid fa-brain"></i> About</a>
             <a href="{{ url_for('projects') }}"><i class="fa-solid fa-sun"></i> Projects</a>
@@ -57,6 +97,7 @@
             <a href="{{ url_for('reviews') }}"><i class="fa-solid fa-star-half-stroke"></i> Reviews</a>
             <a href="{{ url_for('contact') }}"><i class="fa-solid fa-paper-plane"></i> Contact</a>
             {% if current_user.is_authenticated %}
+            <a href="{{ url_for('admin_dashboard') }}"><i class="fa-solid fa-gauge-high"></i> Admin</a>
             <a href="{{ url_for('new_post') }}"><i class="fa-solid fa-rocket"></i> New Post</a>
             <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
             {% endif %}
@@ -64,12 +105,12 @@
     </div>
 
     <!-- Sidebar Toggle Button -->
-    <button id="sidebar-toggle" aria-label="Toggle Sidebar Navigation">
+    <button id="sidebar-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
         <i class="fa-solid fa-bars"></i>
     </button>
 
     <!-- Main Content -->
-    <main>
+    <main id="main-content">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         <ul class="flashes">
@@ -87,7 +128,7 @@
     <footer>
         <p>&copy; {{ datetime.now(timezone.utc).strftime('%Y') }} Neurascape. All rights reserved (I own the word &#128521;).</p>
         <div class="social-links">
-            <a href="https://www.instagram.com/beamu_/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://benamuwo.vercel.app" aria-label="Portfolio"><i class="fa fa-code-fork"></i></a>
             <a href="https://open.spotify.com/user/12171032911?si=dcc4ed9e71d648ad" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
             <a href="https://www.flickr.com/photos/nasa2explore/albums/" aria-label="Beautiful Photos"><i class="fa-brands fa-flickr"></i></a>
         </div>
@@ -97,7 +138,7 @@
             </button>
             <div id="performance-notice" class="performance-notice">
                 <p>Animations reduced to improve performance on your device.</p>
-                <button id="dismiss-notice">Got it</button>
+                <button id="dismiss-notice" aria-label="Dismiss performance notice">Got it</button>
             </div>
         </div>
         <button id="visitor-spotify-connect-button" class="spotify-connect-btn" title="Connect your Spotify account to enable web playback." style="display: none;">
@@ -113,13 +154,13 @@
                     </div>
                 </div>
                 <div class="player-controls">
-                    <button id="player-prev-btn" class="player-btn" title="Previous track">
+                    <button id="player-prev-btn" class="player-btn" title="Previous track" aria-label="Previous track">
                         <i class="fa-solid fa-backward-step"></i>
                     </button>
-                    <button id="player-play-pause-btn" class="player-btn player-play-btn" title="Play/Pause">
+                    <button id="player-play-pause-btn" class="player-btn player-play-btn" title="Play/Pause" aria-label="Play or pause">
                         <i class="fa-solid fa-play"></i>
                     </button>
-                    <button id="player-next-btn" class="player-btn" title="Next track">
+                    <button id="player-next-btn" class="player-btn" title="Next track" aria-label="Next track">
                         <i class="fa-solid fa-forward-step"></i>
                     </button>
                 </div>
@@ -131,10 +172,10 @@
                     <span id="player-duration" class="player-time">0:00</span>
                 </div>
                 <div class="player-actions">
-                    <button id="player-music-page-btn" class="player-action-btn" title="Browse Music">
+                    <button id="player-music-page-btn" class="player-action-btn" title="Browse Music" aria-label="Browse music page">
                         <i class="fa-solid fa-music"></i>
                     </button>
-                    <button id="player-disconnect-btn" class="player-action-btn" title="Disconnect Spotify">
+                    <button id="player-disconnect-btn" class="player-action-btn" title="Disconnect Spotify" aria-label="Disconnect Spotify">
                         <i class="fa-solid fa-power-off"></i>
                     </button>
                 </div>
@@ -142,69 +183,55 @@
         </div>
     </footer>
 
-    <!-- Loading Container (will be shown only during initial page load) -->
-    <div id="loading-container" style="display: none;">
-        <!-- Content will be dynamically generated by JavaScript -->
+    <!-- Inline loader overlay (first visit only, uses sessionStorage) -->
+    <div id="neurascape-loader" style="display:none; position:fixed; inset:0; z-index:99999; background:#050518; align-items:center; justify-content:center; transition:opacity .8s ease;">
+        <div class="loader-wrap" style="display:flex; flex-direction:column; align-items:center; gap:1.5rem;">
+            <canvas id="brain-scan" width="512" height="512" aria-label="MRI loading animation"
+                    style="width:320px; max-width:80vw; aspect-ratio:1/1; filter:drop-shadow(0 0 12px rgba(79,211,255,.3));"></canvas>
+            <div class="bar" style="width:320px; max-width:80vw; height:6px; border-radius:3px; background:rgba(255,255,255,.08); overflow:hidden;">
+                <div class="fill" style="width:0; height:100%; background:linear-gradient(90deg,#4fd3ff,#0ff); box-shadow:0 0 8px #4fd3ff; transition:width .12s linear;"></div>
+            </div>
+            <div class="percent" style="margin-top:.5rem; letter-spacing:2px; font-size:1rem; color:#4fd3ff;">0%</div>
+        </div>
     </div>
-
-    <!-- Scripts - Use minified JS in production -->
-    {% if request.path != '/loading' %}
-        {% if config.ENV == 'production' %}
-        <script src="{{ asset_url('js/main.js') }}" defer></script>
-        <script src="{{ asset_url('js/spotify-player.js') }}" defer></script>
-        {% else %}
-        <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
-        <script src="{{ url_for('static', filename='js/spotify-player.js') }}" defer></script>
-        {% endif %}
-    {% endif %}
-
-    {% if request.path == '/loading' %}
-        {% if config.ENV == 'production' %}
-        <script src="{{ asset_url('js/loader.js') }}" defer></script>
-        {% else %}
-        <script src="{{ url_for('static', filename='js/loader.js') }}" defer></script>
-        {% endif %}
-    {% endif %}
-
-    <!-- Scripts - Device Performance Handling -->
-    <script defer>
-    // Detect device performance
-    function detectLowPerformanceDevice() {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const cpuCores = navigator.hardwareConcurrency || 2;
-
-        // If device is mobile or has 2 or fewer CPU cores, consider it low performance
-        if (isMobile || cpuCores <= 2) {
-            // Only show notice if animations are enabled
-            if (localStorage.getItem('animationsEnabled') !== 'false') {
-                // Show performance notice after a delay
-                setTimeout(() => {
-                    const notice = document.getElementById('performance-notice');
-                    if (notice) notice.classList.add('show');
-
-                    // Add dismiss button functionality
-                    const dismissBtn = document.getElementById('dismiss-notice');
-                    if (dismissBtn) {
-                        dismissBtn.addEventListener('click', () => {
-                            notice.classList.remove('show');
-                            localStorage.setItem('noticeDismissed', 'true');
-                        });
-                    }
-                }, 5000);
-            }
-            return true;
+    <script>
+        // Show loader on first visit (sessionStorage — resets per browser session)
+        if (!sessionStorage.getItem('neurascape_loaded')) {
+            document.getElementById('neurascape-loader').style.display = 'flex';
         }
-        return false;
-    }
+    </script>
 
-    // Execute detection on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        const isLowPerformance = detectLowPerformanceDevice();
+    <!-- Scripts -->
+    {% if config.ENV == 'production' %}
+    <script src="{{ asset_url('js/simplex-noise.js') }}" defer></script>
+    <script src="{{ asset_url('js/neurascape-bg.js') }}" defer></script>
+    <script src="{{ asset_url('js/loader.js') }}" defer></script>
+    <script src="{{ asset_url('js/main.js') }}" defer></script>
+    <script src="{{ asset_url('js/spotify-player.js') }}" defer></script>
+    {% else %}
+    <script src="{{ url_for('static', filename='js/simplex-noise.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/neurascape-bg.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/loader.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/spotify-player.js') }}" defer></script>
+    {% endif %}
 
-        // If low performance and first visit, suggest disabling animations
-        if (isLowPerformance && !localStorage.getItem('noticeDismissed')) {
-            // Don't show immediate suggestions on first visit to avoid overwhelming users
-            localStorage.setItem('suggestReducedAnimations', 'true');
+    <!-- Performance notice (driven by neurascape-bg.js benchmark) -->
+    <script defer>
+    document.addEventListener('neurascapeTier', function(e) {
+        var tier = e.detail && e.detail.tier;
+        if ((tier === 'low' || tier === 'cssonly') &&
+            localStorage.getItem('animationsEnabled') !== 'false' &&
+            !localStorage.getItem('noticeDismissed')) {
+            setTimeout(function() {
+                var notice = document.getElementById('performance-notice');
+                if (notice) notice.classList.add('show');
+                var btn = document.getElementById('dismiss-notice');
+                if (btn) btn.addEventListener('click', function() {
+                    notice.classList.remove('show');
+                    localStorage.setItem('noticeDismissed', 'true');
+                });
+            }, 5000);
         }
     });
     </script>

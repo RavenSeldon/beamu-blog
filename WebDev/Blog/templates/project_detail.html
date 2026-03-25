@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ project.title }} - Ben Amuwo's Neurascape{% endblock %}
+{% block meta_description %}{{ project.description|striptags|truncate(155, end='...') if project.description else 'A project by Ben Amuwo on the Neurascape.' }}{% endblock %}
 {% block content %}
 <div class="project-detail">
     <header class="post-header">
@@ -11,21 +12,11 @@
 
     {% if project.photo and project.photo.filename %}
     <div class="post-image">
-        {% if USING_SPACES %}
-        <img src="{{ SPACES_URL }}/medium/{{ project.photo.filename }}"
-             srcset="{{ get_srcset(project.photo.filename) }}"
-             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
-             alt="{{ project.title }}"
-             class="post-feature-img"
-             loading="eager">
-        {% else %}
-        <img src="{{ url_for('static', filename='images/medium/' + project.photo.filename) }}"
-             srcset="{{ get_srcset(project.photo.filename) }}"
-             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
-             alt="{{ project.title }}"
-             class="post-feature-img"
-             loading="eager">
-        {% endif %}
+        {% set pic = get_picture_data(project.photo.filename, project.photo.lqip) %}
+        {% set img_alt = project.title %}
+        {% set img_class = 'post-feature-img' %}
+        {% set img_loading = 'eager' %}
+        {% include '_responsive_image.html' %}
     </div>
     {% endif %}
 
@@ -58,11 +49,10 @@
                 </div>
                 {% if post_item.photo and post_item.photo.filename %}
                 <div class="post-thumbnail">
-                    {% if USING_SPACES %}
-                    <img src="{{ SPACES_URL }}/thumbnail/{{ post_item.photo.filename }}" alt="{{ post_item.title }}">
-                    {% else %}
-                    <img src="{{ url_for('static', filename='images/thumbnail/' + post_item.photo.filename) }}" alt="{{ post_item.title }}">
-                    {% endif %}
+                    {% set pic = get_picture_data(post_item.photo.filename, post_item.photo.lqip) %}
+                    {% set img_alt = post_item.title %}
+                    {% set img_sizes = '150px' %}
+                    {% include '_responsive_image.html' %}
                 </div>
                 {% endif %}
                 <div class="post-excerpt">
@@ -75,10 +65,11 @@
     </section>
     {% endif %}
     {% if current_user.is_authenticated %}
-    <div class="project-admin">
+    <div class="project-admin" style="display: flex; gap: 1em; align-items: center; flex-wrap: wrap;">
+        <a href="{{ url_for('edit_project', project_id=project.id) }}" class="send-btn" style="display: inline-block; text-decoration: none;"><i class="fa-solid fa-pen-to-square"></i> Edit Project</a>
         <form method="post" action="{{ url_for('delete_project', project_id=project.id) }}" onsubmit="return confirm('Are you sure you want to delete this project and all its posts?');">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i> Delete Project</button>
+            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i></button>
         </form>
     </div>
     {% endif %}

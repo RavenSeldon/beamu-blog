@@ -1,0 +1,169 @@
+/* =============================================
+   base.css — Root variables, reset, typography,
+   scrollbar, select elements, base links
+   ============================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wdth,wght@100..125,200..800&family=Josefin+Slab:ital,wght@0,300..700;1,0..700&display=swap");
+
+:root {
+    --primary: #37B4F8;
+    --accent: #C4B5E2;
+    --accent-alt: #FFCC5C;
+    --accent-alt-rgb: 255, 204, 92;
+    --bg-dark: #050518;
+
+    /* Glassmorphism system — bold transparency */
+    --glass: rgba(10, 10, 35, 0.28);
+    --glass-card: rgba(12, 12, 40, 0.32);
+    --glass-surface: rgba(10, 10, 32, 0.38);
+    --glass-border: rgba(127, 249, 255, 0.13);
+    --glass-edge: inset 1px 1px 0 rgba(255, 255, 255, 0.05);
+    --neural-glow: 0 0 18px rgba(126, 249, 255, 0.3), 0 0 36px rgba(243, 249, 157, 0.15);
+    --transition: 0.4s cubic-bezier(.4,2,.6,1);
+    --text: #e0e6f0;
+    --text-glow: 0 1px 16px rgba(3, 3, 18, 0.9), 0 0 6px rgba(5, 5, 24, 0.7);
+
+    /* Typography */
+    --font-sans: "Space Grotesk","Plus Jakarta Sans",system-ui,-apple-system,sans-serif;
+    --font-serif: "Megrim","Josefin Slab",serif;
+    --font-display: "Space Grotesk","Megrim","Josefin Slab","Playfair Display",serif;
+    font-size: clamp(14px, 0.9rem + 0.5vw, 16px);
+}
+
+/* Skip-to-content (keyboard accessibility) */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    z-index: 10000;
+    padding: 0.8em 1.5em;
+    background: var(--primary);
+    color: var(--bg-dark);
+    font-weight: 700;
+    border-radius: 0 0 8px 8px;
+    text-decoration: none;
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Global focus management:
+   - Hide outline on mouse/touch focus (visual feedback via hover styles)
+   - Show clear outline on keyboard focus (accessibility) */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--bg-dark);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: clamp(14px, 0.9rem + 0.5vw, 16px);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    line-height: 1.65;
+    min-height: 100vh;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-sans);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+/* Typography */
+h1 { font-size: clamp(2.5rem, 1.9rem + 2.5vw, 3.5rem); }
+h2 { font-size: clamp(2rem, 1.6rem + 1.8vw, 2.8rem); }
+h3 { font-size: clamp(1.6rem, 1.4rem + 1.2vw, 2rem); }
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: .02em;
+    color: var(--accent);
+}
+
+h2::after {
+    background: linear-gradient(90deg, var(--accent-alt), transparent);
+}
+
+p {
+    font-family: var(--font-sans);
+    margin-bottom: 1.5em;
+    line-height: 1.6;
+    text-shadow: var(--text-glow);
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+a:hover {
+    color: var(--accent);
+    text-shadow: 0 0 8px rgba(126, 249, 255, 0.5);
+}
+
+/* Border breathing animation (for glass panels) */
+@keyframes borderBreathe {
+    0%, 100% { border-color: rgba(127, 249, 255, 0.12); }
+    50% { border-color: rgba(127, 249, 255, 0.22); }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(8, 8, 25, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--primary), var(--accent));
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(var(--accent), var(--primary));
+}
+
+/* Select Elements */
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2337B4F8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1em center;
+    background-size: 16px 12px;
+    padding-right: 2.5em;
+}
+
+select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 12px rgba(126, 249, 255, 0.6);
+    transform: translateY(-2px);
+}

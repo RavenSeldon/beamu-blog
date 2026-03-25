@@ -59,12 +59,15 @@ SQLALCHEMY_DATABASE_URI = DATABASE_URL or 'sqlite:///' + os.path.join(basedir, '
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Neon Specific Configurations
+# Tightened pool settings to reduce idle compute time on Neon serverless.
+# Connections recycle after 5 minutes (vs 30), smaller pool reduces keep-alive costs.
 SQLALCHEMY_ENGINE_OPTIONS = {
-    'pool_pre_ping': True,  # Verify connections before using them
-    'pool_size': 5,
-    'pool_recycle': 1800,  # Recycle connections after 30 minutes
-    'pool_timeout': 30,
-    'max_overflow': 10,
+    'pool_pre_ping': True,           # Verify connections before using them (catches Neon cold starts)
+    'pool_size': 3,                  # Reduced from 5 — matches typical concurrent load for a personal site
+    'pool_recycle': 300,             # Recycle after 5 minutes (was 1800s / 30 min)
+    'pool_timeout': 20,              # Reduced from 30 — fail faster if pool is exhausted
+    'max_overflow': 5,               # Reduced from 10 — caps burst connections
+    'pool_reset_on_return': 'rollback',  # Clean up any uncommitted state on connection return
 }
 
 if DATABASE_URL and 'neon.tech' in DATABASE_URL:
@@ -93,6 +96,12 @@ MAIL_USERNAME = get_env_var('MAIL_USERNAME')
 MAIL_PASSWORD = get_env_var('MAIL_PASSWORD')
 MAIL_DEFAULT_SENDER = get_env_var('MAIL_DEFAULT_SENDER')
 MAIL_RECIPIENT = get_env_var('MAIL_RECIPIENT')
+
+# Flask-Caching configuration
+# SimpleCache stores in-process memory — no external service needed.
+# Suitable for a single-worker Gunicorn deployment.
+CACHE_TYPE = 'SimpleCache'
+CACHE_DEFAULT_TIMEOUT = 300  # 5-minute TTL for cached queries
 
 #Spotify SDK
 SPOTIFY_CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')

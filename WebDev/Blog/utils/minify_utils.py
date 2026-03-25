@@ -86,7 +86,7 @@ def try_terser_minify(js_content, output_path):
 
         # Create a temporary file for input
         import tempfile
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.js', delete=False) as tmp:
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.static', delete=False) as tmp:
             tmp.write(js_content)
             tmp_path = tmp.name
 
@@ -188,7 +188,7 @@ def minify_all_assets(app):
     static_dir = app.static_folder
 
     # Dictionary to store the mapping of original to minified filenames
-    asset_map = {'css': {}, 'js': {}}
+    asset_map = {'css': {}, 'static': {}}
 
     # Create a directory for minified files if it doesn't exist
     os.makedirs(os.path.join(static_dir, 'min'), exist_ok=True)
@@ -208,18 +208,18 @@ def minify_all_assets(app):
             asset_map['css'][filename] = minified_filename
 
     # Minify JS files
-    js_files = glob.glob(os.path.join(static_dir, 'js', '*.js'))
+    js_files = glob.glob(os.path.join(static_dir, 'static', '*.static'))
     for js_file in js_files:
         # Skip already minified files
         if '.min.' in js_file:
             continue
 
         filename = os.path.basename(js_file)
-        output_path = os.path.join(static_dir, 'min', f"{os.path.splitext(filename)[0]}.min.js")
+        output_path = os.path.join(static_dir, 'min', f"{os.path.splitext(filename)[0]}.min.static")
 
         minified_filename = minify_js_file(js_file, output_path)
         if minified_filename:
-            asset_map['js'][filename] = minified_filename
+            asset_map['static'][filename] = minified_filename
 
     # Save the asset map to a file for reference
     asset_map_path = os.path.join(static_dir, 'asset_map.py')
@@ -234,7 +234,7 @@ def get_minified_url(asset_type, filename):
     Get the URL for a minified asset.
 
     Args:
-        asset_type: Type of asset ('css' or 'js')
+        asset_type: Type of asset ('css' or 'static')
         filename: Original filename
 
     Returns:
@@ -284,7 +284,7 @@ def asset_url(filename):
 
     if filename.startswith('css/') and filename.endswith('.css'):
         return get_minified_url('css', filename.replace('css/', '', 1))
-    elif filename.startswith('js/') and filename.endswith('.js'):
-        return get_minified_url('js', filename.replace('js/', '', 1))
+    elif filename.startswith('static/') and filename.endswith('.static'):
+        return get_minified_url('static', filename.replace('static/', '', 1))
     else:
         return f"/static/{filename}"

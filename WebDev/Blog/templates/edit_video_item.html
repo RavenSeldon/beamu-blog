@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Edit Video – Ben Amuwo's Neurascape{% endblock %}
+{% block extra_css %}{% include '_easymde_head.html' %}{% endblock %}
+{% block content %}
+<section class="newpost-wrap">
+  <h1><i class="fa-solid fa-pen-to-square"></i> Edit Video</h1>
+
+  <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <label for="title">
+      <span>Title</span>
+      <input type="text" id="title" name="title" maxlength="120" value="{{ item.title }}" required>
+    </label>
+
+    <label for="content" class="full">
+      <span>Description <small>(Markdown OK)</small></span>
+      <textarea id="content" name="content" rows="8" maxlength="20000" data-easymde>{{ item.content or '' }}</textarea>
+    </label>
+
+    <div class="flex-row">
+      <label for="video_url" class="flex-grow">
+        <span>Video URL</span>
+        <input type="url" id="video_url" name="video_url" value="{{ item.video_url or '' }}">
+      </label>
+      <label for="source_type" class="flex-grow">
+        <span>Source Type</span>
+        <input type="text" id="source_type" name="source_type" value="{{ item.source_type or '' }}">
+      </label>
+    </div>
+
+    <label for="embed_code" class="full">
+      <span>Embed Code <small>(optional)</small></span>
+      <textarea id="embed_code" name="embed_code" rows="4">{{ item.embed_code or '' }}</textarea>
+    </label>
+
+    <div class="flex-row">
+      <label for="duration" class="flex-grow">
+        <span>Duration</span>
+        <input type="text" id="duration" name="duration" value="{{ item.duration or '' }}">
+      </label>
+      <label for="project_id" class="flex-grow">
+        <span>Associated Project <small>(optional)</small></span>
+        <select id="project_id" name="project_id" class="form-control">
+          <option value="">-- None --</option>
+          {% for project in projects %}
+          <option value="{{ project.id }}" {% if item.project_id == project.id %}selected{% endif %}>{{ project.title }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    {% set current_photo = item.photo %}
+    {% include '_current_image.html' %}
+
+    <label class="file-input has-preview">
+      <i class="fa-solid fa-image"></i> Replace Thumbnail <small>(optional)</small>
+      <input id="post-image" type="file" name="image" accept="image/*">
+      <span class="file-name">No file chosen...</span>
+      <img class="preview" style="display:none;" alt="Image preview" src="">
+    </label>
+
+    <div style="display: flex; gap: 1em; align-items: center;">
+      <button type="submit" class="send-btn"><i class="fa-solid fa-check"></i> Save Changes</button>
+      <a href="{{ url_for('post', post_id=item.id) }}" style="color: var(--accent); text-decoration: none;">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
+{% block extra_js %}
+{% include '_easymde_init.html' %}
+{% include '_image_preview.html' %}
+{% endblock %}

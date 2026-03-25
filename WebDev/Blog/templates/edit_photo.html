@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Edit Photo – Ben Amuwo's Neurascape{% endblock %}
+{% block content %}
+<section class="newpost-wrap">
+  <h1><i class="fa-solid fa-pen-to-square"></i> Edit Photo</h1>
+
+  <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    {% set current_photo = photo %}
+    {% include '_current_image.html' %}
+
+    <label class="file-input has-preview full">
+      <i class="fa-solid fa-image"></i> Replace Photo File <small>(optional — leave empty to keep current)</small>
+      <input id="post-image" type="file" name="image" accept="image/*">
+      <span class="file-name">No file chosen...</span>
+      <img class="preview" style="display:none;" alt="Image preview" src="">
+    </label>
+
+    <label for="description" class="full">
+      <span>Description <small>(optional)</small></span>
+      <textarea id="description" name="description" rows="4" maxlength="512" placeholder="A brief description...">{{ photo.description or '' }}</textarea>
+    </label>
+
+    <div style="display: flex; gap: 1em; align-items: center;">
+      <button type="submit" class="send-btn"><i class="fa-solid fa-check"></i> Save Changes</button>
+      <a href="{{ url_for('photo_album') }}" style="color: var(--accent); text-decoration: none;">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
+{% block extra_js %}
+{% include '_image_preview.html' %}
+{% endblock %}

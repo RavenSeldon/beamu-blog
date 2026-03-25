@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Music - Ben Amuwo's Neurascape{% endblock %}
+{% block meta_description %}Ben Amuwo's music collection — albums, playlists, and tracks with Spotify integration. Listen along in the Neurascape.{% endblock %}
 {% block content %}
 <section class="music-items-wrap">
     <h1><i class="fa-solid fa-compact-disc"></i> Music Collection</h1>
@@ -25,21 +26,11 @@
             {% if item.photo and item.photo.filename %}
             <div class="post-image">
                 <a href="{{ url_for('post', post_id=item.id) }}">
-                    {% if USING_SPACES %}
-                    <img src="{{ SPACES_URL }}/medium/{{ item.photo.filename }}"
-                         srcset="{{ get_srcset(item.photo.filename) }}"
-                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-                         alt="{{ item.photo.description if item.photo.description else item.title }}"
-                         class="post-feature-img"
-                         loading="lazy">
-                    {% else %}
-                    <img src="{{ url_for('static', filename='images/medium/' + item.photo.filename) }}"
-                         srcset="{{ get_srcset(item.photo.filename) }}"
-                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-                         alt="{{ item.photo.description if item.photo.description else item.title }}"
-                         class="post-feature-img"
-                         loading="lazy">
-                    {% endif %}
+                    {% set pic = get_picture_data(item.photo.filename, item.photo.lqip) %}
+                    {% set img_alt = item.photo.description if item.photo.description else item.title %}
+                    {% set img_class = 'post-feature-img' %}
+                    {% set img_sizes = '(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw' %}
+                    {% include '_responsive_image.html' %}
                 </a>
             </div>
             {% endif %}

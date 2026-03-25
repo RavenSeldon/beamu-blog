@@ -1,0 +1,80 @@
+<!--
+  _schedule_convert.html
+  Converts the datetime-local input between local time (for the user) and UTC (for the server).
+  - On page load (edit forms): converts the UTC value from the server to local time for display
+  - On form submit: converts the local time back to UTC before sending to the server
+  - Shows a live UTC preview so the user knows exactly when the post will go live
+-->
+<script>
+(function () {
+  var input = document.querySelector('input[name="published_at"]');
+  if (!input) return;
+
+  var form = input.closest('form');
+  var hint = document.createElement('small');
+  hint.style.cssText = 'display:block; margin-top:0.3em; color:var(--primary); opacity:0.8;';
+  input.parentNode.appendChild(hint);
+
+  function pad(n) { return n.toString().padStart(2, '0'); }
+
+  /* Format a Date as YYYY-MM-DDTHH:MM (for datetime-local input) */
+  function toLocalInputFormat(date) {
+    return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) +
+      'T' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+  }
+
+  /* Format a Date's UTC components as YYYY-MM-DDTHH:MM */
+  function toUTCInputFormat(date) {
+    return date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate()) +
+      'T' + pad(date.getUTCHours()) + ':' + pad(date.getUTCMinutes());
+  }
+
+  /* Show UTC equivalent when user picks a time */
+  function updateHint() {
+    if (!input.value) {
+      hint.textContent = '';
+      return;
+    }
+    // datetime-local value is interpreted as local time by the Date constructor
+    var local = new Date(input.value);
+    if (isNaN(local.getTime())) {
+      hint.textContent = '';
+      return;
+    }
+    var utcStr = local.toLocaleString('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+    hint.textContent = '\u2192 ' + utcStr + ' UTC';
+  }
+
+  input.addEventListener('input', updateHint);
+  input.addEventListener('change', updateHint);
+
+  /*
+   * On page load: if the input has a value, it came from the server as UTC.
+   * Convert it to local time for display so the user sees their own timezone.
+   */
+  if (input.value) {
+    // Append 'Z' to tell the Date constructor this is UTC
+    var utcDate = new Date(input.value + 'Z');
+    if (!isNaN(utcDate.getTime())) {
+      input.value = toLocalInputFormat(utcDate);
+    }
+  }
+
+  // Update hint after any initial conversion
+  updateHint();
+
+  /*
+   * On form submit: convert the local time back to UTC for the server.
+   * The backend does .replace(tzinfo=timezone.utc), so we need to send UTC.
+   */
+  if (form) {
+    form.addEventListener('submit', function () {
+      if (!input.value) return;
+      var local = new Date(input.value);
+      if (!isNaN(local.getTime())) {
+        input.value = toUTCInputFormat(local);
+      }
+    });
+  }
+})();
+</script>

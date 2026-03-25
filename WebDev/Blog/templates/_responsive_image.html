@@ -1,0 +1,48 @@
+{#
+  Responsive image with WebP + LQIP support.
+
+  Variables (set before including):
+    pic        — dict from get_picture_data(filename, lqip)
+    img_alt    — alt text
+    img_sizes  — sizes attribute (default provided)
+    img_class  — CSS class(es) for <img> (default: '')
+    img_loading — 'eager' or 'lazy' (default: 'lazy')
+#}
+{% set _sizes = img_sizes | default('(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px') %}
+{% set _class = img_class | default('') %}
+{% set _loading = img_loading | default('lazy') %}
+
+{% if pic and pic.src %}
+
+{% if pic.lqip and _loading == 'lazy' %}
+<div class="lqip-wrap" style="background:url({{ pic.lqip }}) center/cover no-repeat;position:relative;">
+{% endif %}
+
+{% if pic.has_webp %}
+<picture>
+    <source type="image/webp"
+            srcset="{{ pic.webp_srcset }}"
+            sizes="{{ _sizes }}">
+    <img src="{{ pic.src }}"
+         srcset="{{ pic.srcset }}"
+         sizes="{{ _sizes }}"
+         alt="{{ img_alt }}"
+         {% if _class %}class="{{ _class }}"{% endif %}
+         loading="{{ _loading }}"
+         {% if pic.lqip and _loading == 'lazy' %}onload="if(this.closest('.lqip-wrap'))this.closest('.lqip-wrap').style.background='none'"{% endif %}>
+</picture>
+{% else %}
+<img src="{{ pic.src }}"
+     srcset="{{ pic.srcset }}"
+     sizes="{{ _sizes }}"
+     alt="{{ img_alt }}"
+     {% if _class %}class="{{ _class }}"{% endif %}
+     loading="{{ _loading }}"
+     {% if pic.lqip and _loading == 'lazy' %}onload="if(this.closest('.lqip-wrap'))this.closest('.lqip-wrap').style.background='none'"{% endif %}>
+{% endif %}
+
+{% if pic.lqip and _loading == 'lazy' %}
+</div>
+{% endif %}
+
+{% endif %}

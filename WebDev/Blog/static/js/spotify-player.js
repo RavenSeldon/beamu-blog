@@ -34,15 +34,18 @@ class SpotifyWebPlayer {
     init() {
         document.addEventListener('DOMContentLoaded', () => {
             this.initUI();
-            this.checkStoredTokens();
 
-            if (window.Spotify) {
-                this.initSpotifySDK();
-            } else {
+            // Set up the SDK-ready callback first, then check tokens.
+            // checkStoredTokens() may call initSpotifySDK() if a token exists,
+            // but initSpotifySDK() guards against double-init via this._sdkInitialized.
+            if (!window.Spotify) {
                 window.onSpotifyWebPlaybackSDKReady = () => {
+                    console.log('Spotify SDK loaded, attempting init...');
                     this.initSpotifySDK();
                 };
             }
+
+            this.checkStoredTokens();
         });
 
         // Save state before page unload
@@ -374,7 +377,7 @@ class SpotifyWebPlayer {
         if (this.isPlaying && this.player) this.player.pause();
         if (this.player) this.player.disconnect();
         this.clearStoredTokens();
-        this.player = null; this.deviceId = null; this.accessToken = null; this.isReady = false; this.currentTrack = null; this.isPlaying = false; this.position = 0; this.duration = 0; this.currentContext = null;
+        this.player = null; this.deviceId = null; this.accessToken = null; this.isReady = false; this.currentTrack = null; this.isPlaying = false; this.position = 0; this.duration = 0; this.currentContext = null; this._sdkInitialized = false;
         this.stopProgressTimer(); this.stopStateCheck();
         if (this.playerContainer) this.playerContainer.style.display = 'none';
         this.showConnectButton(); this.showStatusMessage('Disconnected from Spotify', 'info');
@@ -388,12 +391,40 @@ class SpotifyWebPlayer {
     }
 
     initSpotifySDK() {
-        if (!this.accessToken || !window.Spotify) { console.log('Cannot init SDK - no token or SDK not loaded'); return; }
+        if (!this.accessToken || !window.Spotify) {
+            console.log('Cannot init SDK - no token or SDK not loaded. Token:', !!this.accessToken, 'SDK:', !!window.Spotify);
+            return;
+        }
+
+        // Guard against multiple initializations (race between checkStoredTokens and onSpotifyWebPlaybackSDKReady)
+        if (this._sdkInitialized) {
+            console.log('SDK already initialized, skipping duplicate init');
+            return;
+        }
+        this._sdkInitialized = true;
+
+        // Disconnect any stale player instance from a previous session
+        if (this.player) {
+            try { this.player.disconnect(); } catch (e) { /* ignore */ }
+            this.player = null;
+        }
+
         console.log('Initializing Spotify Web Playback SDK...');
         this.player = new Spotify.Player({ name: 'Ben\'s Neurascape Web Player', getOAuthToken: (cb) => { cb(this.accessToken); }, volume: 0.5 });
 
-        this.player.addListener('initialization_error', ({ message }) => console.error('SDK Init Error:', message));
-        this.player.addListener('authentication_error', ({ message }) => { console.error('SDK Auth Error:', message); this.refreshAccessToken(); });
+        this.player.addListener('initialization_error', ({ message }) => {
+            console.error('SDK Init Error:', message);
+            this.showStatusMessage('Spotify player failed to initialize.', 'error');
+        });
+        this.player.addListener('authentication_error', ({ message }) => {
+            console.error('SDK Auth Error:', message);
+            // Reset the init guard so a fresh token can reinitialize the SDK
+            this._sdkInitialized = false;
+            if (this.player) { try { this.player.disconnect(); } catch(e) {} }
+            this.player = null;
+            this.isReady = false;
+            this.refreshAccessToken();
+        });
         this.player.addListener('account_error', ({ message }) => { console.error('SDK Account Error:', message); this.showStatusMessage('Spotify account error. Premium might be required.', 'error');});
         this.player.addListener('playback_error', ({ message }) => { console.error('SDK Playback Error:', message); if (!message.includes('no list was loaded')) this.showStatusMessage('Playback error: ' + message, 'error');});
 
@@ -430,18 +461,58 @@ class SpotifyWebPlayer {
 
         this.player.addListener('ready', async ({ device_id }) => {
             console.log('Spotify Player Ready with Device ID:', device_id);
+            if (this._readyTimeout) clearTimeout(this._readyTimeout);
             this.deviceId = device_id;
             this.isReady = true;
             this.showPlayer();
+            this.showStatusMessage('Spotify connected!', 'success');
             document.dispatchEvent(new Event('spotifyPlayerReady'));
 
+            // Try to restore saved state first
             await this.restorePlaybackState();
+
+            // If no track loaded after restore, try syncing with active Spotify playback
+            if (!this.currentTrack) {
+                await this.syncWithSpotifyState();
+            }
+
+            // If still no track, show helpful guidance
+            if (!this.currentTrack) {
+                if (this.trackNameEl) this.trackNameEl.textContent = 'Ready to play';
+                if (this.artistNameEl) this.artistNameEl.textContent = 'Head to Music to pick a track';
+            }
 
             this.startStateCheck();
         });
 
         this.player.addListener('not_ready', ({ device_id }) => { console.log('Device Not Ready:', device_id); this.isReady = false; this.stopStateCheck();});
-        this.player.connect().then(success => { if (success) console.log('SDK connected.'); else { console.error('SDK failed to connect.'); this.showStatusMessage('Failed to connect to Spotify', 'error');}});
+
+        // Show the player immediately with a connecting state so the user sees feedback
+        if (this.trackNameEl) this.trackNameEl.textContent = 'Connecting...';
+        if (this.artistNameEl) this.artistNameEl.textContent = 'Setting up Spotify player';
+        this.showPlayer();
+
+        // Timeout: if ready doesn't fire within 10s, something is wrong
+        this._readyTimeout = setTimeout(() => {
+            if (!this.isReady) {
+                console.error('SDK ready event did not fire within 10s — likely CSP or network issue');
+                this.showStatusMessage('Spotify connection timed out. Check browser console for errors.', 'error');
+                if (this.trackNameEl) this.trackNameEl.textContent = 'Connection failed';
+                if (this.artistNameEl) this.artistNameEl.textContent = 'Try disconnecting and reconnecting';
+            }
+        }, 10000);
+
+        this.player.connect().then(success => {
+            if (success) {
+                console.log('SDK connect() returned true — waiting for ready event...');
+            } else {
+                console.error('SDK connect() returned false.');
+                clearTimeout(this._readyTimeout);
+                this.showStatusMessage('Failed to connect to Spotify', 'error');
+                this.showConnectButton();
+                this._sdkInitialized = false;
+            }
+        });
     }
 
     startStateCheck() { this.stopStateCheck(); this.stateCheckInterval = setInterval(() => { if (!this.isRestoringState) this.syncWithSpotifyState(); }, 30000); }

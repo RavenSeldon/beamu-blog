@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Videos - Ben Amuwo's Neurascape{% endblock %}
+{% block meta_description %}Video content from Ben Amuwo — diving adventures, creative projects, and visual stories from the Neurascape.{% endblock %}
 {% block content %}
 <section class="video-items-wrap">
     <h1><i class="fa-solid fa-photo-film"></i> Videos</h1>
@@ -28,19 +29,11 @@
             {% if video.photo and video.photo.filename %}
             <div class="post-image video-thumbnail">
                 <a href="{{ url_for('post', post_id=video.id) }}">
-                     {% if USING_SPACES %}
-                    <img src="{{ SPACES_URL }}/medium/{{ video.photo.filename }}"
-                         srcset="{{ get_srcset(video.photo.filename) }}"
-                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-                         alt="{{ video.photo.description if video.photo.description else video.title }}"
-                         class="post-feature-img" loading="lazy">
-                    {% else %}
-                    <img src="{{ url_for('static', filename='images/medium/' + video.photo.filename) }}"
-                         srcset="{{ get_srcset(video.photo.filename) }}"
-                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-                         alt="{{ video.photo.description if video.photo.description else video.title }}"
-                         class="post-feature-img" loading="lazy">
-                    {% endif %}
+                    {% set pic = get_picture_data(video.photo.filename, video.photo.lqip) %}
+                    {% set img_alt = video.photo.description if video.photo.description else video.title %}
+                    {% set img_class = 'post-feature-img' %}
+                    {% set img_sizes = '(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw' %}
+                    {% include '_responsive_image.html' %}
                 </a>
             </div>
             {% elif video.embed_code %}

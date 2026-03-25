@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Write a New Post – Ben Amuwo's Neurascape{% endblock %}
+{% block extra_css %}{% include '_easymde_head.html' %}{% endblock %}
 {% block content %}
 <section class="newpost-wrap">
   <h1><i class="fa-solid fa-pen-nib"></i> New Post</h1>
@@ -15,7 +16,7 @@
       <span>Content <small>(Markdown OK)</small></span>
       <textarea name="content" rows="12" maxlength="20000"
                 placeholder="Speak forth"
-                data-count></textarea>
+                data-count data-easymde></textarea>
       <div class="char-count"><span>0</span>/20 000</div>
     </label>
 
@@ -41,59 +42,27 @@
         <span>GitHub URL <small>(optional)</small></span>
         <input type="url" name="github_link" placeholder="https://github.com/user/repo">
       </label>
+
+      <label class="flex-grow">
+        <span>Schedule <small>(your local time — leave blank to publish now)</small></span>
+        <input type="datetime-local" name="published_at">
+      </label>
+
+      <label class="flex-grow">
+        <span>Tags <small>(comma-separated)</small></span>
+        <input type="text" name="tags" placeholder="python, web-dev, neurascape">
+      </label>
     </div>
-
-
 
     <button type="submit" class="send-btn">
       <i class="fa-solid fa-rocket"></i> Publish
     </button>
   </form>
 </section>
-
 {% endblock %}
 
 {% block extra_js %}
-<script>
-/* live character counter */
-document.querySelectorAll('[data-count]').forEach(area=>{
-  const counter = area.parentElement.querySelector('.char-count span');
-  area.addEventListener('input', ()=> counter.textContent = area.value.length);
-});
-</script>
-
-<script>
-/* image preview */
-(function () {
-  const input   = document.getElementById('post-image');
-  if (!input) return;
-
-  const label      = input.closest('.file-input');
-  const fileNameEl = label.querySelector('.file-name');
-  const previewEl  = label.querySelector('.preview');
-
-  input.addEventListener('change', () => {
-    const file = input.files[0];
-    if (!file) {
-      // reset
-      fileNameEl.textContent = 'No file chosen…';
-      previewEl.style.display = 'none';
-      previewEl.src = '';
-      return;
-    }
-
-    fileNameEl.textContent = file.name;
-
-    // Show thumbnail if it’s an image
-    if (file.type.startsWith('image/')) {
-      previewEl.src = URL.createObjectURL(file);
-      previewEl.style.display = 'block';
-      previewEl.onload = () => URL.revokeObjectURL(previewEl.src); // free memory
-    } else {
-      previewEl.style.display = 'none';
-      previewEl.src = '';
-    }
-  });
-})();
-</script>
+{% include '_easymde_init.html' %}
+{% include '_image_preview.html' %}
+{% include '_schedule_convert.html' %}
 {% endblock %}

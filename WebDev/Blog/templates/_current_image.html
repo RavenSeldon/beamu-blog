@@ -1,0 +1,16 @@
+{# Show current image with option to replace. Pass: current_photo (Photo instance or None) #}
+{% if current_photo and current_photo.filename %}
+<div class="current-image-preview" style="margin-bottom: 1em; padding: 1em; background: rgba(20,20,50,0.4); border-radius: 10px; border: 1px solid var(--glass-border, rgba(127,249,255,0.2));">
+    <p style="margin-top: 0; color: var(--accent, #C4B5E2); font-size: 0.9em;"><i class="fa-solid fa-image"></i> Current Image</p>
+    {% if USING_SPACES %}
+    <img src="{{ SPACES_URL }}/thumbnail/{{ current_photo.filename }}"
+         alt="{{ current_photo.description or 'Current image' }}"
+         style="max-width: 200px; border-radius: 8px; margin-bottom: 0.5em;">
+    {% else %}
+    <img src="{{ url_for('static', filename='images/thumbnail/' + current_photo.filename) }}"
+         alt="{{ current_photo.description or 'Current image' }}"
+         style="max-width: 200px; border-radius: 8px; margin-bottom: 0.5em;">
+    {% endif %}
+    <p style="font-size: 0.85em; opacity: 0.7; margin-bottom: 0;">Upload a new image below to replace it, or leave empty to keep the current one.</p>
+</div>
+{% endif %}

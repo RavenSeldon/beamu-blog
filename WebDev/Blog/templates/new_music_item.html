@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Add a New Music Item - Ben Amuwo's Neurascape{% endblock %}
+{% block extra_css %}{% include '_easymde_head.html' %}{% endblock %}
 
 {% block content %}
 <section class="newpost-wrap">
@@ -41,7 +42,8 @@
     <label for="content" class="full">
       <span>Content/Description <small>(Markdown OK)</small></span>
       <textarea id="content" name="content" rows="8" maxlength="20000"
-                placeholder="Your thoughts, review, or details about this music item..."></textarea>
+                placeholder="Your thoughts, review, or details about this music item..."
+                data-easymde></textarea>
     </label>
 
     <div class="flex-row">
@@ -83,34 +85,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-/* image preview */
-(function () {
-  const input = document.getElementById('post-image');
-  if (!input) return;
-
-  const label = input.closest('.file-input');
-  const fileNameEl = label.querySelector('.file-name');
-  const previewEl = label.querySelector('.preview');
-
-  input.addEventListener('change', () => {
-    const file = input.files[0];
-    if (!file) {
-      fileNameEl.textContent = 'No file chosen…';
-      previewEl.style.display = 'none';
-      previewEl.src = '';
-      return;
-    }
-    fileNameEl.textContent = file.name;
-    if (file.type.startsWith('image/')) {
-      previewEl.src = URL.createObjectURL(file);
-      previewEl.style.display = 'block';
-      previewEl.onload = () => URL.revokeObjectURL(previewEl.src);
-    } else {
-      previewEl.style.display = 'none';
-      previewEl.src = '';
-    }
-  });
-})();
-</script>
+{% include '_easymde_init.html' %}
+{% include '_image_preview.html' %}
 {% endblock %}

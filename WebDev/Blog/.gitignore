@@ -43,6 +43,10 @@ ENV/
 *.swp
 *.swo
 
+# Logs
+debug.log
+*.log
+
 # Image uploads and generated files
 static/images/*/
 !static/images/placeholder.jpg

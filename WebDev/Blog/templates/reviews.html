@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Reviews - Ben's Neurascape{% endblock %}
+{% block title %}Reviews - Ben Amuwo's Neurascape{% endblock %}
+{% block meta_description %}Honest reviews of books, films, music, and more from Ben Amuwo's Neurascape — thoughtful perspectives on art and culture.{% endblock %}
 
 {% block content %}
 <section class="review-items-wrap">
@@ -27,19 +28,11 @@
             {% if review.photo and review.photo.filename %}
             <div class="post-image">
                 <a href="{{ url_for('post', post_id=review.id) }}">
-                     {% if USING_SPACES %}
-                    <img src="{{ SPACES_URL }}/medium/{{ review.photo.filename }}"
-                         srcset="{{ get_srcset(review.photo.filename) }}"
-                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-                         alt="{{ review.photo.description if review.photo.description else review.item_title }}"
-                         class="post-feature-img" loading="lazy">
-                    {% else %}
-                    <img src="{{ url_for('static', filename='images/medium/' + review.photo.filename) }}"
-                         srcset="{{ get_srcset(review.photo.filename) }}"
-                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-                         alt="{{ review.photo.description if review.photo.description else review.item_title }}"
-                         class="post-feature-img" loading="lazy">
-                    {% endif %}
+                    {% set pic = get_picture_data(review.photo.filename, review.photo.lqip) %}
+                    {% set img_alt = review.photo.description if review.photo.description else review.item_title %}
+                    {% set img_class = 'post-feature-img' %}
+                    {% set img_sizes = '(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw' %}
+                    {% include '_responsive_image.html' %}
                 </a>
             </div>
             {% endif %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Bulk Photo Upload – Ben Amuwo's Neurascape{% endblock %}
+{% block content %}
+<section class="newpost-wrap">
+  <h1><i class="fa-solid fa-images"></i> Bulk Photo Upload</h1>
+  <p>Select multiple images to upload them all at once. Each image will be processed into responsive sizes and WebP format.</p>
+
+  <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <label class="file-input has-preview" id="bulk-drop-zone" style="min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5em; cursor: pointer;">
+      <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2em; color: var(--primary);"></i>
+      <span>Drop images here or click to browse</span>
+      <input id="bulk-images" type="file" name="images" accept="image/*" multiple>
+      <span class="file-name" id="bulk-file-count">No files chosen</span>
+    </label>
+
+    <div id="bulk-preview-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.8em; margin-top: 1em;"></div>
+
+    <button type="submit" class="send-btn">
+      <i class="fa-solid fa-rocket"></i> Upload All
+    </button>
+  </form>
+
+  <div style="margin-top: 1.5em;">
+    <a href="{{ url_for('photo_album') }}" style="color: var(--accent); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Back to Gallery</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var input = document.getElementById('bulk-images');
+  var countEl = document.getElementById('bulk-file-count');
+  var grid = document.getElementById('bulk-preview-grid');
+  var dropZone = document.getElementById('bulk-drop-zone');
+  var dragCounter = 0;
+
+  function showPreviews(files) {
+    grid.innerHTML = '';
+    countEl.textContent = files.length + ' file(s) selected';
+    Array.from(files).forEach(function (file) {
+      if (!file.type.startsWith('image/')) return;
+      var wrapper = document.createElement('div');
+      wrapper.style.cssText = 'border-radius:8px; overflow:hidden; aspect-ratio:1/1; position:relative; border:1px solid var(--glass-border);';
+      var img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+      img.onload = function () { URL.revokeObjectURL(img.src); };
+      var label = document.createElement('span');
+      label.textContent = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+      label.style.cssText = 'position:absolute; bottom:4px; right:4px; background:rgba(0,0,0,0.7); color:#fff; font-size:0.7em; padding:2px 6px; border-radius:4px;';
+      wrapper.appendChild(img);
+      wrapper.appendChild(label);
+      grid.appendChild(wrapper);
+    });
+  }
+
+  input.addEventListener('change', function () { showPreviews(input.files); });
+
+  /* Drag-and-drop for bulk zone */
+  dropZone.addEventListener('dragenter', function (e) {
+    e.preventDefault(); dragCounter++;
+    dropZone.style.borderColor = 'var(--primary)';
+    dropZone.style.boxShadow = '0 0 20px rgba(126, 249, 255, 0.4)';
+    dropZone.style.borderStyle = 'dashed';
+  });
+  dropZone.addEventListener('dragover', function (e) { e.preventDefault(); });
+  dropZone.addEventListener('dragleave', function (e) {
+    e.preventDefault(); dragCounter--;
+    if (dragCounter <= 0) {
+      dragCounter = 0;
+      dropZone.style.borderColor = '';
+      dropZone.style.boxShadow = '';
+      dropZone.style.borderStyle = '';
+    }
+  });
+  dropZone.addEventListener('drop', function (e) {
+    e.preventDefault(); dragCounter = 0;
+    dropZone.style.borderColor = '';
+    dropZone.style.boxShadow = '';
+    dropZone.style.borderStyle = '';
+    var dt = new DataTransfer();
+    Array.from(e.dataTransfer.files).forEach(function (f) {
+      if (f.type.startsWith('image/')) dt.items.add(f);
+    });
+    input.files = dt.files;
+    showPreviews(input.files);
+  });
+})();
+</script>
+{% endblock %}

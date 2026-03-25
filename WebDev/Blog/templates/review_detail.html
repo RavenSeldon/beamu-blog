@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ item.title }} - Review - Ben Amuwo's Neurascape{% endblock %}
+{% block meta_description %}{{ item.content|striptags|truncate(155, end='...') }}{% endblock %}
 
 {% block content %}
 <article class="single-post review-detail">
@@ -30,18 +31,11 @@
 
     {% if item.photo and item.photo.filename %}
     <div class="post-image">
-        {% set alt_text = item.photo.description if item.photo.description else item.item_title %}
-        {% if USING_SPACES %}
-        <img src="{{ SPACES_URL }}/large/{{ item.photo.filename }}"
-             srcset="{{ get_srcset(item.photo.filename) }}"
-             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
-             alt="{{ alt_text }}" class="post-feature-img" loading="eager">
-        {% else %}
-        <img src="{{ url_for('static', filename='images/large/' + item.photo.filename) }}"
-             srcset="{{ get_srcset(item.photo.filename) }}"
-             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px"
-             alt="{{ alt_text }}" class="post-feature-img" loading="eager">
-        {% endif %}
+        {% set pic = get_picture_data(item.photo.filename, item.photo.lqip) %}
+        {% set img_alt = item.photo.description if item.photo.description else item.item_title %}
+        {% set img_class = 'post-feature-img' %}
+        {% set img_loading = 'eager' %}
+        {% include '_responsive_image.html' %}
     </div>
     {% endif %}
 
@@ -63,12 +57,12 @@
     </div>
 
     {% if current_user.is_authenticated %}
-    <div class="post-admin">
+    <div class="post-admin" style="display: flex; gap: 1em; align-items: center; flex-wrap: wrap;">
+        <a href="{{ url_for('edit_review', item_id=item.id) }}" class="send-btn" style="display: inline-block; text-decoration: none;"><i class="fa-solid fa-pen-to-square"></i> Edit Review</a>
         <form method="post" action="{{ url_for('delete_post', post_id=item.id) }}" onsubmit="return confirm('Are you sure you want to delete this review?');">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i> Delete Review</button>
+            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i></button>
         </form>
-         {# <a href="{{ url_for('edit_review', item_id=item.id) }}" class="edit-btn">Edit Review</a> #}
     </div>
     {% endif %}
 

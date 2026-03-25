@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard – Ben Amuwo's Neurascape{% endblock %}
+{% block content %}
+<section class="admin-dashboard">
+  <h1><i class="fa-solid fa-gauge-high"></i> Admin Dashboard</h1>
+
+  {# ── Content Counts ── #}
+  <div class="admin-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1em; margin: 2em 0;">
+    {% for label, icon, count in [
+      ('Posts', 'fa-pen-nib', counts.posts),
+      ('Projects', 'fa-sun', counts.projects),
+      ('Photos', 'fa-camera-retro', counts.photos),
+      ('Music', 'fa-compact-disc', counts.music),
+      ('Videos', 'fa-photo-film', counts.videos),
+      ('Reviews', 'fa-star-half-stroke', counts.reviews),
+    ] %}
+    <div style="background: var(--glass, rgba(20,20,50,0.65)); border: 1px solid var(--glass-border, rgba(127,249,255,0.2)); border-radius: 12px; padding: 1.2em; text-align: center;">
+      <div style="font-size: 2em; color: var(--primary, #37B4F8);"><i class="fa-solid {{ icon }}"></i></div>
+      <div style="font-size: 1.8em; font-weight: 700; margin: 0.2em 0;">{{ count }}</div>
+      <div style="font-size: 0.9em; opacity: 0.7;">{{ label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {# ── Quick Create ── #}
+  <div style="margin: 2em 0; padding: 1.2em; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px;">
+    <h2 style="margin-top: 0;"><i class="fa-solid fa-plus-circle"></i> Quick Create</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.8em;">
+      <a href="{{ url_for('new_post') }}" class="hero-btn" style="font-size: 0.9em;"><i class="fa-solid fa-pen-nib"></i> Post</a>
+      <a href="{{ url_for('new_project') }}" class="hero-btn" style="font-size: 0.9em;"><i class="fa-solid fa-sun"></i> Project</a>
+      <a href="{{ url_for('new_photo') }}" class="hero-btn" style="font-size: 0.9em;"><i class="fa-solid fa-camera-retro"></i> Photo</a>
+      <a href="{{ url_for('new_music_item') }}" class="hero-btn" style="font-size: 0.9em;"><i class="fa-solid fa-compact-disc"></i> Music</a>
+      <a href="{{ url_for('new_video_item') }}" class="hero-btn" style="font-size: 0.9em;"><i class="fa-solid fa-photo-film"></i> Video</a>
+      <a href="{{ url_for('new_review') }}" class="hero-btn" style="font-size: 0.9em;"><i class="fa-solid fa-star-half-stroke"></i> Review</a>
+    </div>
+  </div>
+
+  {# ── Recent Projects ── #}
+  {% if recent_projects %}
+  <div style="margin: 2em 0; padding: 1.2em; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px;">
+    <h2 style="margin-top: 0;"><i class="fa-solid fa-sun"></i> Recent Projects</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left;">
+          <th style="padding: 0.5em;">Title</th>
+          <th style="padding: 0.5em;">Date</th>
+          <th style="padding: 0.5em;">Featured</th>
+          <th style="padding: 0.5em;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for project in recent_projects %}
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <td style="padding: 0.5em;"><a href="{{ url_for('project_detail', project_id=project.id) }}">{{ project.title }}</a></td>
+          <td style="padding: 0.5em; opacity: 0.7; font-size: 0.9em;">{{ project.date_posted.strftime('%b %d, %Y') }}</td>
+          <td style="padding: 0.5em;">{% if project.is_featured %}<i class="fa-solid fa-star" style="color: var(--accent-alt, #FFCC5C);"></i>{% endif %}</td>
+          <td style="padding: 0.5em;">
+            <a href="{{ url_for('edit_project', project_id=project.id) }}" title="Edit" style="margin-right: 0.5em;"><i class="fa-solid fa-pen-to-square"></i></a>
+            <form method="post" action="{{ url_for('delete_project', project_id=project.id) }}" style="display: inline;" onsubmit="return confirm('Delete this project?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <button type="submit" style="background: none; border: none; color: #ff6e6e; cursor: pointer;" title="Delete"><i class="fa-solid fa-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {# ── Recent Posts (all types) ── #}
+  {% if recent_posts %}
+  <div style="margin: 2em 0; padding: 1.2em; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px;">
+    <h2 style="margin-top: 0;"><i class="fa-solid fa-clock-rotate-left"></i> Recent Content</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left;">
+          <th style="padding: 0.5em;">Title</th>
+          <th style="padding: 0.5em;">Type</th>
+          <th style="padding: 0.5em;">Date</th>
+          <th style="padding: 0.5em;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in recent_posts %}
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <td style="padding: 0.5em;"><a href="{{ url_for('post', post_id=item.id) }}">{{ item.title }}</a></td>
+          <td style="padding: 0.5em;">
+            {% if item.type == 'post' %}<i class="fa-solid fa-pen-nib"></i> Post
+            {% elif item.type == 'music_item' %}<i class="fa-solid fa-compact-disc"></i> Music
+            {% elif item.type == 'video' %}<i class="fa-solid fa-photo-film"></i> Video
+            {% elif item.type == 'review' %}<i class="fa-solid fa-star-half-stroke"></i> Review
+            {% endif %}
+          </td>
+          <td style="padding: 0.5em; opacity: 0.7; font-size: 0.9em;">{{ item.date_posted.strftime('%b %d, %Y') }}</td>
+          <td style="padding: 0.5em;">
+            {% if item.type == 'post' %}
+            <a href="{{ url_for('edit_post', post_id=item.id) }}" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+            {% elif item.type == 'music_item' %}
+            <a href="{{ url_for('edit_music_item', item_id=item.id) }}" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+            {% elif item.type == 'video' %}
+            <a href="{{ url_for('edit_video_item', item_id=item.id) }}" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+            {% elif item.type == 'review' %}
+            <a href="{{ url_for('edit_review', item_id=item.id) }}" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+            {% endif %}
+            <form method="post" action="{{ url_for('delete_post', post_id=item.id) }}" style="display: inline; margin-left: 0.5em;" onsubmit="return confirm('Delete this item?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <button type="submit" style="background: none; border: none; color: #ff6e6e; cursor: pointer;" title="Delete"><i class="fa-solid fa-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {# ── Maintenance ── #}
+  <div style="margin: 2em 0; padding: 1.2em; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px;">
+    <h2 style="margin-top: 0;"><i class="fa-solid fa-wrench"></i> Maintenance</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.8em;">
+      <form method="post" action="{{ url_for('admin_clear_cache') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="hero-btn" style="font-size: 0.9em; background: var(--accent-alt, #FFCC5C); color: var(--bg-dark, #050518);"><i class="fa-solid fa-broom"></i> Clear Cache</button>
+      </form>
+      <a href="{{ url_for('check_image_files') }}" class="hero-btn" style="font-size: 0.9em;"><i class="fa-solid fa-image"></i> Check Image Files</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

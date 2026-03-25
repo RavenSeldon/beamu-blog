@@ -1,0 +1,125 @@
+{# EasyMDE JS + auto-init — include in {% block extra_js %} on form pages #}
+<script src="https://cdn.jsdelivr.net/npm/easymde@2/dist/easymde.min.js"></script>
+<script>
+(function () {
+  document.querySelectorAll('[data-easymde]').forEach(function (textarea) {
+    var mde = new EasyMDE({
+      element: textarea,
+      spellChecker: false,
+      autosave: { enabled: false },
+      status: ['lines', 'words'],
+      placeholder: textarea.placeholder || 'Write in Markdown…',
+      toolbar: [
+        'bold', 'italic', 'heading', '|',
+        'quote', 'unordered-list', 'ordered-list', '|',
+        'link', 'horizontal-rule', '|',
+        'preview', 'side-by-side', 'fullscreen', '|',
+        'guide'
+      ],
+      /* Match Neurascape dark palette */
+      styleSelectedText: false,
+      renderingConfig: { singleLineBreaks: false },
+    });
+
+    /* If a char-count element exists for this textarea, update it from EasyMDE */
+    var countEl = textarea.parentElement && textarea.parentElement.querySelector('.char-count span');
+    if (countEl) {
+      mde.codemirror.on('change', function () {
+        countEl.textContent = mde.value().length;
+      });
+    }
+  });
+})();
+</script>
+<style>
+  /* Neurascape theme overrides for EasyMDE */
+  .EasyMDEContainer .CodeMirror {
+    background: rgba(10, 10, 32, 0.5);
+    color: var(--text);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    font-size: 0.95em;
+    min-height: 200px;
+  }
+  .EasyMDEContainer .CodeMirror-focused {
+    border-color: var(--primary);
+    box-shadow: 0 0 12px rgba(126, 249, 255, 0.4);
+  }
+  .EasyMDEContainer .CodeMirror-cursor { border-left-color: var(--primary); }
+  .EasyMDEContainer .CodeMirror-selected { background: rgba(55, 180, 248, 0.2); }
+  .EasyMDEContainer .editor-toolbar {
+    background: rgba(10, 10, 32, 0.6);
+    border: 1.5px solid var(--glass-border);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    opacity: 1;
+  }
+  .EasyMDEContainer .editor-toolbar button {
+    color: var(--primary) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0.3em 0.5em !important;
+    margin: 0 !important;
+    min-width: auto;
+    min-height: auto;
+  }
+  .EasyMDEContainer .editor-toolbar button:hover,
+  .EasyMDEContainer .editor-toolbar button.active {
+    color: var(--accent) !important;
+    background: rgba(126, 249, 255, 0.1) !important;
+    border-radius: 4px !important;
+  }
+  .EasyMDEContainer .editor-toolbar i.separator {
+    border-left-color: var(--glass-border);
+  }
+  .EasyMDEContainer .editor-statusbar {
+    color: var(--primary);
+    opacity: 0.7;
+    font-size: 0.8em;
+    padding: 4px 8px;
+  }
+  .EasyMDEContainer .editor-preview,
+  .EasyMDEContainer .editor-preview-side {
+    background: rgba(10, 10, 32, 0.85);
+    color: var(--text);
+    font-family: var(--font-sans);
+    padding: 1em;
+  }
+  .EasyMDEContainer .editor-preview a,
+  .EasyMDEContainer .editor-preview-side a {
+    color: var(--primary);
+  }
+  .EasyMDEContainer .editor-preview h1,
+  .EasyMDEContainer .editor-preview h2,
+  .EasyMDEContainer .editor-preview h3,
+  .EasyMDEContainer .editor-preview-side h1,
+  .EasyMDEContainer .editor-preview-side h2,
+  .EasyMDEContainer .editor-preview-side h3 {
+    color: var(--accent);
+    font-family: var(--font-serif);
+  }
+  .EasyMDEContainer .editor-preview code,
+  .EasyMDEContainer .editor-preview-side code {
+    background: rgba(8, 8, 26, 0.5);
+    color: var(--accent-alt);
+    padding: 0.15em 0.35em;
+    border-radius: 3px;
+  }
+  .EasyMDEContainer .editor-preview blockquote,
+  .EasyMDEContainer .editor-preview-side blockquote {
+    border-left: 3px solid var(--primary);
+    color: rgba(224, 230, 240, 0.85);
+    padding-left: 1em;
+  }
+  /* Fullscreen mode */
+  .EasyMDEContainer.fullscreen { z-index: 9999; }
+  .EasyMDEContainer .CodeMirror-fullscreen,
+  .EasyMDEContainer .editor-toolbar.fullscreen {
+    background: var(--bg-dark);
+  }
+  /* Hide the original textarea label char-count when EasyMDE is active
+     (EasyMDE has its own status bar) */
+  .EasyMDEContainer ~ .char-count { display: none; }
+</style>

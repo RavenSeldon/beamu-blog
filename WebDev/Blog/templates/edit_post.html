@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Edit Post – Ben Amuwo's Neurascape{% endblock %}
+{% block extra_css %}{% include '_easymde_head.html' %}{% endblock %}
+{% block content %}
+<section class="newpost-wrap">
+  <h1><i class="fa-solid fa-pen-to-square"></i> Edit Post</h1>
+
+  <form method="post" enctype="multipart/form-data" class="post-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>
+      <span>Title</span>
+      <input type="text" name="title" maxlength="120" value="{{ post.title }}" required>
+    </label>
+
+    <label class="full">
+      <span>Content <small>(Markdown OK)</small></span>
+      <textarea name="content" rows="12" maxlength="20000" data-count data-easymde>{{ post.content or '' }}</textarea>
+      <div class="char-count"><span>{{ (post.content or '')|length }}</span>/20 000</div>
+    </label>
+
+    <div class="flex-grow">
+      {% set current_photo = post.photo %}
+      {% include '_current_image.html' %}
+
+      <label class="file-input has-preview">
+        <i class="fa-solid fa-image"></i> Replace Image <small>(optional)</small>
+        <input id="post-image" type="file" name="image" accept="image/*">
+        <span class="file-name">No file chosen...</span>
+        <img class="preview" style="display:none;" alt="Image preview" src="">
+      </label>
+
+      <label class="flex-grow">
+        <span>Project <small>(optional)</small></span>
+        <select name="project_id" class="form-control">
+          <option value="">-- None --</option>
+          {% for project in projects %}
+          <option value="{{ project.id }}" {% if post.project_id == project.id %}selected{% endif %}>{{ project.title }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label class="flex-grow">
+        <span>GitHub URL <small>(optional)</small></span>
+        <input type="url" name="github_link" value="{{ post.github_link or '' }}" placeholder="https://github.com/user/repo">
+      </label>
+
+      <label class="flex-grow">
+        <span>Schedule <small>(your local time — blank = publish now)</small></span>
+        <input type="datetime-local" name="published_at" value="{{ post.published_at.strftime('%Y-%m-%dT%H:%M') if post.published_at else '' }}">
+      </label>
+
+      <label class="flex-grow">
+        <span>Tags <small>(comma-separated)</small></span>
+        <input type="text" name="tags" value="{{ post.tags|map(attribute='name')|join(', ') }}" placeholder="python, web-dev, neurascape">
+      </label>
+    </div>
+
+    <div style="display: flex; gap: 1em; align-items: center;">
+      <button type="submit" class="send-btn"><i class="fa-solid fa-check"></i> Save Changes</button>
+      <a href="{{ url_for('post', post_id=post.id) }}" style="color: var(--accent); text-decoration: none;">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% include '_easymde_init.html' %}
+{% include '_image_preview.html' %}
+{% include '_schedule_convert.html' %}
+{% endblock %}

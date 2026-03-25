@@ -1,0 +1,465 @@
+/* =============================================
+   spotify.css — Spotify & music feature styles:
+   embeds, player controls, mini player, status
+   messages, responsive adjustments
+   ============================================= */
+
+/* --- 1. Music Page General (List & Detail) --- */
+
+.post-meta .music-item-type {
+    font-style: italic;
+    opacity: 0.9;
+}
+
+.post-meta .music-item-type i {
+    margin-right: 0.4em;
+}
+
+/* Shared by music detail, review detail, video detail etc. */
+.music-item-type-detail,
+.review-category-detail,
+.video-source-type-detail,
+.video-duration-detail {
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.music-item-type-detail i,
+.review-category-detail i,
+.video-source-type-detail i,
+.video-duration-detail i {
+    margin-right: 0.3em;
+}
+
+.music-links a {
+    margin-right: 10px;
+}
+
+/* --- 2. Spotify Embeds --- */
+
+.spotify-embed-compact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1em;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
+}
+
+.spotify-embed-compact iframe {
+    display: block;
+    border-radius: 12px;
+}
+
+.spotify-embed-compact:hover {
+    box-shadow: 0 6px 25px rgba(29, 185, 84, 0.3);
+}
+
+.spotify-embed-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 75%;
+    height: 0;
+    overflow: hidden;
+    margin-bottom: 2em;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
+}
+
+.spotify-embed-wrapper iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 12px;
+}
+
+.spotify-embed-wrapper:hover {
+    box-shadow: 0 6px 25px rgba(29, 185, 84, 0.3);
+}
+
+/* --- 3. Spotify Player Controls Container --- */
+
+.spotify-player-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em 0;
+    margin-top: 0.5em;
+}
+
+/* --- 4. Spotify Action Buttons --- */
+
+.quick-play-btn {
+    display: none;
+    gap: 0.5em;
+    background: linear-gradient(90deg, #1DB954, #1ED760);
+    color: white;
+    border: none;
+    border-radius: 25%;
+    width: 40px;
+    height: 40px;
+    padding: 0.8em 1.5em;
+    font-size: 0.7em;
+    font-weight: 600;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.4);
+    min-width: 160px;
+}
+
+.quick-play-btn:hover {
+    background: linear-gradient(90deg, #1ED760, #1DB954);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.6);
+}
+
+.quick-play-btn i { font-size: 1em; }
+
+.standalone-play-btn {
+    display: none;
+    align-items: center;
+    gap: 0.5em;
+    background: linear-gradient(90deg, #1DB954, #1ED760);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 1em 2em;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.4);
+    transition: all 0.3s ease;
+    min-width: 180px;
+    justify-content: center;
+}
+
+.standalone-play-btn:hover {
+    background: linear-gradient(90deg, #1ED760, #1DB954);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.6);
+    transform: translateY(-2px);
+}
+
+.standalone-play-btn i { font-size: 1.1em; }
+
+.general-spotify-play-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.6em 1.2em;
+    background: #1DB954;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.general-spotify-play-btn:hover {
+    background: #1ed760;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+.spotify-connect-btn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #1DB954;
+    color: white;
+    border: none;
+    padding: 0.8em 1.5em;
+    border-radius: 25px;
+    font-size: 0.7em;
+    font-weight: 600;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.5em;
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.spotify-connect-btn:hover {
+    background: #1ed760;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
+}
+
+/* Player Action Buttons */
+.player-actions {
+    display: flex;
+    gap: 0.8em;
+    align-items: center;
+}
+
+.player-action-btn {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+    opacity: 0.7;
+}
+
+.player-action-btn:hover {
+    opacity: 1;
+    background: rgba(55, 180, 248, 0.15);
+    color: var(--primary);
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+#player-music-page-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(196, 181, 226, 0.15);
+}
+
+#player-disconnect-btn:hover {
+    color: #ff6e6e;
+    border-color: #ff6e6e;
+    background: rgba(255, 110, 110, 0.15);
+}
+
+/* --- 5. Spotify Mini Player (Footer) --- */
+
+.mini-player {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(8, 8, 25, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 2px solid var(--glass-border);
+    box-shadow: 0 -4px 32px rgba(0, 255, 255, 0.1);
+    z-index: 999;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.mini-player.visible {
+    display: flex;
+}
+
+@keyframes slideUpPlayer {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.player-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1em 2em;
+    gap: 2em;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.player-track-info {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    flex: 1;
+    min-width: 0;
+}
+
+.player-album-art {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.player-album-art:hover { transform: scale(1.05); }
+
+.player-text-info { flex: 1; overflow: hidden; }
+
+.player-track-name {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.95em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.2em;
+}
+
+.player-artist-name {
+    color: var(--primary);
+    font-size: 0.85em;
+    opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.player-btn {
+    background: transparent;
+    border: 2px solid var(--glass-border);
+    color: var(--primary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1em;
+}
+
+.player-btn:hover {
+    background: rgba(55, 180, 248, 0.2);
+    color: var(--accent);
+    transform: scale(1.1);
+}
+
+.player-btn:active { transform: scale(0.95); }
+
+#player-play-pause-btn.player-play-btn {
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    color: #111;
+    font-size: 1.1rem;
+    width: 45px;
+    height: 45px;
+    border: none;
+}
+
+#player-play-pause-btn.player-play-btn:hover {
+    background: linear-gradient(90deg, var(--accent), var(--primary));
+    color: #000;
+    box-shadow: 0 0 15px rgba(126, 249, 255, 0.5);
+}
+
+.player-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+    flex: 1;
+    max-width: 300px;
+}
+
+.player-time {
+    font-size: 0.85em;
+    color: var(--text);
+    opacity: 0.8;
+    min-width: 40px;
+    text-align: center;
+}
+
+.player-progress .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+}
+
+.player-progress .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 2px;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 6px rgba(126, 249, 255, 0.5);
+}
+
+.player-progress .progress-bar:hover .progress-fill {
+    box-shadow: 0 0 10px rgba(126, 249, 255, 0.8);
+}
+
+/* Footer adjustment when mini-player is visible */
+body:has(.mini-player[style*="flex"]) footer,
+body:has(.mini-player.visible) footer {
+    padding-bottom: calc(4em + 70px);
+}
+
+/* --- 6. Spotify Status Messages & Notifications --- */
+
+.spotify-status-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(8, 8, 25, 0.95);
+    border: 1px solid var(--glass-border);
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.9rem;
+    z-index: 1001;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.spotify-status-message.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.spotify-status-message.success {
+    border-color: #1DB954;
+    background: rgba(29, 185, 84, 0.2);
+    color: #1DB954;
+}
+
+.spotify-status-message.error {
+    border-color: #ff6e6e;
+    background: rgba(255, 110, 110, 0.2);
+    color: #ff6e6e;
+}
+
+/* --- 7. Responsive --- */
+
+@media (max-width: 768px) {
+    .spotify-connect-btn {
+        bottom: 70px;
+        left: 10px;
+        padding: 0.6em 1.2em;
+        font-size: 0.85em;
+    }
+    .quick-play-btn { padding: 0.7em 1.2em; font-size: 0.85em; min-width: 140px; }
+    .standalone-play-btn { padding: 0.8em 1.5em; font-size: 0.9em; min-width: 160px; }
+    .spotify-player-controls { padding: 0.8em 0; }
+    .player-content { padding: 0.8em 1em; flex-wrap: wrap; gap: 1em; }
+    .player-track-info { flex: 1 1 100%; order: 1; }
+    .player-controls { order: 2; }
+    .player-progress { flex: 1 1 100%; order: 3; max-width: none; }
+    .player-album-art { width: 40px; height: 40px; }
+    .player-btn { width: 35px; height: 35px; font-size: 0.9em; }
+    #player-play-pause { width: 45px; height: 45px; font-size: 1.1em; }
+}
+
+@media (max-width: 500px) {
+    .quick-play-btn { padding: 0.6em 1em; font-size: 0.8em; min-width: 120px; }
+    .standalone-play-btn { padding: 0.7em 1.2em; font-size: 0.85em; min-width: 140px; }
+    .spotify-player-controls { padding: 0.6em 0; }
+    .player-content { padding: 0.6em 0.8em; }
+    .player-track-name, .player-artist-name { font-size: 0.85em; }
+    .spotify-status-message { right: 10px; left: 10px; font-size: 0.9em; }
+}
