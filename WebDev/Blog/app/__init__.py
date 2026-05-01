@@ -37,8 +37,8 @@ def create_app(config_filename='config.py'):
     app.config.from_pyfile(config_path)
 
     # --- Sentry Error Monitoring ---
-    sentry_dsn = os.environ.get('SENTRY_DSN')
-    if sentry_dsn:
+    sentry_dsn = os.environ.get('SENTRY_DSN', '').strip()
+    if sentry_dsn and sentry_dsn.startswith('https://'):
         sentry_sdk.init(
             dsn=sentry_dsn,
             traces_sample_rate=0.1,
@@ -46,6 +46,8 @@ def create_app(config_filename='config.py'):
             environment=app.config.get('ENV', 'development'),
         )
         app.logger.info('Sentry error monitoring initialized')
+    elif sentry_dsn:
+        app.logger.warning(f'SENTRY_DSN is set but looks invalid (starts with: {sentry_dsn[:10]}...) — skipping Sentry init')
 
     # ProxyFix for reverse proxy (DigitalOcean / Gunicorn)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
