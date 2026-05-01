@@ -58,26 +58,22 @@ if DATABASE_URL and DATABASE_URL.startswith('postgresql://') and '?sslmode=' not
 SQLALCHEMY_DATABASE_URI = DATABASE_URL or 'sqlite:///' + os.path.join(basedir, 'instance', 'blog.db')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-# Neon Specific Configurations
-# Tightened pool settings to reduce idle compute time on Neon serverless.
-# Connections recycle after 5 minutes (vs 30), smaller pool reduces keep-alive costs.
+# Neon Serverless Database Configuration
+# NullPool: opens a fresh connection per request and closes it immediately after.
+# This lets Neon's compute auto-suspend when there's no traffic, instead of
+# persistent pool connections keeping it awake 24/7.
+# Trade-off: ~50-100ms cold-start penalty on first request after suspend.
+from sqlalchemy.pool import NullPool
+
 SQLALCHEMY_ENGINE_OPTIONS = {
-    'pool_pre_ping': True,           # Verify connections before using them (catches Neon cold starts)
-    'pool_size': 3,                  # Reduced from 5 — matches typical concurrent load for a personal site
-    'pool_recycle': 300,             # Recycle after 5 minutes (was 1800s / 30 min)
-    'pool_timeout': 20,              # Reduced from 30 — fail faster if pool is exhausted
-    'max_overflow': 5,               # Reduced from 10 — caps burst connections
-    'pool_reset_on_return': 'rollback',  # Clean up any uncommitted state on connection return
+    'poolclass': NullPool,           # No persistent connections — Neon can auto-suspend
 }
 
 if DATABASE_URL and 'neon.tech' in DATABASE_URL:
-    # Neon-specific connection options
-    SQLALCHEMY_ENGINE_OPTIONS.update({
-        'connect_args': {
-            'sslmode': 'require',
-            'connect_timeout': 10,
-        }
-    })
+    SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = {
+        'sslmode': 'require',
+        'connect_timeout': 10,
+    }
 
 # Session and security settings
 PERMANENT_SESSION_LIFETIME = timedelta(days=1)

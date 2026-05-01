@@ -177,14 +177,22 @@ def sitemap():
 @main_bp.route('/health')
 @limiter.exempt
 def health():
-    """Health check endpoint for uptime monitors (UptimeRobot, Betterstack, etc.)."""
-    db_ok = False
-    try:
-        db.session.execute(db.text('SELECT 1'))
-        db_ok = True
-    except Exception as e:
-        current_app.logger.error(f"Health check DB failure: {e}")
+    """Health check endpoint for uptime monitors.
 
-    status = 'ok' if db_ok else 'degraded'
-    code = 200 if db_ok else 503
-    return jsonify(status=status, db=db_ok), code
+    Uses a lightweight app-level check by default. The DB is only checked
+    if ?db=1 is passed, to avoid keeping Neon's serverless compute awake.
+    """
+    result = {'status': 'ok', 'app': True}
+    code = 200
+
+    if request.args.get('db'):
+        try:
+            db.session.execute(db.text('SELECT 1'))
+            result['db'] = True
+        except Exception as e:
+            current_app.logger.error(f"Health check DB failure: {e}")
+            result['db'] = False
+            result['status'] = 'degraded'
+            code = 503
+
+    return jsonify(**result), code
