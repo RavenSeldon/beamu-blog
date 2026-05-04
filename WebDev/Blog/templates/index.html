@@ -24,9 +24,9 @@
       </div>
       {% endif %}
       {% if featured_project.description %}
-      <p class="featured-description">
-          {{ featured_project.description|truncate(200) }}
-      </p>
+      <div class="featured-description">
+          {{ (featured_project.description[:200] ~ '...' if featured_project.description and featured_project.description|length > 200 else featured_project.description)|markdown_safe }}
+      </div>
       {% endif %}
 
       <div class="featured-project-links">

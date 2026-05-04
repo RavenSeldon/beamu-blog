@@ -43,7 +43,7 @@
         {% endif %}
         <p>
             {% if project.description %}
-                {{ project.description|truncate(150) }}
+                {{ (project.description[:150] ~ '...' if project.description|length > 150 else project.description)|markdown_safe }}
             {% else %}
                 <em>No description provided</em>
             {% endif %}

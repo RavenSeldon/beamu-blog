@@ -460,3 +460,74 @@ FROM projects ORDER BY projects.date_posted DESC]
 2025-08-29 07:49:50,792 - app - INFO - Retrieved 2 projects
 2025-08-29 07:49:50,792 - app - INFO - Project ID: 2, Title: Test2, Image: 3
 2025-08-29 07:49:50,792 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-05-01 10:04:33,611 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-05-01 10:04:34,556 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-05-01 10:04:36,413 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-01 10:04:36,414 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-01 10:04:36,416 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-01 10:04:36,580 - app - WARNING - 404 Not Found: /favicon.ico
+2026-05-04 13:01:08,418 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-05-04 13:01:09,121 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-05-04 13:01:10,872 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:01:10,874 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:01:10,878 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:01:59,747 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:01:59,748 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:01:59,753 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:04:06,667 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-05-04 13:04:10,078 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-05-04 13:04:10,712 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-05-04 13:04:12,180 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:04:12,187 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:04:12,192 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:06:58,857 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:06:58,864 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:06:58,871 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:07:03,815 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-05-04 13:07:39,154 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:07:39,158 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:07:39,163 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:07:39,288 - app - WARNING - 404 Not Found: /favicon.ico
+2026-05-04 13:08:08,842 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:08:08,843 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:08:08,844 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:08:08,917 - app - WARNING - 404 Not Found: /favicon.ico
+2026-05-04 13:08:15,593 - app - WARNING - 404 Not Found: /favicon.ico
+2026-05-04 13:08:18,129 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:08:18,129 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:08:18,131 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:08:18,145 - app - WARNING - 404 Not Found: /favicon.ico
+2026-05-04 13:08:29,686 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:08:29,691 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:08:29,691 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:08:29,703 - app - WARNING - 404 Not Found: /favicon.ico
+2026-05-04 13:10:57,744 - app - WARNING - 404 Not Found: /favicon.ico
+2026-05-04 13:11:00,361 - app - WARNING - 404 Not Found: /favicon.ico
+2026-05-04 13:11:00,403 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:11:00,407 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:11:00,411 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:11:07,686 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:11:07,687 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:11:07,691 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:11:07,716 - app - WARNING - 404 Not Found: /favicon.ico
+2026-05-04 13:11:13,732 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:11:13,734 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:11:13,741 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:11:13,762 - app - WARNING - 404 Not Found: /favicon.ico
+2026-05-04 13:19:03,069 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-05-04 13:19:03,759 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-05-04 13:19:05,122 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:19:05,123 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:19:05,125 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:20:13,803 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:20:13,805 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:20:13,808 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:20:42,470 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:20:42,476 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:20:42,477 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:20:47,169 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:20:47,172 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:20:47,175 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-05-04 13:20:55,815 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-05-04 13:20:55,819 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-05-04 13:20:55,824 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg

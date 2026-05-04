@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify
 from app.extensions import db, cache
 from app.models import Post, Photo
 from app.utils.image_utils import get_srcset
-from app.helpers import published_filter
+from app.helpers import published_filter, markdown_safe
 
 api_bp = Blueprint('api', __name__)
 
@@ -28,11 +28,13 @@ def api_posts():
 
     serialized_posts = []
     for post_item in posts_pagination.items:
+        raw_content = post_item.content or ''
+        truncated_content = raw_content[:300] + ('...' if len(raw_content) > 300 else '')
         item_data = {
             'id': post_item.id,
             'type': post_item.type,
             'title': post_item.title,
-            'content': (post_item.content or '')[:300] + ('...' if post_item.content and len(post_item.content) > 300 else ''),
+            'content': (markdown_safe(truncated_content)),
             'date_posted': post_item.date_posted.strftime('%Y-%m-%d'),
             'photo_filename': post_item.photo.filename if post_item.photo else None,
             'github_link': post_item.github_link,
