@@ -65,14 +65,19 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 # Trade-off: ~50-100ms cold-start penalty on first request after suspend.
 from sqlalchemy.pool import NullPool
 
-SQLALCHEMY_ENGINE_OPTIONS = {
-    'poolclass': NullPool,           # No persistent connections — Neon can auto-suspend
-}
-
 if DATABASE_URL and 'neon.tech' in DATABASE_URL:
-    SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = {
-        'sslmode': 'require',
-        'connect_timeout': 10,
+    # Neon serverless: fresh connection per request so compute can auto-suspend.
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'poolclass': NullPool,
+        'connect_args': {'sslmode': 'require', 'connect_timeout': 10},
+    }
+else:
+    # Local / non-Neon Postgres: persistent pool, recycle stale connections.
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,    # transparently replaces dead connections
+        'pool_recycle': 1800,     # refresh connections older than 30 min
+        'pool_size': 5,
+        'max_overflow': 5,
     }
 
 # Session and security settings
