@@ -12,8 +12,12 @@ api_bp = Blueprint('api', __name__)
 @api_bp.route('/api/posts')
 @cache.cached(query_string=True)
 def api_posts():
-    page = int(request.args.get('page', 1))
-    per_page = 10
+    try:
+        offset = max(int(request.args.get('offset', 0)), 0)
+        limit = min(max(int(request.args.get('limit', 10)), 1), 25)
+    except ValueError:
+        offset = 0
+        limit = 10
 
     query = (
         published_filter(Post.query)
@@ -24,17 +28,23 @@ def api_posts():
         )
         .order_by(Post.date_posted.desc())
     )
-    posts_pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+
+    # Fetch one extra row so we can determine whether more posts exist.
+    posts = query.offset(offset).limit(limit + 1).all()
+    has_next = len(posts) > limit
+    posts = posts[:limit]
 
     serialized_posts = []
-    for post_item in posts_pagination.items:
+
+    for post_item in posts:
         raw_content = post_item.content or ''
         truncated_content = raw_content[:300] + ('...' if len(raw_content) > 300 else '')
+
         item_data = {
             'id': post_item.id,
             'type': post_item.type,
             'title': post_item.title,
-            'content': (markdown_safe(truncated_content)),
+            'content': markdown_safe(truncated_content),
             'date_posted': post_item.date_posted.strftime('%Y-%m-%d'),
             'photo_filename': post_item.photo.filename if post_item.photo else None,
             'github_link': post_item.github_link,
@@ -42,30 +52,42 @@ def api_posts():
             'project_title': post_item.project.title if post_item.project else None,
             'tags': [tag.name for tag in post_item.tags] if post_item.tags else []
         }
+
         if post_item.type == 'music_item':
             item_data.update({
-                'item_type': post_item.item_type, 'artist': post_item.artist,
-                'album_title': post_item.album_title, 'spotify_link': post_item.spotify_link,
+                'item_type': post_item.item_type,
+                'artist': post_item.artist,
+                'album_title': post_item.album_title,
+                'spotify_link': post_item.spotify_link,
                 'youtube_link': post_item.youtube_link,
             })
+
         elif post_item.type == 'video':
             item_data.update({
-                'video_url': post_item.video_url, 'embed_code': post_item.embed_code,
-                'source_type': post_item.source_type, 'duration': post_item.duration,
+                'video_url': post_item.video_url,
+                'embed_code': post_item.embed_code,
+                'source_type': post_item.source_type,
+                'duration': post_item.duration,
             })
+
         elif post_item.type == 'review':
             item_data.update({
-                'item_title': post_item.item_title, 'category': post_item.category,
-                'rating': post_item.rating, 'year_released': post_item.year_released,
-                'director_author': post_item.director_author, 'item_link': post_item.item_link,
+                'item_title': post_item.item_title,
+                'category': post_item.category,
+                'rating': post_item.rating,
+                'year_released': post_item.year_released,
+                'director_author': post_item.director_author,
+                'item_link': post_item.item_link,
             })
+
         serialized_posts.append(item_data)
 
     return jsonify({
         'posts': serialized_posts,
-        'has_next': posts_pagination.has_next,
-        'current_page': posts_pagination.page,
-        'total_pages': posts_pagination.pages
+        'has_next': has_next,
+        'offset': offset,
+        'limit': limit,
+        'next_offset': offset + len(serialized_posts)
     })
 
 

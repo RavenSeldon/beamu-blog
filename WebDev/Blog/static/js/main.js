@@ -150,7 +150,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        let page = 1;
+        let offset = 0;
+        const limit = 10;
         let loading = false;
         let hasNext = true;
         let observer = null;
@@ -262,25 +263,25 @@ document.addEventListener('DOMContentLoaded', function() {
         async function loadPosts() {
             if (!hasNext || loading) return;
 
-            console.log(`Infinite Scroll: Loading page ${page}`);
+            console.log(`Infinite Scroll: Loading posts from offset ${offset}`);
             loading = true;
             showLoader();
             startLoaderTimeout();
 
             try {
-                const response = await fetch(`/api/posts?page=${page}`);
+                const response = await fetch(`/api/posts?offset=${offset}&limit=${limit}`);
                 if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
 
                 if (!response.ok) {
                     // Surface the server's words — a 500 here usually means one
                     // post on this page broke serialization server-side.
                     const body = await response.text().catch(() => '');
-                    console.error(`Infinite Scroll: /api/posts?page=${page} responded ${response.status}.`,
-                                  body.slice(0, 500));
+                    console.error(`Infinite Scroll: /api/posts?offset=${offset}&limit=${limit} responded ${response.status}.`,
+                        body.slice(0, 500));
                     throw new Error(`HTTP ${response.status}`);
                 }
                 const data = await response.json();
-                console.log(`Infinite Scroll: API response for page ${page}:`, data);
+                console.log(`Infinite Scroll: API response for offset ${offset}:`, data);
 
                 if (data.posts && data.posts.length > 0) {
                     data.posts.forEach((post, idx) => {
@@ -307,8 +308,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         postsContainer.appendChild(article);
                         setTimeout(() => article.classList.add('visible'), 50 * idx);
                     });
-                    page++;
-                    hasNext = !!data.has_next; // Ensure boolean
+                    offset = Number.isInteger(data.next_offset)
+                        ? data.next_offset
+                        : offset + data.posts.length;
+
+                    hasNext = !!data.has_next;
                     if (!hasNext) {
                         console.log("Infinite Scroll: No more posts after this page.");
                         showEndOfPostsMessage();
@@ -316,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     hasNext = false;
                     console.log("Infinite Scroll: API returned no posts for this page.");
-                    if (page === 1) { // No posts at all
+                    if (offset === 0) { // No posts at all
                         if (!postsContainer.querySelector('.no-posts-msg')) {
                             const msg = document.createElement('div');
                             msg.className = 'no-posts-msg';
@@ -367,14 +371,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Initial load / continue check
         const initialPostElements = postsContainer.querySelectorAll('article');
+
+        offset = initialPostElements.length;
+
         if (initialPostElements.length === 0 && window.location.pathname === '/') {
-            console.log('Infinite Scroll: No initial posts on home page. Loading page 1.');
+            console.log('Infinite Scroll: No initial posts on home page. Loading from offset 0.');
             loadPosts();
         } else if (initialPostElements.length > 0) {
-            // Server-rendered first page(s): resume from the next page on demand.
-            page = postsContainer.dataset.initialPageCount
-                ? parseInt(postsContainer.dataset.initialPageCount, 10) + 1 : 2;
-            console.log(`Infinite Scroll: ${initialPostElements.length} initial posts found. Next page on demand: ${page}`);
+            console.log(`Infinite Scroll: ${initialPostElements.length} initial posts found. Loading from offset ${offset}.`);
             maybeLoadMore();
         }
     }
