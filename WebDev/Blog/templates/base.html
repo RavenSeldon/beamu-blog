@@ -126,7 +126,7 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; {{ datetime.now(timezone.utc).strftime('%Y') }} Neurascape. All rights reserved (I own the word &#128521;).</p>
+        <p>&copy; {{ datetime.now(timezone.utc).strftime('%Y') }} <span id="neurascape-word">Neurascape</span>. All rights reserved (I own the word &#128521;).</p>
         <div class="social-links">
             <a href="https://benamuwo.vercel.app" aria-label="Portfolio"><i class="fa fa-code-fork"></i></a>
             <a href="https://open.spotify.com/user/12171032911?si=dcc4ed9e71d648ad" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
@@ -203,13 +203,11 @@
 
     <!-- Scripts -->
     {% if config.ENV == 'production' %}
-    <script src="{{ asset_url('js/simplex-noise.js') }}" defer></script>
     <script src="{{ asset_url('js/neurascape-bg.js') }}" defer></script>
     <script src="{{ asset_url('js/loader.js') }}" defer></script>
     <script src="{{ asset_url('js/main.js') }}" defer></script>
     <script src="{{ asset_url('js/spotify-player.js') }}" defer></script>
     {% else %}
-    <script src="{{ url_for('static', filename='js/simplex-noise.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/neurascape-bg.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/loader.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
@@ -234,6 +232,110 @@
             }, 5000);
         }
     });
+    </script>
+    <!-- Neurascape v2: init + cascade choreography (NeurascapeBG.ignite / supernova) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!window.NeurascapeBG) { console.warn('NeurascapeBG not loaded.'); return; }
+
+            // Respect the saved pause preference before first paint.
+            // (main.js sets this too — doing it here just guarantees order.)
+            window.isAnimationPaused = localStorage.getItem('animationsEnabled') === 'false';
+
+            NeurascapeBG.init('#bg-canvas');   // auto-benchmarks → high/medium/low/cssonly
+
+            var bg = document.getElementById('bg-canvas');
+            if (bg && window.isAnimationPaused) bg.style.opacity = '0.2';
+
+            /* ── Cascade choreography ──────────────────────────────────────
+               ignite(depth) fires a thought cascade from a hub node.
+               spark() wraps it with taste: a cooldown, and silence while
+               paused, hidden, or on the CSS-only / off tiers.              */
+            var lastSpark = 0;
+            var novaClicks = 0, novaClickT = 0;
+            function spark(depth, force) {
+                var now = Date.now();
+                if (!force && now - lastSpark < 1500) return;
+                if (window.isAnimationPaused || document.hidden) return;
+                var s = NeurascapeBG.getState();
+                if (!s || s.tier === 'cssonly' || s.tier === 'off') return;
+                lastSpark = now;
+                NeurascapeBG.ignite(depth);
+            }
+
+            // 1 · Boot-up surge — the brain scan completes, the web lights up.
+            var booted = false;
+            document.addEventListener('neurascape:loaderDone', function () {
+                booted = true;
+                setTimeout(function () { spark(4, true); }, 250);
+            });
+
+            // …and a gentler hello for returning visitors (no loader this time).
+            var loaderEl = document.getElementById('neurascape-loader');
+            var loaderShowing = loaderEl && getComputedStyle(loaderEl).display !== 'none';
+            if (!loaderShowing) {
+                setTimeout(function () { if (!booted) spark(2); }, 1200);
+            }
+
+            // 2 · Flash messages — the site has news; the mind reacts to it.
+            if (document.querySelector('.flashes li')) {
+                setTimeout(function () { spark(3); }, 2200);
+            }
+
+            // 3 · The clicky moments, via one capture-phase listener.
+            //     (Capture survives stopPropagation and cloned buttons.)
+            document.addEventListener('click', function (e) {
+                if (!e.target || !e.target.closest) return;
+
+                // Opening the nav — the map of the mind unfolds.
+                if (e.target.closest('#sidebar-toggle')) {
+                    var sb = document.getElementById('sidebar');
+                    if (sb && !sb.classList.contains('open')) spark(2);
+                    return;
+                }
+
+                // Pressing play — music lights up the web.
+                var play = e.target.closest('#player-play-pause-btn');
+                if (play && play.querySelector('.fa-play')) { spark(3); return; }
+
+                // Easter egg: you own the word. One click sparks the web. Two,
+                // and somewhere a star starts to tremble. Three clicks within
+                // two seconds and it goes supernova — collapse, shockwave,
+                // pulsar remnant, rebirth. (Clicking during the remnant just
+                // pokes the pulsar.)
+                if (e.target.closest('#neurascape-word')) {
+                    var nw = Date.now();
+                    if (nw - novaClickT > 2000) novaClicks = 0;
+                    novaClickT = nw;
+                    novaClicks++;
+                    if (window.isAnimationPaused || document.hidden) return;
+                    if (novaClicks >= 3 && NeurascapeBG.supernova) {
+                        novaClicks = 0;
+                        if (NeurascapeBG.supernova()) return;   // boom (or pulsar poke)
+                    } else if (NeurascapeBG.novaPrime) {
+                        NeurascapeBG.novaPrime(novaClicks);     // the tremble builds
+                    }
+                    spark(4, true);
+                }
+            }, true);
+
+            // 4 · Coming back to the tab after a real absence (> 30 s away).
+            var hiddenAt = 0;
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) {
+                    hiddenAt = Date.now();
+                } else if (hiddenAt && Date.now() - hiddenAt > 30000) {
+                    setTimeout(function () { spark(2); }, 600);
+                }
+            });
+
+            // 5 · Resuming animations — the web flickers back to life.
+            document.addEventListener('animationToggled', function (e) {
+                if (e.detail && e.detail.enabled) {
+                    setTimeout(function () { spark(2, true); }, 450);
+                }
+            });
+        });
     </script>
     <script src="https://sdk.scdn.co/spotify-player.js" defer></script>
     {% block extra_js %}{% endblock %}
