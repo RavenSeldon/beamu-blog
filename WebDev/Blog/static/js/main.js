@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof window.USING_SPACES === 'undefined') {
         console.warn('window.USING_SPACES is undefined. Critical for image paths. Check base.html script order and Jinja templating.');
     }
-    if (typeof window.SPACES_URL === 'undefined' && window.USING_SPACES === true) { // SPACES_URL is needed if USING_SPACES is true
+
+    if (typeof window.SPACES_URL === 'undefined' && window.USING_SPACES === true) {
         console.warn('window.SPACES_URL is undefined but USING_SPACES is true. Critical for image paths. Check base.html script order and Jinja templating.');
     }
 
@@ -16,7 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function initBackgroundCanvas() {
         console.log('Initializing background canvas properties');
+
         const bgCanvas = document.getElementById('bg-canvas');
+
         if (bgCanvas) {
             bgCanvas.style.pointerEvents = 'none';
         } else {
@@ -26,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function initSidebar() {
         console.log('Initializing sidebar');
+
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
 
@@ -37,43 +41,52 @@ document.addEventListener('DOMContentLoaded', function() {
         sidebarToggle.style.zIndex = '10000';
         sidebarToggle.style.pointerEvents = 'auto';
 
-        // To ensure only one click listener, we can remove and re-add or use a flag
-        // A simple way is to replace the element if it might have old listeners from previous script versions
         let currentToggle = sidebarToggle;
+
         if (sidebarToggle.getAttribute('data-listener-attached') !== 'true') {
             const newToggle = sidebarToggle.cloneNode(true);
+
             if (sidebarToggle.parentNode) {
                 sidebarToggle.parentNode.replaceChild(newToggle, sidebarToggle);
             }
-            currentToggle = newToggle; // Work with the new or existing toggle
+
+            currentToggle = newToggle;
             currentToggle.setAttribute('data-listener-attached', 'true');
 
             currentToggle.onclick = function(event) {
                 event.stopPropagation();
                 event.preventDefault();
+
                 const sidebarElem = document.getElementById('sidebar');
                 if (!sidebarElem) return false;
 
                 const isOpen = sidebarElem.classList.toggle('open');
+
                 document.body.classList.toggle('sidebar-open', isOpen);
                 this.classList.toggle('active', isOpen);
-                this.innerHTML = isOpen ?
-                    '<i class="fa-solid fa-xmark"></i>' :
-                    '<i class="fa-solid fa-bars"></i>';
+
+                this.innerHTML = isOpen
+                    ? '<i class="fa-solid fa-xmark"></i>'
+                    : '<i class="fa-solid fa-bars"></i>';
+
                 console.log('Sidebar toggled:', isOpen);
                 return false;
             };
         }
 
-
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', function(e) {
             const currentSidebarEl = document.getElementById('sidebar');
-            const activeSidebarToggle = document.getElementById('sidebar-toggle'); // Get the current toggle in DOM
+            const activeSidebarToggle = document.getElementById('sidebar-toggle');
 
-            if (currentSidebarEl && activeSidebarToggle && currentSidebarEl.classList.contains('open') &&
+            if (
+                currentSidebarEl &&
+                activeSidebarToggle &&
+                currentSidebarEl.classList.contains('open') &&
                 !currentSidebarEl.contains(e.target) &&
-                e.target !== activeSidebarToggle && !activeSidebarToggle.contains(e.target) &&
-                !e.target.closest('#animation-toggle')) {
+                e.target !== activeSidebarToggle &&
+                !activeSidebarToggle.contains(e.target) &&
+                !e.target.closest('#animation-toggle')
+            ) {
                 currentSidebarEl.classList.remove('open');
                 document.body.classList.remove('sidebar-open');
                 activeSidebarToggle.classList.remove('active');
@@ -84,7 +97,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function initAnimationToggle() {
         console.log('Initializing animation toggle');
+
         const animToggle = document.getElementById('animation-toggle');
+
         if (!animToggle) {
             console.warn('Animation toggle button not found.');
             return;
@@ -94,15 +109,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const animationsStoredPreference = localStorage.getItem('animationsEnabled');
         const animationsEnabled = animationsStoredPreference !== 'false';
+
         window.isAnimationPaused = !animationsEnabled;
 
         if (toggleIcon) {
             toggleIcon.className = animationsEnabled ? 'fa-solid fa-pause' : 'fa-solid fa-play';
         }
+
         animToggle.setAttribute('aria-checked', animationsEnabled.toString());
         animToggle.setAttribute('title', animationsEnabled ? 'Pause background animation' : 'Resume background animation');
 
         const canvas = document.getElementById('bg-canvas');
+
         if (canvas && window.isAnimationPaused) {
             canvas.style.opacity = '0.2';
         }
@@ -118,12 +136,15 @@ document.addEventListener('DOMContentLoaded', function() {
             window.isAnimationPaused = !newIsEnabledState;
 
             this.setAttribute('aria-checked', newIsEnabledState.toString());
+
             if (toggleIcon) {
                 toggleIcon.className = newIsEnabledState ? 'fa-solid fa-pause' : 'fa-solid fa-play';
             }
+
             this.setAttribute('title', newIsEnabledState ? 'Pause background animation' : 'Resume background animation');
 
             const bgCanvas = document.getElementById('bg-canvas');
+
             if (bgCanvas) {
                 bgCanvas.style.opacity = newIsEnabledState ? '1' : '0.2';
             }
@@ -131,20 +152,17 @@ document.addEventListener('DOMContentLoaded', function() {
             document.dispatchEvent(new CustomEvent('animationToggled', {
                 detail: { enabled: newIsEnabledState }
             }));
+
             console.log('Animation toggle clicked, new state:', newIsEnabledState);
             return false;
         };
     }
 
-    // NOTE: the old inline canvas animation (initBackgroundAnimation) is
-    // retired. The background is now fully owned by static/js/neurascape-bg.js
-    // (v2), initialised from base.html. It listens for the 'animationToggled'
-    // event dispatched by initAnimationToggle() above, so the pause button
-    // keeps working with zero changes here.
-
     function initInfiniteScroll() {
         console.log('Initializing infinite scroll');
+
         const postsContainer = document.querySelector('.posts');
+
         if (!postsContainer) {
             console.warn('Posts container (.posts) not found. Infinite scroll will not be initialized.');
             return;
@@ -152,32 +170,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let offset = 0;
         const limit = 10;
+
         let loading = false;
         let hasNext = true;
         let observer = null;
+
         const maxLoadTime = 5000;
         let loaderTimeoutId = null;
+        let scrollDebounceTimeout = null;
 
         let loader = document.getElementById('loader');
+
         if (!loader) {
             console.warn('Loader element (#loader) not found. Creating it dynamically for infinite scroll.');
+
             loader = document.createElement('div');
             loader.id = 'loader';
             loader.className = 'loader';
+
             if (postsContainer.parentNode) {
                 postsContainer.parentNode.insertBefore(loader, postsContainer.nextSibling);
             } else if (document.querySelector('main')) {
                 document.querySelector('main').appendChild(loader);
             }
         }
-        if (loader) loader.style.display = 'none';
 
-        // Invisible 1px sentinel placed after the loader. The observer watches
-        // this instead of the loader itself, because the loader is display:none
-        // while idle and hidden elements never report an intersection.
+        if (loader) {
+            loader.style.display = 'none';
+        }
+
         const sentinel = document.createElement('div');
         sentinel.className = 'scroll-sentinel';
         sentinel.style.cssText = 'height:1px;width:100%;pointer-events:none;';
+
         if (loader && loader.parentNode) {
             loader.parentNode.insertBefore(sentinel, loader.nextSibling);
         } else if (postsContainer.parentNode) {
@@ -189,7 +214,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 loader.style.display = 'none';
                 loader.classList.remove('pulsing');
             }
-            if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
+
+            if (loaderTimeoutId) {
+                clearTimeout(loaderTimeoutId);
+                loaderTimeoutId = null;
+            }
         }
 
         function showLoader() {
@@ -204,16 +233,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 loader.parentNode.removeChild(loader);
                 loader = null;
             }
-            if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
-            if (observer) { observer.disconnect(); observer = null; }
-            if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
+
+            if (sentinel && sentinel.parentNode) {
+                sentinel.parentNode.removeChild(sentinel);
+            }
+
+            if (observer) {
+                observer.disconnect();
+                observer = null;
+            }
+
+            if (loaderTimeoutId) {
+                clearTimeout(loaderTimeoutId);
+                loaderTimeoutId = null;
+            }
+
+            if (scrollDebounceTimeout) {
+                clearTimeout(scrollDebounceTimeout);
+                scrollDebounceTimeout = null;
+            }
         }
 
         function startLoaderTimeout() {
-            if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
-            loaderTimeoutId = setTimeout(() => {
+            if (loaderTimeoutId) {
+                clearTimeout(loaderTimeoutId);
+            }
+
+            loaderTimeoutId = setTimeout(function() {
                 if (loading) {
-                    console.warn("Loader timeout. Forcing loading state to false.");
+                    console.warn('Loader timeout. Forcing loading state to false.');
                     loading = false;
                     hideLoader();
                 }
@@ -227,67 +275,125 @@ document.addEventListener('DOMContentLoaded', function() {
                 endMsg.innerHTML = '<i class="fa fa-check-circle"></i> You\'ve reached the end of all posts.';
                 postsContainer.appendChild(endMsg);
             }
-            removeLoader(); // Remove loader + sentinel once the end is definitively reached
+
+            removeLoader();
         }
 
-        // A failed page no longer kills pagination silently — the error box
-        // says what happened and a tap retries the same page.
         function showRetryMessage(detail) {
             if (!postsContainer) return;
+
             let msg = postsContainer.querySelector('.error-msg');
+
             if (!msg) {
                 msg = document.createElement('div');
                 msg.className = 'error-msg';
                 msg.style.cursor = 'pointer';
                 msg.setAttribute('role', 'button');
-                msg.addEventListener('click', () => {
-                    if (msg.parentNode) msg.parentNode.removeChild(msg);
+                msg.setAttribute('tabindex', '0');
+
+                msg.addEventListener('click', function() {
+                    if (msg.parentNode) {
+                        msg.parentNode.removeChild(msg);
+                    }
+
                     hasNext = true;
                     loadPosts();
                 });
+
+                msg.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+
+                        if (msg.parentNode) {
+                            msg.parentNode.removeChild(msg);
+                        }
+
+                        hasNext = true;
+                        loadPosts();
+                    }
+                });
+
                 postsContainer.appendChild(msg);
             }
-            msg.innerHTML = '<i class="fa fa-exclamation-circle"></i> Failed to load more posts' +
-                            (detail ? ' (' + detail + ')' : '') + ' — tap to retry.';
+
+            msg.innerHTML =
+                '<i class="fa fa-exclamation-circle"></i> Failed to load more posts' +
+                (detail ? ' (' + detail + ')' : '') +
+                ' — tap to retry.';
         }
 
         function nearViewport() {
-            const probe = sentinel.parentNode ? sentinel : postsContainer;
-            return probe.getBoundingClientRect().top < window.innerHeight + 600;
+            const probe = sentinel && sentinel.parentNode ? sentinel : postsContainer;
+            const rect = probe.getBoundingClientRect();
+
+            return rect.top < window.innerHeight + 900;
         }
 
         function maybeLoadMore() {
-            if (hasNext && !loading && nearViewport()) loadPosts();
+            if (hasNext && !loading && nearViewport()) {
+                loadPosts();
+            }
+        }
+
+        function scheduleLoadCheck() {
+            if (!hasNext || loading) return;
+
+            if (scrollDebounceTimeout) {
+                clearTimeout(scrollDebounceTimeout);
+            }
+
+            scrollDebounceTimeout = setTimeout(function() {
+                requestAnimationFrame(maybeLoadMore);
+            }, 120);
         }
 
         async function loadPosts() {
             if (!hasNext || loading) return;
 
             console.log(`Infinite Scroll: Loading posts from offset ${offset}`);
+
             loading = true;
             showLoader();
             startLoaderTimeout();
 
             try {
                 const response = await fetch(`/api/posts?offset=${offset}&limit=${limit}`);
-                if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
+
+                if (loaderTimeoutId) {
+                    clearTimeout(loaderTimeoutId);
+                    loaderTimeoutId = null;
+                }
 
                 if (!response.ok) {
-                    // Surface the server's words — a 500 here usually means one
-                    // post on this page broke serialization server-side.
-                    const body = await response.text().catch(() => '');
-                    console.error(`Infinite Scroll: /api/posts?offset=${offset}&limit=${limit} responded ${response.status}.`,
-                        body.slice(0, 500));
+                    const body = await response.text().catch(function() {
+                        return '';
+                    });
+
+                    console.error(
+                        `Infinite Scroll: /api/posts?offset=${offset}&limit=${limit} responded ${response.status}.`,
+                        body.slice(0, 500)
+                    );
+
                     throw new Error(`HTTP ${response.status}`);
                 }
+
                 const data = await response.json();
+
                 console.log(`Infinite Scroll: API response for offset ${offset}:`, data);
 
                 if (data.posts && data.posts.length > 0) {
-                    data.posts.forEach((post, idx) => {
+                    const existingError = postsContainer.querySelector('.error-msg');
+
+                    if (existingError && existingError.parentNode) {
+                        existingError.parentNode.removeChild(existingError);
+                    }
+
+                    data.posts.forEach(function(post, idx) {
                         const article = document.createElement('article');
                         article.className = 'post-card fade-in';
+
                         let imageTag = '';
+
                         if (post.photo_filename) {
                             if (window.USING_SPACES === true && window.SPACES_URL) {
                                 imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="${window.SPACES_URL}/thumbnail/${post.photo_filename}" alt="${post.title}" class="post-thumb"></a>`;
@@ -295,8 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.photo_filename}" alt="${post.title}" class="post-thumb"></a>`;
                             }
                         }
-                        // The API returns pre-rendered, sanitized HTML (with its
-                        // own <p> tags), so wrap in a div — not another <p>.
+
                         article.innerHTML = `
                             <h2><a href="/post/${post.id}">${post.title}</a></h2>
                             ${imageTag}
@@ -305,73 +410,92 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <a href="/post/${post.id}" class="read-more-link">Read More <i class="fa-solid fa-angles-right"></i></a>
                                 ${post.github_link ? `<a href="${post.github_link}" target="_blank" class="github-link"><i class="fa-brands fa-github"></i> View on GitHub</a>` : ''}
                             </div>`;
+
                         postsContainer.appendChild(article);
-                        setTimeout(() => article.classList.add('visible'), 50 * idx);
+
+                        setTimeout(function() {
+                            article.classList.add('visible');
+                        }, 50 * idx);
                     });
+
                     offset = Number.isInteger(data.next_offset)
                         ? data.next_offset
                         : offset + data.posts.length;
 
                     hasNext = !!data.has_next;
+
                     if (!hasNext) {
-                        console.log("Infinite Scroll: No more posts after this page.");
+                        console.log('Infinite Scroll: No more posts after this batch.');
                         showEndOfPostsMessage();
                     }
                 } else {
                     hasNext = false;
-                    console.log("Infinite Scroll: API returned no posts for this page.");
-                    if (offset === 0) { // No posts at all
+
+                    console.log('Infinite Scroll: API returned no posts for this offset.');
+
+                    if (offset === 0) {
                         if (!postsContainer.querySelector('.no-posts-msg')) {
                             const msg = document.createElement('div');
                             msg.className = 'no-posts-msg';
                             msg.innerHTML = '<i class="fa fa-info-circle"></i> No posts yet.';
                             postsContainer.appendChild(msg);
                         }
+
                         removeLoader();
-                    } else { // Was loading subsequent pages and found no more
+                    } else {
                         showEndOfPostsMessage();
                     }
                 }
             } catch (error) {
-                console.error("Infinite Scroll: Error loading posts:", error);
-                if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
-                hasNext = false;        // paused until the user taps retry
-                showRetryMessage(error && error.message);
+                console.error('Infinite Scroll: Error loading posts:', error);
+
+                if (loaderTimeoutId) {
+                    clearTimeout(loaderTimeoutId);
+                    loaderTimeoutId = null;
+                }
+
+                hasNext = false;
+                showRetryMessage(error && error.message ? error.message : 'unknown error');
                 hideLoader();
             } finally {
                 loading = false;
+
                 if (hasNext) {
                     hideLoader();
-                    // The fill check: on a tall screen one page may not create
-                    // any scrollable space, so no scroll/intersection change
-                    // would ever fire. Keep loading until the viewport is
-                    // genuinely filled or the posts run out.
-                    maybeLoadMore();
+
+                    // Re-check after the DOM/layout has updated. This handles tall screens
+                    // and production layout cases where the observer does not retrigger.
+                    requestAnimationFrame(maybeLoadMore);
                 }
             }
         }
 
-        // Trigger: IntersectionObserver on the sentinel with a generous
-        // prefetch margin; falls back to a debounced scroll listener.
+        // Use IntersectionObserver when available, but always keep scroll,
+        // resize, and pageshow fallbacks. This prevents production from getting
+        // stuck after the first batch if the sentinel does not retrigger.
         if ('IntersectionObserver' in window) {
-            observer = new IntersectionObserver((entries) => {
-                if (entries.some(e => e.isIntersecting)) maybeLoadMore();
-            }, { rootMargin: '600px 0px' });
-            observer.observe(sentinel);
-            console.log("Infinite scroll: IntersectionObserver attached.");
-        } else {
-            let scrollDebounceTimeout;
-            window.addEventListener('scroll', () => {
-                if (!hasNext || loading) return;
-                clearTimeout(scrollDebounceTimeout);
-                scrollDebounceTimeout = setTimeout(maybeLoadMore, 150);
+            observer = new IntersectionObserver(function(entries) {
+                if (entries.some(function(entry) {
+                    return entry.isIntersecting;
+                })) {
+                    scheduleLoadCheck();
+                }
+            }, {
+                rootMargin: '900px 0px 900px 0px',
+                threshold: 0
             });
-            console.log("Infinite scroll: scroll listener attached (no IntersectionObserver).");
+
+            observer.observe(sentinel);
+            console.log('Infinite scroll: IntersectionObserver attached.');
+        } else {
+            console.log('Infinite scroll: IntersectionObserver unavailable; using scroll fallback.');
         }
 
-        // Initial load / continue check
-        const initialPostElements = postsContainer.querySelectorAll('article');
+        window.addEventListener('scroll', scheduleLoadCheck, { passive: true });
+        window.addEventListener('resize', scheduleLoadCheck);
+        window.addEventListener('pageshow', scheduleLoadCheck);
 
+        const initialPostElements = postsContainer.querySelectorAll('article');
         offset = initialPostElements.length;
 
         if (initialPostElements.length === 0 && window.location.pathname === '/') {
@@ -379,36 +503,30 @@ document.addEventListener('DOMContentLoaded', function() {
             loadPosts();
         } else if (initialPostElements.length > 0) {
             console.log(`Infinite Scroll: ${initialPostElements.length} initial posts found. Loading from offset ${offset}.`);
-            maybeLoadMore();
+            requestAnimationFrame(maybeLoadMore);
         }
     }
 
     function initLoadingAnimation(container, mainContent) {
-        console.log('Loading animation setup function called (if defined elsewhere).');
-        // This function was in your original structure, assumed to be part of the full page load animation.
-        // If it was tied to `loader.js`, ensure that `loader.js` is still included and functioning as expected for the `/loading` route.
+        console.log('Loading animation setup function called.');
     }
 
     function checkForMorePosts() {
-        // This function was present in your original script.
-        // Its primary purpose now is likely covered by initInfiniteScroll's initial checks.
-        // If it has unique logic, it can be kept, otherwise, it might be simplified or removed.
-        // For now, just logging its call.
         console.log('checkForMorePosts called. Review if its logic is still needed separately from initInfiniteScroll.');
-        // The original logic for this function is now better integrated into initInfiniteScroll.
     }
 
     // ------- CALL INITIALIZATION FUNCTIONS --------
-    // The order here matters!
-    initBackgroundCanvas(); // Set up canvas properties
-    initSidebar();          // Set up sidebar interactions
-    initAnimationToggle();  // Set up animation play/pause (NeurascapeBG reacts to its event)
-    initInfiniteScroll();   // Handle dynamic post loading
+    initBackgroundCanvas();
+    initSidebar();
+    initAnimationToggle();
+    initInfiniteScroll();
 
     const isFirstVisit = !sessionStorage.getItem('visited');
-    if (isFirstVisit && window.location.pathname !== '/loading') { // Avoid flag setting if loader.js will handle it
+
+    if (isFirstVisit && window.location.pathname !== '/loading') {
         sessionStorage.setItem('visited', 'true');
         console.log('First visit (not /loading) - flag set.');
     }
+
     console.log('All JavaScript initializations have been set up.');
 });
