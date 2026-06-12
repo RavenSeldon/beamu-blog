@@ -153,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let page = 1;
         let loading = false;
         let hasNext = true;
+        let observer = null;
         const maxLoadTime = 5000;
         let loaderTimeoutId = null;
 
@@ -165,11 +166,22 @@ document.addEventListener('DOMContentLoaded', function() {
             if (postsContainer.parentNode) {
                 postsContainer.parentNode.insertBefore(loader, postsContainer.nextSibling);
             } else if (document.querySelector('main')) {
-                 document.querySelector('main').appendChild(loader);
+                document.querySelector('main').appendChild(loader);
             }
         }
-        if(loader) loader.style.display = 'none';
+        if (loader) loader.style.display = 'none';
 
+        // Invisible 1px sentinel placed after the loader. The observer watches
+        // this instead of the loader itself, because the loader is display:none
+        // while idle and hidden elements never report an intersection.
+        const sentinel = document.createElement('div');
+        sentinel.className = 'scroll-sentinel';
+        sentinel.style.cssText = 'height:1px;width:100%;pointer-events:none;';
+        if (loader && loader.parentNode) {
+            loader.parentNode.insertBefore(sentinel, loader.nextSibling);
+        } else if (postsContainer.parentNode) {
+            postsContainer.parentNode.insertBefore(sentinel, postsContainer.nextSibling);
+        }
 
         function hideLoader() {
             if (loader) {
@@ -191,6 +203,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 loader.parentNode.removeChild(loader);
                 loader = null;
             }
+            if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
+            if (observer) { observer.disconnect(); observer = null; }
             if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
         }
 
@@ -212,7 +226,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 endMsg.innerHTML = '<i class="fa fa-check-circle"></i> You\'ve reached the end of all posts.';
                 postsContainer.appendChild(endMsg);
             }
-            removeLoader(); // Remove loader once end is definitively reached
+            removeLoader(); // Remove loader + sentinel once the end is definitively reached
+        }
+
+        // A failed page no longer kills pagination silently — the error box
+        // says what happened and a tap retries the same page.
+        function showRetryMessage(detail) {
+            if (!postsContainer) return;
+            let msg = postsContainer.querySelector('.error-msg');
+            if (!msg) {
+                msg = document.createElement('div');
+                msg.className = 'error-msg';
+                msg.style.cursor = 'pointer';
+                msg.setAttribute('role', 'button');
+                msg.addEventListener('click', () => {
+                    if (msg.parentNode) msg.parentNode.removeChild(msg);
+                    hasNext = true;
+                    loadPosts();
+                });
+                postsContainer.appendChild(msg);
+            }
+            msg.innerHTML = '<i class="fa fa-exclamation-circle"></i> Failed to load more posts' +
+                            (detail ? ' (' + detail + ')' : '') + ' — tap to retry.';
+        }
+
+        function nearViewport() {
+            const probe = sentinel.parentNode ? sentinel : postsContainer;
+            return probe.getBoundingClientRect().top < window.innerHeight + 600;
+        }
+
+        function maybeLoadMore() {
+            if (hasNext && !loading && nearViewport()) loadPosts();
         }
 
         async function loadPosts() {
@@ -227,7 +271,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const response = await fetch(`/api/posts?page=${page}`);
                 if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
 
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                if (!response.ok) {
+                    // Surface the server's words — a 500 here usually means one
+                    // post on this page broke serialization server-side.
+                    const body = await response.text().catch(() => '');
+                    console.error(`Infinite Scroll: /api/posts?page=${page} responded ${response.status}.`,
+                                  body.slice(0, 500));
+                    throw new Error(`HTTP ${response.status}`);
+                }
                 const data = await response.json();
                 console.log(`Infinite Scroll: API response for page ${page}:`, data);
 
@@ -243,10 +294,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                 imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.photo_filename}" alt="${post.title}" class="post-thumb"></a>`;
                             }
                         }
+                        // The API returns pre-rendered, sanitized HTML (with its
+                        // own <p> tags), so wrap in a div — not another <p>.
                         article.innerHTML = `
                             <h2><a href="/post/${post.id}">${post.title}</a></h2>
                             ${imageTag}
-                            <p>${post.content}</p> <div class="post-footer">
+                            <div class="post-excerpt">${post.content}</div>
+                            <div class="post-footer">
                                 <a href="/post/${post.id}" class="read-more-link">Read More <i class="fa-solid fa-angles-right"></i></a>
                                 ${post.github_link ? `<a href="${post.github_link}" target="_blank" class="github-link"><i class="fa-brands fa-github"></i> View on GitHub</a>` : ''}
                             </div>`;
@@ -263,67 +317,66 @@ document.addEventListener('DOMContentLoaded', function() {
                     hasNext = false;
                     console.log("Infinite Scroll: API returned no posts for this page.");
                     if (page === 1) { // No posts at all
-                         if (!postsContainer.querySelector('.no-posts-msg')) {
+                        if (!postsContainer.querySelector('.no-posts-msg')) {
                             const msg = document.createElement('div');
                             msg.className = 'no-posts-msg';
                             msg.innerHTML = '<i class="fa fa-info-circle"></i> No posts yet.';
                             postsContainer.appendChild(msg);
-                         }
+                        }
+                        removeLoader();
                     } else { // Was loading subsequent pages and found no more
                         showEndOfPostsMessage();
                     }
-                    removeLoader();
                 }
             } catch (error) {
                 console.error("Infinite Scroll: Error loading posts:", error);
                 if (loaderTimeoutId) clearTimeout(loaderTimeoutId);
-                hasNext = false;
-                 if (postsContainer && !postsContainer.querySelector('.error-msg')) {
-                    const errorMsg = document.createElement('div');
-                    errorMsg.className = 'error-msg';
-                    errorMsg.innerHTML = '<i class="fa fa-exclamation-circle"></i> Failed to load more posts.';
-                    postsContainer.appendChild(errorMsg);
-                }
-                removeLoader(); // Stop trying on error
+                hasNext = false;        // paused until the user taps retry
+                showRetryMessage(error && error.message);
+                hideLoader();
             } finally {
                 loading = false;
-                if (hasNext) hideLoader(); // Hide loader if there might be more, otherwise it's removed
+                if (hasNext) {
+                    hideLoader();
+                    // The fill check: on a tall screen one page may not create
+                    // any scrollable space, so no scroll/intersection change
+                    // would ever fire. Keep loading until the viewport is
+                    // genuinely filled or the posts run out.
+                    maybeLoadMore();
+                }
             }
         }
 
-        // Initial check/load logic for infinite scroll
-        const initialPostElements = postsContainer.querySelectorAll('article');
-        if (initialPostElements.length === 0 && window.location.pathname === '/') {
-            console.log('Infinite Scroll: No initial posts on home page. Attempting to load page 1.');
-            loadPosts();
-        } else if (initialPostElements.length > 0) {
-            console.log(`Infinite Scroll: ${initialPostElements.length} initial posts found. Checking for more.`);
-            fetch('/api/posts?page=' + (postsContainer.dataset.initialPageCount ? parseInt(postsContainer.dataset.initialPageCount) + 1 : 2) )
-                .then(res => res.json())
-                .then(data => {
-                    if (!data.posts || data.posts.length === 0 || !data.has_next) {
-                        hasNext = false;
-                        showEndOfPostsMessage();
-                    } else {
-                        page = (postsContainer.dataset.initialPageCount ? parseInt(postsContainer.dataset.initialPageCount) + 1 : 2);
-                        console.log(`Infinite Scroll: More posts available. Next page to load on scroll: ${page}`);
-                    }
-                }).catch(err => console.error("Infinite Scroll: Error checking for more initial posts:", err));
+        // Trigger: IntersectionObserver on the sentinel with a generous
+        // prefetch margin; falls back to a debounced scroll listener.
+        if ('IntersectionObserver' in window) {
+            observer = new IntersectionObserver((entries) => {
+                if (entries.some(e => e.isIntersecting)) maybeLoadMore();
+            }, { rootMargin: '600px 0px' });
+            observer.observe(sentinel);
+            console.log("Infinite scroll: IntersectionObserver attached.");
+        } else {
+            let scrollDebounceTimeout;
+            window.addEventListener('scroll', () => {
+                if (!hasNext || loading) return;
+                clearTimeout(scrollDebounceTimeout);
+                scrollDebounceTimeout = setTimeout(maybeLoadMore, 150);
+            });
+            console.log("Infinite scroll: scroll listener attached (no IntersectionObserver).");
         }
 
-        let scrollDebounceTimeout;
-        window.addEventListener('scroll', () => {
-            if (!hasNext || loading) return;
-            clearTimeout(scrollDebounceTimeout);
-            scrollDebounceTimeout = setTimeout(() => {
-                const scrollPosition = window.innerHeight + window.scrollY;
-                const documentHeight = document.documentElement.scrollHeight;
-                if (scrollPosition >= documentHeight - 600) {
-                    loadPosts();
-                }
-            }, 150);
-        });
-        console.log("Infinite scroll event listener attached.");
+        // Initial load / continue check
+        const initialPostElements = postsContainer.querySelectorAll('article');
+        if (initialPostElements.length === 0 && window.location.pathname === '/') {
+            console.log('Infinite Scroll: No initial posts on home page. Loading page 1.');
+            loadPosts();
+        } else if (initialPostElements.length > 0) {
+            // Server-rendered first page(s): resume from the next page on demand.
+            page = postsContainer.dataset.initialPageCount
+                ? parseInt(postsContainer.dataset.initialPageCount, 10) + 1 : 2;
+            console.log(`Infinite Scroll: ${initialPostElements.length} initial posts found. Next page on demand: ${page}`);
+            maybeLoadMore();
+        }
     }
 
     function initLoadingAnimation(container, mainContent) {
