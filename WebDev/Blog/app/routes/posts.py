@@ -38,7 +38,7 @@ def post(post_id):
 def new_post():
     if request.method == 'POST':
         title = request.form['title']
-        content = request.form['content'][:20000]
+        content = request.form['content'][:50000]
         github_link = request.form.get('github_link', '')
         project_id = request.form.get('project_id')
         image_file = request.files.get('image')
@@ -102,7 +102,7 @@ def edit_post(post_id):
 
     if request.method == 'POST':
         post_obj.title = request.form['title']
-        post_obj.content = request.form['content'][:20000]
+        post_obj.content = request.form['content'][:50000]
         post_obj.github_link = request.form.get('github_link', '').strip() or None
         post_obj.project_id = request.form.get('project_id') or None
 

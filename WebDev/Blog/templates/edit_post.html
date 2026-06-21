@@ -14,8 +14,8 @@
 
     <label class="full">
       <span>Content <small>(Markdown OK)</small></span>
-      <textarea name="content" id="content" rows="12" maxlength="20000" data-count data-easymde>{{ post.content or '' }}</textarea>
-      <div class="char-count"><span>{{ (post.content or '')|length }}</span>/20 000</div>
+      <textarea name="content" id="content" rows="12" maxlength="50000" data-count data-easymde>{{ post.content or '' }}</textarea>
+      <div class="char-count"><span>{{ (post.content or '')|length }}</span>/50 000</div>
     </label>
 
     {% set body_field_id = 'content' %}
