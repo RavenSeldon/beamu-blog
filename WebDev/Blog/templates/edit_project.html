@@ -14,8 +14,13 @@
 
     <label class="full">
       <span>Description</span>
-      <textarea name="description" rows="8" maxlength="5000" data-easymde>{{ project.description or '' }}</textarea>
+      <textarea name="description" id="description" rows="8" maxlength="5000" data-easymde>{{ project.description or '' }}</textarea>
     </label>
+
+    {% set body_field_id = 'description' %}
+    {% set gallery_owner = 'project' %}
+    {% set existing_gallery = project.images %}
+    {% include '_image_studio.html' %}
 
     <div class="flex-row">
       {% set current_photo = project.photo %}

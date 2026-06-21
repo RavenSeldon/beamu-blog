@@ -1,0 +1,47 @@
+{#
+Inline Image Studio v1
+
+Expected variables:
+body_field_id — textarea id where [[img:KEY]] tokens should be inserted
+gallery_owner — "post" or "project"; defaults to "post"
+existing_gallery — optional list of PostImage/ProjectImage rows for edit mode
+
+Backend contract:
+gallery_manifest — JSON object keyed by placeholder_key
+gallery_<KEY> — file input name for new image uploads
+#}
+
+<section
+    class="image-studio"
+    data-body-field-id="{{ body_field_id }}"
+    data-gallery-owner="{{ gallery_owner|default('post') }}"
+>
+    <h3>Inline Images</h3>
+
+    <p class="image-studio-help">
+        Add images here, then use <strong>Insert into body</strong> to place
+        <code>[[img:KEY]]</code> tokens between paragraphs.
+    </p>
+
+    <input type="file" id="image-studio-file-input" accept="image/*" multiple>
+
+    <input type="hidden" name="gallery_manifest" id="gallery-manifest" value="{}">
+
+    <div id="image-studio-list" class="image-studio-list" data-existing-gallery='[
+        {% if existing_gallery %}
+            {% for image in existing_gallery %}
+              {
+                "key": {{ image.placeholder_key|tojson }},
+                "association_id": {{ image.id|tojson }},
+                "caption": {{ image.caption|default("", true)|tojson }},
+                "alt_text": {{ image.alt_text|default("", true)|tojson }},
+                "alignment": {{ image.alignment|default("center", true)|tojson }},
+                "position": {{ image.position|tojson }},
+                "filename": {{ image.photo.filename|tojson if image.photo else "null" }},
+                "preview_url" : {{get_picture_data(image.photo.filename, image.photo.lqip).src|tojson if image.photo and image.photo.filename else "null" }}
+              }{% if not loop.last %},{% endif %}
+              {% endfor %}
+              {% endif %}
+      ]'
+    ></div>
+</section>

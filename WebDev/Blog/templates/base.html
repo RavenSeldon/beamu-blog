@@ -211,11 +211,14 @@
     <script src="{{ asset_url('js/loader.js') }}" defer></script>
     <script src="{{ asset_url('js/main.js') }}" defer></script>
     <script src="{{ asset_url('js/spotify-player.js') }}" defer></script>
+    <script src="{{ asset_url('js/image-studio.js') }}" defer></script>
+
     {% else %}
     <script src="{{ url_for('static', filename='js/neurascape-bg.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/loader.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/spotify-player.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/image-studio.js') }}" defer></script>
     {% endif %}
 
     <!-- Performance notice (driven by neurascape-bg.js benchmark) -->

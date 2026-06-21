@@ -103,12 +103,23 @@
     font-size: 1.3em;
 }
 
-.post-content blockquote {
+.post-content blockquote,
+.post-excerpt blockquote,
+.post-card blockquote,
+.posts blockquote {
+    margin: 0.85rem 0;
+    padding: 0.15rem 0 0.15rem 1rem;
     border-left: 3px solid var(--primary);
-    padding-left: 1em;
-    margin-left: 1em;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--text);
+    opacity:0.92;
     font-style: italic;
+}
+
+.post-content blockquote p,
+.post-excerpt blockquote p,
+.post-card blockquote p,
+.posts blockquote p {
+  margin: 0;
 }
 
 .post-content pre {
@@ -485,6 +496,237 @@
     color: var(--accent);
     box-shadow: 0 0 16px rgba(243, 249, 157, 0.4);
     transform: translateY(-3px);
+}
+
+/* Inline Image Studio */
+
+.image-studio {
+  margin: 1.75rem 0 2rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(55, 180, 248, 0.22);
+  border-radius: 16px;
+  background: rgba(7, 12, 32, 0.42);
+  box-shadow: 0 0 18px rgba(55, 180, 248, 0.08);
+}
+
+.image-studio h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+}
+
+.image-studio-help {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  opacity: 0.85;
+  line-height: 1.5;
+}
+
+.image-studio input[type="file"] {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin-top: 0.75rem;
+}
+
+.image-studio-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.image-studio-card {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+  padding: 1rem;
+  border: 1px solid rgba(55, 180, 248, 0.18);
+  border-radius: 14px;
+  background: rgba(2, 8, 24, 0.55);
+}
+
+.image-studio-preview {
+  width: 140px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.image-studio-fields {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.image-studio-fields label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.image-studio-fields input,
+.image-studio-fields select {
+  width: 100%;
+}
+
+.image-studio-token code {
+  display: inline-block;
+  padding: 0.25rem 0.45rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.image-studio-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.image-studio-actions button {
+  cursor: pointer;
+}
+
+/* Admin form cleanup */
+
+.post-form .form-stack {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.post-form .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: end;
+  margin: 1.5rem 0;
+}
+
+.post-form .form-grid label,
+.post-form .form-stack label {
+  min-width: 0;
+}
+
+.post-form .form-grid input,
+.post-form .form-grid select,
+.post-form .form-stack input,
+.post-form .form-stack select {
+  width: 100%;
+}
+
+@media (max-width: 760px) {
+  .image-studio-card {
+    grid-template-columns: 1fr;
+  }
+
+  .image-studio-preview {
+    width: 100%;
+    height: auto;
+    max-height: 240px;
+  }
+
+  .post-form .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Inline post gallery figures */
+
+.post-content .gallery-figure {
+  margin: 2rem auto;
+  max-width: 820px;
+}
+
+.post-content .gallery-figure picture,
+.post-content .gallery-figure .lqip-wrap {
+  display: block;
+  max-width: 100%;
+}
+
+.post-content .gallery-figure .lqip-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.post-content .gallery-inline-img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+/* Center/default */
+.post-content .fig-align-center {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* Full width within the content column */
+.post-content .fig-align-full {
+  max-width: 100%;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Non-floating editorial alignment.
+   This gives clear left/right placement without awkward text wrapping. */
+.post-content .fig-align-left {
+  max-width: 520px;
+  margin-left: 0;
+  margin-right: auto;
+  text-align: left;
+}
+
+.post-content .fig-align-right {
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: 0;
+  text-align: right;
+}
+
+.post-content .gallery-figure figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--text);
+  opacity: 0.78;
+  text-align: center;
+}
+
+.post-content .fig-align-left figcaption {
+  text-align: left;
+}
+
+.post-content .fig-align-right figcaption {
+  text-align: right;
+}
+
+/* Fallback thumbnails sourced from an inline gallery image */
+.post-thumb.inline-fallback-thumb {
+  object-fit: cover;
+}
+
+/* Mobile: all inline figures become full content width */
+@media (max-width: 760px) {
+  .post-content .gallery-figure,
+  .post-content .fig-align-center,
+  .post-content .fig-align-left,
+  .post-content .fig-align-right,
+  .post-content .fig-align-full {
+    max-width: 100%;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .post-content .fig-align-left figcaption,
+  .post-content .fig-align-right figcaption {
+    text-align: center;
+  }
 }
 
 /* ── Forms ── */

@@ -17,7 +17,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from datetime import datetime, timezone
 
 from app.extensions import db, migrate, login_manager, csrf, cache, limiter, mail, compress
-from app.helpers import markdown_safe
+from app.helpers import markdown_safe, render_body, strip_gallery_tokens, post_excerpt
 
 
 def create_app(config_filename='config.py'):
@@ -107,6 +107,9 @@ def create_app(config_filename='config.py'):
     def markdown_safe_filter(text):
         return markdown_safe(text)
 
+    app.jinja_env.filters["strip_gallery_tokens"] = strip_gallery_tokens
+    app.jinja_env.globals["post_excerpt"] = post_excerpt
+
     # --- Context Processors ---
     from app.utils.image_utils import USING_SPACES, SPACES_URL, get_srcset, get_picture_data
     from app.utils.minify_utils import asset_url
@@ -129,6 +132,12 @@ def create_app(config_filename='config.py'):
             USING_SPACES=USING_SPACES,
             SPACES_URL=SPACES_URL
         )
+
+    @app.context_processor
+    def inject_template_helpers():
+        return {
+            'render_body': render_body,
+        }
 
     # --- Shell Context ---
     import sqlalchemy as sa

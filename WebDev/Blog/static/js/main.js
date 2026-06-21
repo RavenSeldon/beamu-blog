@@ -395,10 +395,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         let imageTag = '';
 
                         if (post.photo_filename) {
+                            const thumbClass = post.photo_is_inline_fallback
+                                ? 'post-thumb inline-fallback-thumb'
+                                : 'post-thumb';
+
                             if (window.USING_SPACES === true && window.SPACES_URL) {
-                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="${window.SPACES_URL}/thumbnail/${post.photo_filename}" alt="${post.title}" class="post-thumb"></a>`;
+                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="${window.SPACES_URL}/thumbnail/${post.photo_filename}" alt="${post.title}" class="${thumbClass}"></a>`;
                             } else {
-                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.photo_filename}" alt="${post.title}" class="post-thumb"></a>`;
+                                imageTag = `<a href="/post/${post.id}" class="post-image-link"><img src="/static/images/thumbnail/${post.photo_filename}" alt="${post.title}" class="${thumbClass}"></a>`;
                             }
                         }
 

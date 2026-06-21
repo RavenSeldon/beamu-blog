@@ -50,6 +50,11 @@
       <textarea id="content" name="content" rows="10" maxlength="20000" data-easymde>{{ item.content or '' }}</textarea>
     </label>
 
+    {% set body_field_id = 'content' %}
+    {% set gallery_owner = 'post' %}
+    {% set existing_gallery = item.images %}
+    {% include '_image_studio.html' %}
+
     <label for="item_link">
       <span>Link to Item <small>(optional)</small></span>
       <input type="url" id="item_link" name="item_link" value="{{ item.item_link or '' }}">

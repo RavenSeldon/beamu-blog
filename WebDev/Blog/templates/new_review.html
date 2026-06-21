@@ -58,6 +58,11 @@
                 data-easymde></textarea>
     </label>
 
+    {% set body_field_id = 'content' %}
+    {% set gallery_owner = 'post' %}
+    {% set existing_gallery = [] %}
+    {% include '_image_studio.html' %}
+
     <label for="item_link">
         <span>Link to Item <small>(e.g., IMDb, Goodreads, Product Page - optional)</small></span>
         <input type="url" id="item_link" name="item_link" placeholder="https://...">

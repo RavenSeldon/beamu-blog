@@ -7,7 +7,10 @@ from uuid import uuid4
 
 from app.extensions import db, cache
 from app.models import Project, Photo
-from app.helpers import allowed_file, invalidate_content_caches, handle_image_upload, replace_item_image
+from app.helpers import (
+    allowed_file, invalidate_content_caches, handle_image_upload,
+    replace_item_image, sync_project_images, GalleryValidationError
+)
 from app.utils.image_utils import process_upload_image
 
 projects_bp = Blueprint('projects_bp', __name__)
@@ -55,6 +58,8 @@ def new_project():
             db.session.add(project)
             db.session.flush()
 
+            sync_project_images(project, request.form, request.files)
+
             if image_file and allowed_file(image_file.filename):
                 photo = handle_image_upload(image_file, description=f"Cover for {title}")
                 if photo:
@@ -66,6 +71,10 @@ def new_project():
             flash('Project created!', 'success')
             return redirect(url_for('projects'))
 
+        except GalleryValidationError as e:
+            db.session.rollback()
+            flash(str(e), 'error')
+            return redirect(url_for('new_project'))
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Error creating project: {str(e)}")
@@ -84,6 +93,13 @@ def edit_project(project_id):
         project.title = request.form['title'].strip()
         project.description = request.form.get('description', '').strip()
         project.github_link = request.form.get('github_link', '').strip() or None
+
+        try:
+            sync_project_images(project, request.form, request.files)
+        except GalleryValidationError as e:
+            db.session.rollback()
+            flash(str(e), 'error')
+            return redirect(url_for('edit_project', project_id=project.id))
 
         image_file = request.files.get('image')
         if image_file and image_file.filename:

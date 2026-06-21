@@ -18,6 +18,11 @@
       <textarea id="content" name="content" rows="8" maxlength="20000" data-easymde>{{ item.content or '' }}</textarea>
     </label>
 
+    {% set body_field_id = 'content' %}
+    {% set gallery_owner = 'post' %}
+    {% set existing_gallery = item.images %}
+    {% include '_image_studio.html' %}
+
     <div class="flex-row">
       <label for="video_url" class="flex-grow">
         <span>Video URL</span>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ item.title }} - Review - Ben Amuwo's Neurascape{% endblock %}
-{% block meta_description %}{{ item.content|striptags|truncate(155, end='...') }}{% endblock %}
+{% block meta_description %}{{ item.content|strip_gallery_tokens|striptags|truncate(155, end='...') }}{% endblock %}
 
 {% block content %}
 <article class="single-post review-detail">
@@ -40,7 +40,7 @@
     {% endif %}
 
     <div class="post-content review-full-content">
-        {{ item.content | markdown_safe }}
+        {{ render_body(item) }}
     </div>
 
     <div class="post-links review-links">

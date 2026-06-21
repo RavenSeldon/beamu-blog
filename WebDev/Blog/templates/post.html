@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ post.title }} - Ben Amuwo's Neurascape{% endblock %}
-{% block meta_description %}{{ post.content|striptags|truncate(155, end='...') }}{% endblock %}
+{% block meta_description %}{{ post_excerpt(post, 300) }}{% endblock %}
 {% block og_type %}article{% endblock %}
 {% if post.photo and post.photo.filename %}
 {% block og_image %}{{ request.host_url.rstrip('/') }}{{ get_picture_data(post.photo.filename).src }}{% endblock %}
@@ -22,7 +22,7 @@
     "@type": "Person",
     "name": "Ben Amuwo"
   },
-  "description": {{ (post.content|striptags|truncate(155, end='...'))|tojson }},
+  "description": {{ (post_excerpt(post, 300))|tojson }},
   "url": "{{ request.url }}"
   {% if post.photo and post.photo.filename %}
   ,"image": "{{ request.host_url.rstrip('/') }}{{ get_picture_data(post.photo.filename).src }}"
@@ -67,7 +67,7 @@
     {% endif %}
 
     <div class="post-content">
-        {{ post.content|markdown_safe }}
+        {{ render_body(post) }}
     </div>
 
     {% if post.github_link %}

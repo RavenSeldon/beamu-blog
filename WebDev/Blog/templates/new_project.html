@@ -20,11 +20,19 @@
     <label class="full">
       <span>Description</span>
       <textarea name="description"
+                id="description"
                 rows="8"
                 maxlength="5000"
                 placeholder="What does this project do?"
                 data-easymde></textarea>
+        <div data-gallery-owner="project">
+        </div>
     </label>
+
+    {% set body_field_id = 'description' %}
+    {% set gallery_owner = 'project' %}
+    {% set existing_gallery = [] %}
+    {% include '_image_studio.html' %}
 
     <div class="flex-row">
      <label class="file-input has-preview">

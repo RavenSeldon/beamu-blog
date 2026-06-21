@@ -1,0 +1,22 @@
+{#
+  Inline gallery figure.
+
+  Expects:
+    gallery_item — PostImage or ProjectImage row
+#}
+
+{% if gallery_item and gallery_item.photo and gallery_item.photo.filename %}
+<figure class="post-figure gallery-figure fig-align-{{ gallery_item.alignment|default('center') }}">
+    {% set pic = get_picture_data(gallery_item.photo.filename, gallery_item.photo.lqip) %}
+    {% set img_alt = gallery_item.alt_text or gallery_item.caption or gallery_item.photo.description or 'Inline image' %}
+    {% set img_class = 'post-inline-img gallery-inline-img' %}
+    {% set img_loading = 'lazy' %}
+    {% set img_sizes = '(max-width: 600px) 100vw, (max-width: 1200px) 80vw, 800px' %}
+
+    {% include '_responsive_image.html' %}
+
+    {% if gallery_item.caption %}
+    <figcaption>{{ gallery_item.caption }}</figcaption>
+    {% endif %}
+</figure>
+{% endif %}

@@ -21,6 +21,11 @@
                 data-easymde></textarea>
     </label>
 
+    {% set body_field_id = 'content' %}
+    {% set gallery_owner = 'post' %}
+    {% set existing_gallery = [] %}
+    {% include '_image_studio.html' %}
+
     <div class="flex-row">
         <label for="video_url" class="flex-grow">
             <span>Video URL <small>(e.g., YouTube, Vimeo link)</small></span>

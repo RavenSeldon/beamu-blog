@@ -7,9 +7,8 @@ from uuid import uuid4
 
 from app.extensions import db, cache
 from app.models import Photo, Post, Project, MusicItem, Video, Review
-from app.helpers import allowed_file, invalidate_content_caches, handle_image_upload, replace_item_image, published_filter
-from app.utils.image_utils import process_upload_image, USING_SPACES, IMAGE_SIZES
-from app.utils.s3_utils import delete_files
+from app.helpers import allowed_file, invalidate_content_caches, handle_image_upload, replace_item_image, published_filter, delete_photo_if_unreferenced, generate_lqip_for, _delete_image_files, MAX_UPLOAD_SIZE, sync_post_images, GalleryValidationError
+from app.utils.image_utils import process_upload_image
 
 media_bp = Blueprint('media', __name__)
 
@@ -93,10 +92,23 @@ def edit_photo(photo_id):
     if request.method == 'POST':
         photo.description = request.form.get('description', '').strip() or None
 
-        # Optionally replace the image file itself
+        # Optionally replace the underlying image file. We keep the SAME Photo row
+        # (and id), so any feature-image or inline-gallery references to this photo
+        # stay valid and simply point at the new image.
         image_file = request.files.get('image')
-        if image_file and image_file.filename and allowed_file(image_file.filename):
-            # Process new image with same base workflow
+        if image_file and image_file.filename:
+            if not allowed_file(image_file.filename):
+                flash('Unsupported image file type. Please upload a PNG, JPG, JPEG, GIF, or WebP image.', 'error')
+                return redirect(url_for('edit_photo', photo_id=photo.id))
+
+            # Size guard, mirroring handle_image_upload (10 MB max).
+            image_file.seek(0, os.SEEK_END)
+            file_size = image_file.tell()
+            image_file.seek(0)
+            if file_size > MAX_UPLOAD_SIZE:
+                flash(f'Image too large ({file_size / (1024 * 1024):.1f} MB). Maximum allowed is 10 MB.', 'error')
+                return redirect(url_for('edit_photo', photo_id=photo.id))
+
             ext = os.path.splitext(secure_filename(image_file.filename))[1].lower()
             unique_filename = f"{uuid4().hex}{ext}"
 
@@ -104,28 +116,16 @@ def edit_photo(photo_id):
                 image_file, current_app.config['UPLOAD_FOLDER'], unique_filename
             )
 
-            if image_paths:
-                old_filename = photo.filename
+            if not image_paths:
+                flash('Could not process the new image; keeping the existing one.', 'error')
+                return redirect(url_for('edit_photo', photo_id=photo.id))
 
-                # Delete old files from storage (original + WebP)
-                old_no_ext = os.path.splitext(old_filename)[0]
-                try:
-                    if USING_SPACES:
-                        paths = []
-                        for size in IMAGE_SIZES:
-                            paths.append(f"{size}/{old_filename}")
-                            paths.append(f"{size}/{old_no_ext}.webp")
-                        delete_files(paths)
-                    else:
-                        for size in IMAGE_SIZES:
-                            for fname in [old_filename, f"{old_no_ext}.webp"]:
-                                path = os.path.join(current_app.config['UPLOAD_FOLDER'], size, fname)
-                                if os.path.exists(path):
-                                    os.remove(path)
-                except Exception as e:
-                    current_app.logger.warning(f"Failed to delete old photo files: {e}")
-
-                photo.filename = unique_filename
+            old_filename = photo.filename
+            photo.filename = unique_filename
+            # Regenerate the LQIP for the new image (previously left stale).
+            photo.lqip = generate_lqip_for(unique_filename)
+            # Remove the previous file's size-tier variants via the shared helper.
+            _delete_image_files(old_filename)
 
         db.session.commit()
         invalidate_content_caches('photo')
@@ -139,34 +139,22 @@ def edit_photo(photo_id):
 @login_required
 def delete_photo(photo_id):
     photo = Photo.query.get_or_404(photo_id)
-    if not photo:
-        flash('Photo not found.', 'error')
-        return redirect(url_for('photo_album'))
 
-    filename = photo.filename
+    # delete_photo_if_unreferenced is the only sanctioned Photo-deletion path: it
+    # removes the row + files only when nothing still references this photo as a
+    # feature image or inline gallery image (across posts and projects).
+    deleted = delete_photo_if_unreferenced(photo)
 
-    name_no_ext = os.path.splitext(filename)[0]
-    try:
-        if USING_SPACES:
-            paths_to_delete = []
-            for size in IMAGE_SIZES:
-                paths_to_delete.append(f"{size}/{filename}")
-                paths_to_delete.append(f"{size}/{name_no_ext}.webp")
-            delete_files(paths_to_delete)
-        else:
-            for size in IMAGE_SIZES:
-                for fname in [filename, f"{name_no_ext}.webp"]:
-                    file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], size, fname)
-                    if os.path.exists(file_path):
-                        os.remove(file_path)
-    except Exception as e:
-        flash(f'Error deleting image files: {str(e)}', 'error')
-
-    db.session.delete(photo)
-    db.session.commit()
-    invalidate_content_caches('photo')
-
-    flash('Photo deleted successfully', 'success')
+    if deleted:
+        db.session.commit()
+        invalidate_content_caches('photo')
+        flash('Photo deleted successfully', 'success')
+    else:
+        flash(
+            'This photo is still in use by a post or project and was not deleted. '
+            'Remove it from those items first.',
+            'error'
+        )
     return redirect(url_for('photo_album'))
 
 
@@ -185,10 +173,13 @@ def music():
 @login_required
 def new_music_item():
     if request.method == 'POST':
-        title = request.form['title']
+        title = request.form.get('title', '').strip()
         content = request.form.get('content', '')
         project_id = request.form.get('project_id') if request.form.get('project_id') else None
-        item_type = request.form['item_type']
+        item_type = request.form.get('item_type', '').strip()
+        if not title or not item_type:
+            flash('Title and item type are required.', 'error')
+            return redirect(url_for('new_music_item'))
         artist = request.form.get('artist')
         album_title = request.form.get('album_title')
         spotify_link = request.form.get('spotify_link')
@@ -202,6 +193,13 @@ def new_music_item():
         )
         db.session.add(music_item)
         db.session.flush()
+
+        try:
+            sync_post_images(music_item, request.form, request.files)
+        except GalleryValidationError as e:
+            db.session.rollback()
+            flash(str(e), 'error')
+            return redirect(url_for('new_music_item'))
 
         if image_file and allowed_file(image_file.filename):
             photo = handle_image_upload(image_file, description=f"Cover for {title}")
@@ -222,14 +220,26 @@ def edit_music_item(item_id):
     item = MusicItem.query.get_or_404(item_id)
 
     if request.method == 'POST':
-        item.title = request.form['title']
+        title = request.form.get('title', '').strip()
+        item_type = request.form.get('item_type', '').strip()
+        if not title or not item_type:
+            flash('Title and item type are required.', 'error')
+            return redirect(url_for('edit_music_item', item_id=item.id))
+        item.title = title
         item.content = request.form.get('content', '')
         item.project_id = request.form.get('project_id') or None
-        item.item_type = request.form['item_type']
+        item.item_type = item_type
         item.artist = request.form.get('artist', '').strip() or None
         item.album_title = request.form.get('album_title', '').strip() or None
         item.spotify_link = request.form.get('spotify_link', '').strip() or None
         item.youtube_link = request.form.get('youtube_link', '').strip() or None
+
+        try:
+            sync_post_images(item, request.form, request.files)
+        except GalleryValidationError as e:
+            db.session.rollback()
+            flash(str(e), 'error')
+            return redirect(url_for('edit_music_item', item_id=item.id))
 
         image_file = request.files.get('image')
         if image_file and image_file.filename:
@@ -276,6 +286,13 @@ def new_video_item():
         db.session.add(video_item)
         db.session.flush()
 
+        try:
+            sync_post_images(video_item, request.form, request.files)
+        except GalleryValidationError as e:
+            db.session.rollback()
+            flash(str(e), 'error')
+            return redirect(url_for('new_video_item'))
+
         if image_file and allowed_file(image_file.filename):
             photo = handle_image_upload(image_file, description=f"Thumbnail for {title}")
             if photo:
@@ -302,6 +319,13 @@ def edit_video_item(item_id):
         item.embed_code = request.form.get('embed_code', '').strip() or None
         item.source_type = request.form.get('source_type', '').strip() or None
         item.duration = request.form.get('duration', '').strip() or None
+
+        try:
+            sync_post_images(item, request.form, request.files)
+        except GalleryValidationError as e:
+            db.session.rollback()
+            flash(str(e), 'error')
+            return redirect(url_for('edit_video_item', item_id=item.id))
 
         image_file = request.files.get('image')
         if image_file and image_file.filename:
@@ -330,11 +354,14 @@ def reviews():
 @login_required
 def new_review():
     if request.method == 'POST':
-        title = request.form['title']
+        title = request.form.get('title', '').strip()
         content = request.form.get('content', '')
         project_id = request.form.get('project_id') if request.form.get('project_id') else None
-        item_title = request.form['item_title']
-        category = request.form['category']
+        item_title = request.form.get('item_title', '').strip()
+        category = request.form.get('category', '').strip()
+        if not title or not item_title or not category:
+            flash('Title, reviewed-item title, and category are all required.', 'error')
+            return redirect(url_for('new_review'))
         rating = request.form.get('rating') if request.form.get('rating') else None
         year_released_str = request.form.get('year_released')
         year_released = int(year_released_str) if year_released_str and year_released_str.isdigit() else None
@@ -350,6 +377,13 @@ def new_review():
         )
         db.session.add(review_item)
         db.session.flush()
+
+        try:
+            sync_post_images(review_item, request.form, request.files)
+        except GalleryValidationError as e:
+            db.session.rollback()
+            flash(str(e), 'error')
+            return redirect(url_for('new_review'))
 
         if image_file and allowed_file(image_file.filename):
             photo = handle_image_upload(image_file, description=f"Cover for {item_title}")
@@ -371,16 +405,29 @@ def edit_review(item_id):
     item = Review.query.get_or_404(item_id)
 
     if request.method == 'POST':
-        item.title = request.form['title']
+        title = request.form.get('title', '').strip()
+        item_title = request.form.get('item_title', '').strip()
+        category = request.form.get('category', '').strip()
+        if not title or not item_title or not category:
+            flash('Title, reviewed-item title, and category are all required.', 'error')
+            return redirect(url_for('edit_review', item_id=item.id))
+        item.title = title
         item.content = request.form.get('content', '')
         item.project_id = request.form.get('project_id') or None
-        item.item_title = request.form['item_title']
-        item.category = request.form['category']
+        item.item_title = item_title
+        item.category = category
         item.rating = request.form.get('rating', '').strip() or None
         year_released_str = request.form.get('year_released', '')
         item.year_released = int(year_released_str) if year_released_str and year_released_str.isdigit() else None
         item.director_author = request.form.get('director_author', '').strip() or None
         item.item_link = request.form.get('item_link', '').strip() or None
+
+        try:
+            sync_post_images(item, request.form, request.files)
+        except GalleryValidationError as e:
+            db.session.rollback()
+            flash(str(e), 'error')
+            return redirect(url_for('edit_review', item_id=item.id))
 
         image_file = request.files.get('image')
         if image_file and image_file.filename:

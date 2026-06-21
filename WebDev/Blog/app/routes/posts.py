@@ -8,7 +8,10 @@ from uuid import uuid4
 
 from app.extensions import db
 from app.models import Post, Photo, Project
-from app.helpers import allowed_file, invalidate_content_caches, handle_image_upload, replace_item_image, sync_tags
+from app.helpers import (
+    allowed_file, invalidate_content_caches, handle_image_upload,
+    replace_item_image, sync_tags, sync_post_images, GalleryValidationError
+)
 from app.utils.image_utils import process_upload_image
 
 posts_bp = Blueprint('posts', __name__)
@@ -68,6 +71,13 @@ def new_post():
         db.session.add(post_obj)
         db.session.flush()
 
+        try:
+            sync_post_images(post_obj, request.form, request.files)
+        except GalleryValidationError as e:
+            db.session.rollback()
+            flash(str(e), 'error')
+            return redirect(url_for('new_post'))
+
         if image_file and allowed_file(image_file.filename):
             photo = handle_image_upload(image_file, description=title)
             if photo:
@@ -114,6 +124,13 @@ def edit_post(post_id):
             post_obj.published_at = None
 
         sync_tags(post_obj, request.form.get('tags', ''))
+
+        try:
+            sync_post_images(post_obj, request.form, request.files)
+        except GalleryValidationError as e:
+            db.session.rollback()
+            flash(str(e), 'error')
+            return redirect(url_for('edit_post', post_id=post_obj.id))
 
         image_file = request.files.get('image')
         if image_file and image_file.filename:

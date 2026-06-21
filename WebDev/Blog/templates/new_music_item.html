@@ -46,6 +46,11 @@
                 data-easymde></textarea>
     </label>
 
+    {% set body_field_id = 'content' %}
+    {% set gallery_owner = 'post' %}
+    {% set existing_gallery = [] %}
+    {% include '_image_studio.html' %}
+
     <div class="flex-row">
         <label class="file-input has-preview flex-grow">
             <i class="fa-solid fa-image"></i> Cover Image <small>(optional)</small>

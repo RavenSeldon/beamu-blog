@@ -2,9 +2,9 @@
 from flask import Blueprint, request, jsonify
 
 from app.extensions import db, cache
-from app.models import Post, Photo
+from app.models import Post, Photo, PostImage
 from app.utils.image_utils import get_srcset
-from app.helpers import published_filter, markdown_safe
+from app.helpers import published_filter, markdown_safe, strip_gallery_tokens, post_excerpt
 
 api_bp = Blueprint('api', __name__)
 
@@ -25,6 +25,7 @@ def api_posts():
             db.joinedload(Post.photo),
             db.joinedload(Post.project),
             db.selectinload(Post.tags),
+            db.selectinload(Post.images).joinedload(PostImage.photo),
         )
         .order_by(Post.date_posted.desc())
     )
@@ -37,16 +38,28 @@ def api_posts():
     serialized_posts = []
 
     for post_item in posts:
-        raw_content = post_item.content or ''
-        truncated_content = raw_content[:300] + ('...' if len(raw_content) > 300 else '')
+        truncated_content = str(post_excerpt(post_item, length=300))
+
+        card_photo = post_item.photo
+        if card_photo is None:
+            first_inline = next(
+                (
+                    image
+                    for image in sorted(post_item.images, key=lambda image: image.position or 0)
+                    if image.photo and image.photo.filename
+                ),
+                None
+            )
+            card_photo = first_inline.photo if first_inline else None
 
         item_data = {
             'id': post_item.id,
             'type': post_item.type,
             'title': post_item.title,
-            'content': markdown_safe(truncated_content),
+            'content': truncated_content,
             'date_posted': post_item.date_posted.strftime('%Y-%m-%d'),
-            'photo_filename': post_item.photo.filename if post_item.photo else None,
+            'photo_filename': card_photo.filename if card_photo else None,
+            'photo_is_inline_fallback': bool(card_photo and post_item.photo is None),
             'github_link': post_item.github_link,
             'project_id': post_item.project_id,
             'project_title': post_item.project.title if post_item.project else None,

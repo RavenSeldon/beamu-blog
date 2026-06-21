@@ -34,6 +34,21 @@ class Photo(db.Model):
     lqip: so.Mapped[Optional[str]] = so.mapped_column(sa.Text, nullable=True)
     linked_posts: so.Mapped[list["Post"]] = so.relationship("Post", foreign_keys="Post.photo_id", back_populates="photo")
     linked_projects: so.Mapped[list["Project"]] = so.relationship("Project", foreign_keys="Project.photo_id", back_populates="photo")
+    post_gallery_links: so.Mapped[list["PostImage"]] = so.relationship(
+        "PostImage",
+        back_populates="photo",
+        passive_deletes=True,
+    )
+
+    project_gallery_links: so.Mapped[list["ProjectImage"]] = so.relationship(
+        "ProjectImage",
+        back_populates="photo",
+        passive_deletes=True,
+    )
+
+    @property
+    def gallery_links(self):
+        return [*self.post_gallery_links, *self.project_gallery_links]
 
 
 class Project(db.Model):
@@ -47,6 +62,7 @@ class Project(db.Model):
     photo_id: so.Mapped[Optional[int]] = so.mapped_column(sa.ForeignKey("photos.id", name=naming_convention["fk"] % {"table_name": "projects", "column_0_name": "photo_id", "referred_table_name": "photos"}, ondelete="SET NULL"), nullable=True, index=True)
     photo: so.Mapped[Optional["Photo"]] = so.relationship("Photo", foreign_keys=[photo_id], back_populates="linked_projects", innerjoin=False)
     items: so.Mapped[list["Post"]] = so.relationship("Post", back_populates="project", cascade="all, delete-orphan")
+    images: so.Mapped[list["ProjectImage"]] = so.relationship("ProjectImage", back_populates="project", cascade="all, delete-orphan", order_by="ProjectImage.position")
 
 
 # Many-to-many junction table for Post <-> Tag
@@ -82,6 +98,7 @@ class Post(db.Model):
     project_id: so.Mapped[Optional[int]] = so.mapped_column(sa.ForeignKey("projects.id", name=naming_convention["fk"] % {"table_name": "posts", "column_0_name": "project_id", "referred_table_name": "projects"}, ondelete="SET NULL"), nullable=True, index=True)
     project: so.Mapped[Optional["Project"]] = so.relationship("Project", back_populates="items", foreign_keys=[project_id])
     tags: so.Mapped[list["Tag"]] = so.relationship("Tag", secondary=post_tags, back_populates="posts")
+    images: so.Mapped[list["PostImage"]] = so.relationship("PostImage", back_populates="post", cascade="all, delete-orphan", order_by="PostImage.position")
     __mapper_args__ = {"polymorphic_on": type, "polymorphic_identity": "post", "with_polymorphic": "*"}
 
 
@@ -116,3 +133,70 @@ class Review(Post):
     director_author: so.Mapped[Optional[str]] = so.mapped_column(sa.String(120), nullable=True)
     item_link: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256), nullable=True)
     __mapper_args__ = {"polymorphic_identity": "review"}
+
+
+class PostImage(db.Model):
+    """Inline/gallery image attached to a Post (or any Post subclass).
+
+    Keyed to posts.id, so it covers normal posts, reviews, videos, and music items
+    via the polymorphic base. Positioned in the Markdown body by a [[img:KEY]] token
+    matching placeholder_key. Distinct from Post.photo_id, which remains the single
+    dedicated feature image.
+    """
+    __tablename__ = "post_images"
+    id: so.Mapped[int] = so.mapped_column(sa.Integer, primary_key=True)
+    post_id: so.Mapped[int] = so.mapped_column(
+        sa.ForeignKey("posts.id", name=naming_convention["fk"] % {"table_name": "post_images", "column_0_name": "post_id", "referred_table_name": "posts"}, ondelete="CASCADE"),
+        nullable=False,
+    )
+    photo_id: so.Mapped[int] = so.mapped_column(
+        sa.ForeignKey("photos.id", name=naming_convention["fk"] % {"table_name": "post_images", "column_0_name": "photo_id", "referred_table_name": "photos"}, ondelete="CASCADE"),
+        nullable=False, index=True,
+    )
+    placeholder_key: so.Mapped[str] = so.mapped_column(sa.String(16), nullable=False)
+    position: so.Mapped[int] = so.mapped_column(sa.Integer, nullable=False, default=0, server_default=sa.text("0"))
+    caption: so.Mapped[Optional[str]] = so.mapped_column(sa.String(512), nullable=True)
+    alt_text: so.Mapped[Optional[str]] = so.mapped_column(sa.String(512), nullable=True)
+    alignment: so.Mapped[str] = so.mapped_column(sa.String(10), nullable=False, default="center", server_default=sa.text("'center'"))
+
+    post: so.Mapped["Post"] = so.relationship("Post", back_populates="images")
+    photo: so.Mapped["Photo"] = so.relationship("Photo", back_populates="post_gallery_links")
+
+    __table_args__ = (
+        sa.UniqueConstraint("post_id", "placeholder_key", name="uq_post_images_post_key"),
+        sa.CheckConstraint("alignment IN ('left', 'right', 'center', 'full')", name="ck_post_images_alignment"),
+        sa.Index("ix_post_images_post_id_position", "post_id", "position"),
+    )
+
+
+class ProjectImage(db.Model):
+    """Inline/gallery image attached to a Project.
+
+    Parallel to PostImage but keyed to projects.id (Project is a standalone table,
+    not part of the Post hierarchy). Both tables share the same gallery helpers,
+    which accept the association class so there is no duplicated logic.
+    """
+    __tablename__ = "project_images"
+    id: so.Mapped[int] = so.mapped_column(sa.Integer, primary_key=True)
+    project_id: so.Mapped[int] = so.mapped_column(
+        sa.ForeignKey("projects.id", name=naming_convention["fk"] % {"table_name": "project_images", "column_0_name": "project_id", "referred_table_name": "projects"}, ondelete="CASCADE"),
+        nullable=False,
+    )
+    photo_id: so.Mapped[int] = so.mapped_column(
+        sa.ForeignKey("photos.id", name=naming_convention["fk"] % {"table_name": "project_images", "column_0_name": "photo_id", "referred_table_name": "photos"}, ondelete="CASCADE"),
+        nullable=False, index=True,
+    )
+    placeholder_key: so.Mapped[str] = so.mapped_column(sa.String(16), nullable=False)
+    position: so.Mapped[int] = so.mapped_column(sa.Integer, nullable=False, default=0, server_default=sa.text("0"))
+    caption: so.Mapped[Optional[str]] = so.mapped_column(sa.String(512), nullable=True)
+    alt_text: so.Mapped[Optional[str]] = so.mapped_column(sa.String(512), nullable=True)
+    alignment: so.Mapped[str] = so.mapped_column(sa.String(10), nullable=False, default="center", server_default=sa.text("'center'"))
+
+    project: so.Mapped["Project"] = so.relationship("Project", back_populates="images")
+    photo: so.Mapped["Photo"] = so.relationship("Photo", back_populates="project_gallery_links")
+
+    __table_args__ = (
+        sa.UniqueConstraint("project_id", "placeholder_key", name="uq_project_images_project_key"),
+        sa.CheckConstraint("alignment IN ('left', 'right', 'center', 'full')", name="ck_project_images_alignment"),
+        sa.Index("ix_project_images_project_id_position", "project_id", "position"),
+    )

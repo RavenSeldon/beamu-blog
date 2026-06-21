@@ -21,6 +21,14 @@
       renderingConfig: { singleLineBreaks: false },
     });
 
+    /* Expose this instance so image-studio.js can insert [[img:KEY]] tokens
+       into the visible CodeMirror editor, not just the hidden textarea. */
+    textarea.EasyMDE = mde;
+    window.EasyMDEInstances = window.EasyMDEInstances || {};
+    if (textarea.id) {
+      window.EasyMDEInstances[textarea.id] = mde;
+    }
+
     /* If a char-count element exists for this textarea, update it from EasyMDE */
     var countEl = textarea.parentElement && textarea.parentElement.querySelector('.char-count span');
     if (countEl) {

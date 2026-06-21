@@ -23,12 +23,22 @@
                 </div>
             </header>
 
+            {% set card_thumb = namespace(photo=None) %}
             {% if item.photo and item.photo.filename %}
+                {% set card_thumb.photo = item.photo %}
+            {% elif item.images %}
+                {% set first_gallery_image = item.images|sort(attribute='position')|first %}
+                {% if first_gallery_image and first_gallery_image.photo and first_gallery_image.photo.filename %}
+                    {% set card_thumb.photo = first_gallery_image.photo %}
+                {% endif %}
+            {% endif %}
+
+            {% if card_thumb.photo %}
             <div class="post-image">
                 <a href="{{ url_for('post', post_id=item.id) }}">
-                    {% set pic = get_picture_data(item.photo.filename, item.photo.lqip) %}
-                    {% set img_alt = item.photo.description if item.photo.description else item.title %}
-                    {% set img_class = 'post-feature-img' %}
+                    {% set pic = get_picture_data(card_thumb.photo.filename, card_thumb.photo.lqip) %}
+                    {% set img_alt = card_thumb.photo.description if card_thumb.photo.description else item.title %}
+                    {% set img_class = 'post-feature-img inline-fallback-thumb' if not (item.photo and item.photo.filename) else 'post-feature-img' %}
                     {% set img_sizes = '(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw' %}
                     {% include '_responsive_image.html' %}
                 </a>
@@ -42,7 +52,7 @@
                 {% if item.album_title %}
                     <p><strong>Album:</strong> {{ item.album_title }}</p>
                 {% endif %}
-                {{ item.content | markdown_safe | truncate(250) }}
+                {{ post_excerpt(item, 200) }}
             </div>
 
             {% if item.spotify_link %}

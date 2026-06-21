@@ -26,12 +26,22 @@
                 </div>
             </header>
 
+            {% set card_thumb = namespace(photo=None) %}
             {% if video.photo and video.photo.filename %}
+                {% set card_thumb.photo = video.photo %}
+            {% elif video.images %}
+                {% set first_gallery_image = video.images|sort(attribute='position')|first %}
+                {% if first_gallery_image and first_gallery_image.photo and first_gallery_image.photo.filename %}
+                    {% set card_thumb.photo = first_gallery_image.photo %}
+                {% endif %}
+            {% endif %}
+
+            {% if card_thumb.photo %}
             <div class="post-image video-thumbnail">
                 <a href="{{ url_for('post', post_id=video.id) }}">
-                    {% set pic = get_picture_data(video.photo.filename, video.photo.lqip) %}
-                    {% set img_alt = video.photo.description if video.photo.description else video.title %}
-                    {% set img_class = 'post-feature-img' %}
+                    {% set pic = get_picture_data(card_thumb.photo.filename, card_thumb.photo.lqip) %}
+                    {% set img_alt = card_thumb.photo.description if card_thumb.photo.description else video.title %}
+                    {% set img_class = 'post-feature-img inline-fallback-thumb' if not (video.photo and video.photo.filename) else 'post-feature-img' %}
                     {% set img_sizes = '(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw' %}
                     {% include '_responsive_image.html' %}
                 </a>
@@ -43,7 +53,7 @@
             {% endif %}
 
             <div class="post-content">
-                {{ video.content | markdown_safe | truncate(250) }}
+                {{ post_excerpt(video, 200) }}
             </div>
 
             <div class="post-links">

@@ -25,12 +25,22 @@
                 </div>
             </header>
 
+            {% set card_thumb = namespace(photo=None) %}
             {% if review.photo and review.photo.filename %}
+                {% set card_thumb.photo = review.photo %}
+            {% elif review.images %}
+                {% set first_gallery_image = review.images|sort(attribute='position')|first %}
+                {% if first_gallery_image and first_gallery_image.photo and first_gallery_image.photo.filename %}
+                    {% set card_thumb.photo = first_gallery_image.photo %}
+                {% endif %}
+            {% endif %}
+
+            {% if card_thumb.photo %}
             <div class="post-image">
                 <a href="{{ url_for('post', post_id=review.id) }}">
-                    {% set pic = get_picture_data(review.photo.filename, review.photo.lqip) %}
-                    {% set img_alt = review.photo.description if review.photo.description else review.item_title %}
-                    {% set img_class = 'post-feature-img' %}
+                    {% set pic = get_picture_data(card_thumb.photo.filename, card_thumb.photo.lqip) %}
+                    {% set img_alt = card_thumb.photo.description if card_thumb.photo.description else review.item_title %}
+                    {% set img_class = 'post-feature-img inline-fallback-thumb' if not (review.photo and review.photo.filename) else 'post-feature-img' %}
                     {% set img_sizes = '(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw' %}
                     {% include '_responsive_image.html' %}
                 </a>
@@ -47,7 +57,7 @@
                 {% if review.rating %}
                     <p><strong>Rating:</strong> {{ review.rating }}</p>
                 {% endif %}
-                {{ review.content | markdown_safe | truncate(200) }}
+                {{ post_excerpt(review, 200) }}
             </div>
 
             <div class="post-links">

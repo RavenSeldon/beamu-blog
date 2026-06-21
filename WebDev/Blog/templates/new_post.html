@@ -14,11 +14,16 @@
 
     <label class="full">
       <span>Content <small>(Markdown OK)</small></span>
-      <textarea name="content" rows="12" maxlength="20000"
+      <textarea name="content" id="content" rows="12" maxlength="20000"
                 placeholder="Speak forth"
                 data-count data-easymde></textarea>
       <div class="char-count"><span>0</span>/20 000</div>
     </label>
+
+    {% set body_field_id = 'content' %}
+    {% set gallery_owner = 'post' %}
+    {% set existing_gallery = [] %}
+    {% include '_image_studio.html' %}
 
     <div class="flex-grow">
       <label class="file-input has-preview">

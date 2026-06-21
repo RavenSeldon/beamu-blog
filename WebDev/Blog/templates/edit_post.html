@@ -14,9 +14,14 @@
 
     <label class="full">
       <span>Content <small>(Markdown OK)</small></span>
-      <textarea name="content" rows="12" maxlength="20000" data-count data-easymde>{{ post.content or '' }}</textarea>
+      <textarea name="content" id="content" rows="12" maxlength="20000" data-count data-easymde>{{ post.content or '' }}</textarea>
       <div class="char-count"><span>{{ (post.content or '')|length }}</span>/20 000</div>
     </label>
+
+    {% set body_field_id = 'content' %}
+    {% set gallery_owner = 'post' %}
+    {% set existing_gallery = post.images %}
+    {% include '_image_studio.html' %}
 
     <div class="flex-grow">
       {% set current_photo = post.photo %}

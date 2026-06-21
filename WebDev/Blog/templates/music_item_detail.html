@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ item.title }} - Music - Ben Amuwo's Neurascape{% endblock %}
-{% block meta_description %}{{ item.content|striptags|truncate(155, end='...') }}{% endblock %}
+{% block meta_description %}{{ item.content|strip_gallery_tokens|striptags|truncate(155, end='...') }}{% endblock %}
 {% block content %}
 <article class="single-post music-item-detail">
     <header class="post-header">
@@ -35,7 +35,7 @@
             <p><strong>Album:</strong> {{ item.album_title }}</p>
         {% endif %}
 
-        {{ item.content | markdown_safe }}
+        {{ render_body(item) }}
     </div>
 
     <div class="post-links music-links">
