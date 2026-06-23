@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ project.title }} - Ben Amuwo's Neurascape{% endblock %}
-{% block meta_description %}{{ post_excerpt(project, 200) if project.description else 'A project by Ben Amuwo on the Neurascape.' }}{% endblock %}
+{% block meta_description %}{{ (post_excerpt(project, 200)|striptags) if project.description else 'A project by Ben Amuwo on the Neurascape.' }}{% endblock %}
 {% block content %}
 <div class="project-detail">
     <header class="post-header">
