@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ post.title }} - Ben Amuwo's Neurascape{% endblock %}
-{% block meta_description %}{{ post_excerpt(post, 200) if post.description else 'A post by Ben Amuwo on the Neurascape. }}{% endblock %}
+{% block meta_description %}{{ post_excerpt(post, 200) if post.content else 'A post by Ben Amuwo on the Neurascape. }}{% endblock %}
 {% block og_type %}article{% endblock %}
 {% if post.photo and post.photo.filename %}
 {% block og_image %}{{ request.host_url.rstrip('/') }}{{ get_picture_data(post.photo.filename).src }}{% endblock %}
