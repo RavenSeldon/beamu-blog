@@ -8,6 +8,7 @@
    3. components — Posts, cards, forms, buttons, messages, media
    4. spotify    — Spotify embeds, controls, mini player
    5. animations — Toggle, loader, keyframes, transitions
+   6. search     — /search page + typeahead overlay
    ============================================= */
 
 @import url("modules/base.css");
@@ -15,3 +16,4 @@
 @import url("modules/components.css");
 @import url("modules/spotify.css");
 @import url("modules/animations.css");
+@import url("modules/search.css");

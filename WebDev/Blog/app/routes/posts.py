@@ -12,6 +12,7 @@ from app.helpers import (
     allowed_file, invalidate_content_caches, handle_image_upload,
     replace_item_image, sync_tags, sync_post_images, GalleryValidationError
 )
+from app.search import sync_search_document, delete_search_document
 from app.utils.image_utils import process_upload_image
 
 posts_bp = Blueprint('posts', __name__)
@@ -86,6 +87,9 @@ def new_post():
 
         sync_tags(post_obj, request.form.get('tags', ''))
 
+        # Keep the search index in sync within this same transaction.
+        sync_search_document(post_obj)
+
         db.session.commit()
         invalidate_content_caches('post')
         flash('Post created!', 'success')
@@ -136,6 +140,9 @@ def edit_post(post_id):
         if image_file and image_file.filename:
             replace_item_image(post_obj, image_file, description=post_obj.title)
 
+        # Keep the search index in sync within this same transaction.
+        sync_search_document(post_obj)
+
         db.session.commit()
         invalidate_content_caches('post')
         flash('Post updated!', 'success')
@@ -155,6 +162,9 @@ def delete_post(post_id):
         return redirect(url_for('index'))
 
     post_type = post_obj.type
+    # Remove the search index row in the same transaction as the delete.
+    # This route handles ALL Post subtypes (post, review, video, music_item).
+    delete_search_document(post_type, post_obj.id)
     db.session.delete(post_obj)
     db.session.commit()
     invalidate_content_caches(post_type)

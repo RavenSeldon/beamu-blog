@@ -5,6 +5,7 @@ from app.extensions import db, cache
 from app.models import Post, Photo, PostImage
 from app.utils.image_utils import get_srcset
 from app.helpers import published_filter, markdown_safe, strip_gallery_tokens, post_excerpt
+from app.search import search_query, SEARCHABLE_ENTITY_TYPES, QUERY_MIN_CHARS
 
 api_bp = Blueprint('api', __name__)
 
@@ -101,6 +102,66 @@ def api_posts():
         'offset': offset,
         'limit': limit,
         'next_offset': offset + len(serialized_posts)
+    })
+
+
+@api_bp.route('/api/search')
+@cache.cached(query_string=True, timeout=60)
+def api_search():
+    """Site-wide search API (typeahead + programmatic access).
+
+    Params: q (required, min 2 chars), type (optional whitelist),
+    offset/limit capped like /api/posts. No `tag` param (deferred to v2 —
+    structured tag storage; tag names are still matched as full text).
+
+    Caching policy, stated honestly: targeted invalidation is impractical with
+    query-string-hashed cache keys, so v1 accepts a <=60s staleness window for
+    deleted/rescheduled items. Acceptable ONLY because the visibility filter
+    (published_at) runs inside search_query() before this caching layer.
+    (invalidate_content_caches() also clears the whole cache on every content
+    change, which in practice shortens that window further.) If true
+    invalidation is wanted later: add a search-index version token to the
+    cache key and bump it on writes (deferred).
+    """
+    raw_q = request.args.get('q', '')
+    q = (raw_q or '').strip()
+    if len(q) < QUERY_MIN_CHARS:
+        return jsonify({
+            'error': f'Query parameter "q" is required (min {QUERY_MIN_CHARS} characters).'
+        }), 400
+
+    entity_type = request.args.get('type', '').strip() or None
+    if entity_type is not None and entity_type not in SEARCHABLE_ENTITY_TYPES:
+        return jsonify({
+            'error': f'Invalid type. Allowed: {", ".join(SEARCHABLE_ENTITY_TYPES)}.'
+        }), 400
+
+    try:
+        offset = max(int(request.args.get('offset', 0)), 0)
+        limit = min(max(int(request.args.get('limit', 10)), 1), 25)
+    except ValueError:
+        offset = 0
+        limit = 10
+
+    # search_query() paginates by page number; translate offset/limit onto it.
+    # Offsets that aren't limit-aligned are rounded down to the nearest page.
+    page = (offset // limit) + 1
+    result = search_query(q, entity_type=entity_type, page=page, per_page=limit)
+
+    return jsonify({
+        'query': result['query'],
+        'results': [
+            {
+                'type': item['type'],
+                'title': item['title'],
+                'snippet': item['snippet'],
+                'url': item['url'],
+                'date': item['date'],
+                'meta': item['meta'],
+            }
+            for item in result['items']
+        ],
+        'has_next': result['has_next'],
     })
 
 

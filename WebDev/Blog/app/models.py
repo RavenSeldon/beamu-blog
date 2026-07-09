@@ -135,6 +135,52 @@ class Review(Post):
     __mapper_args__ = {"polymorphic_identity": "review"}
 
 
+class SearchDocument(db.Model):
+    """Denormalized site-wide search index row.
+
+    One row per searchable entity (Post + subtypes, Project). Searchable text
+    spans multiple tables (posts + joined subtype tables + projects + tags), so
+    a single flat table is indexed instead of per-table tsvector columns.
+
+    Weighting (applied in the Postgres generated column, not here):
+        title    -> weight A
+        keywords -> weight B (tags, artist, album_title, item_title, category,
+                    director_author, item_type, source_type)
+        body     -> weight C (plain text: gallery tokens stripped, Markdown
+                    rendered to text, truncated to ~50KB)
+
+    NOTE: the Postgres-only `search_vector` tsvector generated column and its
+    GIN index are created purely in the Alembic migration and are intentionally
+    NOT mapped here, so the model is identical on SQLite and Postgres. The
+    Postgres query path references search_vector via raw SQL only.
+
+    Rows are kept in sync explicitly by app.search.sync_search_document() /
+    delete_search_document() inside the same transaction as the source change,
+    with `flask search reindex` as a recovery/backfill tool.
+
+    Deferred (v2+): structured tag storage for real tag filtering (tag names
+    currently live in `keywords` as plain text), and gallery caption/alt-text
+    indexing.
+    """
+    __tablename__ = "search_index"
+    id: so.Mapped[int] = so.mapped_column(sa.Integer, primary_key=True)
+    entity_type: so.Mapped[str] = so.mapped_column(sa.String(20), nullable=False, index=True)
+    entity_id: so.Mapped[int] = so.mapped_column(sa.Integer, nullable=False)
+    title: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False)
+    keywords: so.Mapped[Optional[str]] = so.mapped_column(sa.Text, nullable=True)
+    body: so.Mapped[Optional[str]] = so.mapped_column(sa.Text, nullable=True)
+    # Copied from the source row for visibility filtering and recency sorting.
+    date_posted: so.Mapped[Optional[datetime]] = so.mapped_column(sa.DateTime(timezone=True), nullable=True)
+    published_at: so.Mapped[Optional[datetime]] = so.mapped_column(sa.DateTime(timezone=True), nullable=True, index=True)
+
+    __table_args__ = (
+        sa.UniqueConstraint("entity_type", "entity_id", name="uq_search_index_entity"),
+    )
+
+    def __repr__(self):
+        return f'<SearchDocument {self.entity_type}:{self.entity_id} "{self.title[:30]}">'
+
+
 class PostImage(db.Model):
     """Inline/gallery image attached to a Post (or any Post subclass).
 

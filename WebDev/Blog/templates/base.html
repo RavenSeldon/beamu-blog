@@ -92,6 +92,8 @@
     <!-- Sidebar Navigation -->
     <div id="sidebar" class="sidebar" aria-hidden="true">
         <nav aria-label="Main navigation">
+            {# Plain link to /search — search.js upgrades it to the live overlay #}
+            <a href="{{ url_for('main.search') }}" id="search-nav-link"><i class="fa-solid fa-magnifying-glass"></i> Search</a>
             <a href="{{ url_for('index') }}"><i class="fa-solid fa-meteor"></i> Home</a>
             <a href="{{ url_for('about') }}"><i class="fa-solid fa-brain"></i> About</a>
             <a href="{{ url_for('projects') }}"><i class="fa-solid fa-sun"></i> Projects</a>
@@ -112,6 +114,12 @@
     <button id="sidebar-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
         <i class="fa-solid fa-bars"></i>
     </button>
+
+    <!-- Top-right search icon: mirrors #sidebar-toggle on the opposite corner.
+         Plain link to /search — search.js upgrades it to the live overlay. -->
+    <a id="search-corner-btn" href="{{ url_for('main.search') }}" aria-label="Search the site" title="Search (Ctrl+K or /)">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </a>
 
     <!-- Main Content -->
     <main id="main-content">
@@ -213,6 +221,7 @@
     <script src="{{ asset_url('js/main.js') }}" defer></script>
     <script src="{{ asset_url('js/spotify-player.js') }}" defer></script>
     <script src="{{ asset_url('js/image-studio.js') }}" defer></script>
+    <script src="{{ asset_url('js/search.js') }}" defer></script>
 
     {% else %}
     <script src="{{ url_for('static', filename='js/neurascape-bg.js') }}" defer></script>
@@ -220,6 +229,7 @@
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/spotify-player.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/image-studio.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}" defer></script>
     {% endif %}
 
     <!-- Performance notice (driven by neurascape-bg.js benchmark) -->

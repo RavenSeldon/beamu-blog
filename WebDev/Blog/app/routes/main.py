@@ -9,8 +9,19 @@ from sib_api_v3_sdk.rest import ApiException
 from app.extensions import db, cache, limiter
 from app.models import Post, Project
 from app.helpers import retry_database_operation, published_filter
+from app.search import search_query, SEARCHABLE_ENTITY_TYPES, QUERY_MIN_CHARS
 
 main_bp = Blueprint('main', __name__)
+
+# Filter-chip labels for the /search page, in display order.
+SEARCH_TYPE_CHIPS = [
+    (None, 'All'),
+    ('post', 'Posts'),
+    ('review', 'Reviews'),
+    ('video', 'Videos'),
+    ('music_item', 'Music'),
+    ('project', 'Projects'),
+]
 
 
 @main_bp.route('/')
@@ -26,6 +37,50 @@ def index():
         current_app.logger.error(f"Database connection error: {str(e)}")
         flash('Database connection issue. Please try again in a moment.', 'error')
         return render_template('index.html', posts=[])
+
+
+@main_bp.route('/search')
+def search():
+    """Server-rendered search results page.
+
+    Query params (all optional; validated with .get()):
+        q    — search terms (min 2 chars after stripping)
+        type — entity-type filter (whitelisted)
+        page — 1-based page number
+
+    No result count is shown by design — prev/next pagination only.
+    Snippets contain <mark> highlighting; the query layer guarantees all
+    other snippet content is escaped, so the template may |safe ONLY the
+    snippet field.
+    """
+    q = request.args.get('q', '').strip()[:100]
+    entity_type = request.args.get('type', '').strip() or None
+    if entity_type not in SEARCHABLE_ENTITY_TYPES:
+        entity_type = None
+    try:
+        page = max(int(request.args.get('page', 1)), 1)
+    except ValueError:
+        page = 1
+
+    result = None
+    if len(q) >= QUERY_MIN_CHARS:
+        try:
+            result = retry_database_operation(
+                lambda: search_query(q, entity_type=entity_type, page=page, per_page=10)
+            )
+        except OperationalError as e:
+            current_app.logger.error(f"Search database error: {e}")
+            flash('Database connection issue. Please try again in a moment.', 'error')
+            result = {'query': q, 'items': [], 'has_next': False}
+
+    return render_template(
+        'search.html',
+        q=q,
+        result=result,
+        active_type=entity_type,
+        page=page,
+        type_chips=SEARCH_TYPE_CHIPS,
+    )
 
 
 @main_bp.route('/about')

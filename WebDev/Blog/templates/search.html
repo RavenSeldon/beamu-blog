@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}{% if q %}Search: {{ q }} - Ben Amuwo's Neurascape{% else %}Search - Ben Amuwo's Neurascape{% endif %}{% endblock %}
+{% block meta_description %}Search the Neurascape — posts, reviews, videos, music, and projects.{% endblock %}
+
+{% block extra_css %}
+<meta name="robots" content="noindex">
+{% endblock %}
+
+{% block content %}
+<section class="search-page">
+    <h1><i class="fa-solid fa-magnifying-glass"></i> Search the Neurascape</h1>
+
+    {# Search box — plain GET form, works with JS disabled #}
+    <form class="search-page-form" method="get" action="{{ url_for('main.search') }}" role="search">
+        <input type="search" name="q" value="{{ q }}" placeholder="Search posts, reviews, music, projects…"
+               minlength="2" maxlength="100" aria-label="Search query" autocomplete="off"
+               {% if not q %}autofocus{% endif %}>
+        {% if active_type %}<input type="hidden" name="type" value="{{ active_type }}">{% endif %}
+        <button type="submit" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </form>
+
+    {% if result %}
+    {# Entity-type filter chips, preserving q. No result counts by design. #}
+    <nav class="search-chips" aria-label="Filter results by type">
+        {% for chip_type, chip_label in type_chips %}
+        <a class="search-chip {% if chip_type == active_type %}active{% endif %}"
+           href="{{ url_for('main.search', q=q, type=chip_type) }}">{{ chip_label }}</a>
+        {% endfor %}
+    </nav>
+
+    <h2 class="search-results-heading">Results for &ldquo;{{ q }}&rdquo;</h2>
+
+    {% if result['items'] %}
+    <div class="posts-list search-results-list">
+        {% for item in result['items'] %}
+        <article class="post-card visible search-result-card">
+            <header class="post-header">
+                <h3 class="search-result-title">
+                    <a href="{{ item['url'] }}">
+                        <i class="fa-solid {{ {
+                            'post': 'fa-meteor',
+                            'review': 'fa-star-half-stroke',
+                            'video': 'fa-photo-film',
+                            'music_item': 'fa-compact-disc',
+                            'project': 'fa-sun',
+                        }[item['type']] }}" aria-hidden="true"></i>
+                        {{ item['title'] }}
+                    </a>
+                </h3>
+                <div class="post-meta">
+                    {% if item['date'] %}
+                    <span class="post-date"><i class="fa-solid fa-calendar-alt"></i> {{ item['date'] }}</span>
+                    {% endif %}
+                    {% if item['meta'] %}
+                    <span class="search-result-meta">{{ item['meta'] }}</span>
+                    {% endif %}
+                </div>
+            </header>
+            {% if item['snippet'] %}
+            {# |safe is applied ONLY to the snippet: the query layer escapes all
+               snippet content and injects nothing but <mark> tags itself. #}
+            <p class="search-result-snippet">{{ item['snippet'] | safe }}</p>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </div>
+
+    <nav class="search-pagination" aria-label="Search results pages">
+        {% if page > 1 %}
+        <a class="search-page-link" href="{{ url_for('main.search', q=q, type=active_type, page=page - 1) }}">
+            <i class="fa-solid fa-chevron-left"></i> Previous
+        </a>
+        {% endif %}
+        {% if result['has_next'] %}
+        <a class="search-page-link" href="{{ url_for('main.search', q=q, type=active_type, page=page + 1) }}">
+            Next <i class="fa-solid fa-chevron-right"></i>
+        </a>
+        {% endif %}
+    </nav>
+
+    {% else %}
+    {# No-results empty state #}
+    <div class="search-empty">
+        <p class="search-empty-glyph" aria-hidden="true"><i class="fa-solid fa-satellite"></i></p>
+        <p>Nothing in this corner of the Neurascape matched &ldquo;{{ q }}&rdquo;.</p>
+        <p class="search-empty-hint">
+            Try different words, or drift through
+            <a href="{{ url_for('index') }}">Home</a>,
+            <a href="{{ url_for('projects') }}">Projects</a>,
+            <a href="{{ url_for('music') }}">Music</a>,
+            <a href="{{ url_for('videos') }}">Videos</a>, or
+            <a href="{{ url_for('reviews') }}">Reviews</a>.
+        </p>
+    </div>
+    {% endif %}
+
+    {% else %}
+    {# No-query empty state — centered search box invitation #}
+    <div class="search-empty search-empty--noquery">
+        <p class="search-empty-glyph" aria-hidden="true"><i class="fa-solid fa-brain"></i></p>
+        <p>Scan the Neurascape for posts, reviews, videos, music, and projects.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

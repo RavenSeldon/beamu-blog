@@ -249,6 +249,23 @@ def create_app(config_filename='config.py'):
         db.session.commit()
         click.echo(f'Password updated for "{username}".')
 
+    @app.cli.group()
+    def search():
+        """Site search index commands."""
+        pass
+
+    @search.command('reindex')
+    def search_reindex():
+        """Rebuild the site-wide search index from scratch.
+
+        Recovery/backfill tool only — normal consistency comes from explicit
+        sync calls in the create/edit/delete routes. Idempotent: safe to run
+        repeatedly with no duplicate rows.
+        """
+        from app.search import rebuild_search_index
+        count = rebuild_search_index()
+        click.echo(f'Search index rebuilt: {count} documents.')
+
     @user.command('list')
     def list_users():
         """List all admin users."""

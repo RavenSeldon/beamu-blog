@@ -9,6 +9,7 @@ from app.extensions import db, cache
 from app.models import Photo, Post, Project, MusicItem, Video, Review
 from app.helpers import allowed_file, invalidate_content_caches, handle_image_upload, replace_item_image, published_filter, delete_photo_if_unreferenced, generate_lqip_for, _delete_image_files, MAX_UPLOAD_SIZE, sync_post_images, GalleryValidationError
 from app.utils.image_utils import process_upload_image
+from app.search import sync_search_document
 
 media_bp = Blueprint('media', __name__)
 
@@ -206,6 +207,9 @@ def new_music_item():
             if photo:
                 music_item.photo_id = photo.id
 
+        # Keep the search index in sync within this same transaction.
+        sync_search_document(music_item)
+
         db.session.commit()
         invalidate_content_caches('music_item')
         flash('Music item added!', 'success')
@@ -244,6 +248,9 @@ def edit_music_item(item_id):
         image_file = request.files.get('image')
         if image_file and image_file.filename:
             replace_item_image(item, image_file, description=f"Cover for {item.title}")
+
+        # Keep the search index in sync within this same transaction.
+        sync_search_document(item)
 
         db.session.commit()
         invalidate_content_caches('music_item')
@@ -298,6 +305,9 @@ def new_video_item():
             if photo:
                 video_item.photo_id = photo.id
 
+        # Keep the search index in sync within this same transaction.
+        sync_search_document(video_item)
+
         db.session.commit()
         invalidate_content_caches('video')
         flash('Video item added!', 'success')
@@ -330,6 +340,9 @@ def edit_video_item(item_id):
         image_file = request.files.get('image')
         if image_file and image_file.filename:
             replace_item_image(item, image_file, description=f"Thumbnail for {item.title}")
+
+        # Keep the search index in sync within this same transaction.
+        sync_search_document(item)
 
         db.session.commit()
         invalidate_content_caches('video')
@@ -390,6 +403,9 @@ def new_review():
             if photo:
                 review_item.photo_id = photo.id
 
+        # Keep the search index in sync within this same transaction.
+        sync_search_document(review_item)
+
         db.session.commit()
         invalidate_content_caches('review')
         flash('Review added!', 'success')
@@ -432,6 +448,9 @@ def edit_review(item_id):
         image_file = request.files.get('image')
         if image_file and image_file.filename:
             replace_item_image(item, image_file, description=f"Cover for {item.item_title}")
+
+        # Keep the search index in sync within this same transaction.
+        sync_search_document(item)
 
         db.session.commit()
         invalidate_content_caches('review')

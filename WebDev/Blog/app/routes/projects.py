@@ -11,6 +11,7 @@ from app.helpers import (
     allowed_file, invalidate_content_caches, handle_image_upload,
     replace_item_image, sync_project_images, GalleryValidationError
 )
+from app.search import sync_search_document, delete_search_document
 from app.utils.image_utils import process_upload_image
 
 projects_bp = Blueprint('projects_bp', __name__)
@@ -66,6 +67,9 @@ def new_project():
                     project.photo_id = photo.id
                     project.photo = photo
 
+            # Keep the search index in sync within this same transaction.
+            sync_search_document(project)
+
             db.session.commit()
             invalidate_content_caches('project')
             flash('Project created!', 'success')
@@ -105,6 +109,9 @@ def edit_project(project_id):
         if image_file and image_file.filename:
             replace_item_image(project, image_file, description=f"Cover for {project.title}")
 
+        # Keep the search index in sync within this same transaction.
+        sync_search_document(project)
+
         db.session.commit()
         invalidate_content_caches('project')
         flash('Project updated!', 'success')
@@ -142,6 +149,12 @@ def delete_project(project_id):
     if not project:
         flash('Project not found.', 'error')
         return redirect(url_for('projects'))
+    # Remove the search index rows in the same transaction as the delete.
+    # Deleting a Project cascades to its child Posts (delete-orphan), so their
+    # index rows must be removed too.
+    delete_search_document('project', project.id)
+    for item in project.items:
+        delete_search_document(item.type, item.id)
     db.session.delete(project)
     db.session.commit()
     invalidate_content_caches('project')

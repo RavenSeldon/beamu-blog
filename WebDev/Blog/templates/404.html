@@ -3,5 +3,9 @@
 {% block meta_description %}The page you're looking for doesn't exist in the Neurascape.{% endblock %}
 {% block content %}
 <h1>404 - Page Not Found</h1>
-<p>Sorry, the page you requested does not exist. Please return to <a href="{{ url_for('index') }}">safety</a>.</p>
+<p>Sorry, the page you requested does not exist. Please return to <a href="{{ url_for('index') }}">safety</a> — or try scanning for it:</p>
+<form class="search-page-form" method="get" action="{{ url_for('main.search') }}" role="search" style="max-width: 480px; margin: 1.5em auto;">
+    <input type="search" name="q" placeholder="Search the Neurascape…" minlength="2" maxlength="100" aria-label="Search query">
+    <button type="submit" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+</form>
 {% endblock %}
