@@ -14,8 +14,15 @@
     <meta property="og:description" content="{% block og_description %}{{ self.meta_description() }}{% endblock %}">
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
     <meta property="og:url" content="{{ request.url }}">
-    <meta property="og:image" content="{% block og_image %}{{ request.host_url.rstrip('/') }}{{ url_for('static', filename='img/og-default.jpg') }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ absolute_url(url_for('static', filename='img/og-default.jpg')) }}{% endblock %}">
     <meta property="og:site_name" content="Ben Amuwo's Neurascape">
+
+    <!-- SEO: Twitter/X card — mirrors the Open Graph blocks above, so an
+         og_image override (and absolute_url) applies here for free. -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ self.og_title() }}">
+    <meta name="twitter:description" content="{{ self.og_description() }}">
+    <meta name="twitter:image" content="{{ self.og_image() }}">
 
     <!-- SEO: Canonical URL -->
     <link rel="canonical" href="{{ request.url }}">

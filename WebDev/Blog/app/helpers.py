@@ -16,20 +16,56 @@ from bs4 import BeautifulSoup, NavigableString, Comment
 from sqlalchemy.exc import OperationalError
 from werkzeug.utils import secure_filename
 from uuid import uuid4
-from flask import current_app, render_template
+from flask import current_app, render_template, request
 
 from app.extensions import db, cache
+
+# Table column alignment: Markdown emits style="text-align: left|center|right;"
+# on th/td for the ':---' / '---:' column syntax. Inline styles can't survive
+# Bleach without a CSSSanitizer (an extra dependency), so translate them into a
+# fixed set of class names that Bleach can allow safely.
+ALIGN_CLASSES = ('ta-left', 'ta-center', 'ta-right')
+
+_ALIGN_STYLE_RE = re.compile(
+    r'\s*style\s*=\s*"\s*text-align\s*:\s*(left|center|right)\s*;?\s*"',
+    re.I,
+)
+
+
+def _rewrite_align_styles(html):
+    """Turn Markdown's inline text-align styles into ta-* classes."""
+    return _ALIGN_STYLE_RE.sub(lambda m: ' class="ta-%s"' % m.group(1).lower(), html)
+
+
+def _allow_align_class(tag, name, value):
+    """Bleach attribute filter: on th/td, permit only our alignment classes."""
+    return name == 'class' and value in ALIGN_CLASSES
+
 
 # Allowed HTML tags and attributes for Bleach sanitization
 ALLOWED_TAGS = [
     'p', 'br', 'strong', 'em', 'ul', 'ol', 'li',
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'a', 'img', 'blockquote', 'code', 'pre'
+    'a', 'img', 'blockquote', 'code', 'pre',
+    # Markdown emits these but Bleach used to strip them, so they silently
+    # vanished from published posts: '---' produced nothing at all, and the
+    # 'tables' extension (enabled in markdown_safe below) collapsed into
+    # loose text.
+    'hr',
+    'table', 'thead', 'tbody', 'tr', 'th', 'td',
 ]
 
 ALLOWED_ATTRIBUTES = {
     'a': ['href', 'title', 'target'],
-    'img': ['src', 'alt', 'title', 'width', 'height', 'style']
+    'img': ['src', 'alt', 'title', 'width', 'height', 'style'],
+    # Table column alignment. Markdown renders ':---' / '---:' as an inline
+    # style="text-align:...", which Bleach would drop (allowing inline styles
+    # needs a CSSSanitizer, i.e. a new tinycss2 dependency). Instead
+    # _rewrite_align_styles() converts those styles into ta-* classes before
+    # sanitizing, and this callable admits ONLY those three class names --
+    # no arbitrary class injection via post body.
+    'th': _allow_align_class,
+    'td': _allow_align_class,
 }
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -82,6 +118,7 @@ def markdown_safe(text):
     html_content = markdown.markdown(
         text, extensions=['fenced_code', 'tables', 'codehilite']
     )
+    html_content = _rewrite_align_styles(html_content)
     safe_html = bleach.clean(
         html_content,
         tags=ALLOWED_TAGS,
@@ -89,6 +126,33 @@ def markdown_safe(text):
         strip=True
     )
     return Markup(safe_html)
+
+
+# --- Absolute URLs for social/meta tags ---
+def absolute_url(path):
+    """Return `path` as an absolute URL suitable for og:image / JSON-LD.
+
+    Image paths are NOT uniformly relative: image_utils._build_url() returns a
+    full CDN URL (https://<space>.<region>.cdn.digitaloceanspaces.com/...) when
+    DigitalOcean Spaces is configured, and a site-relative /static/images/...
+    path when it is not. Blindly prefixing the host produced
+    "https://benamuwo.mehttps://neurascape..." in production.
+
+    Absolute inputs are returned untouched; only genuinely relative paths get
+    the current host prepended. Purely a meta-tag concern -- this never touches
+    the <img>/srcset rendering path.
+    """
+    if not path:
+        return ''
+
+    path = str(path).strip()
+    if path.startswith(('http://', 'https://')):
+        return path
+    # Protocol-relative: og:image requires an explicit scheme.
+    if path.startswith('//'):
+        return 'https:' + path
+
+    return request.host_url.rstrip('/') + '/' + path.lstrip('/')
 
 
 # --- Crosspost link labelling ---

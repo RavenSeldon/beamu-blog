@@ -2,9 +2,13 @@
 {% block title %}{{ post.title }} - Ben Amuwo's Neurascape{% endblock %}
 {% block meta_description %}{{ (post_excerpt(post, 200)|striptags) if post.content else 'A post by Ben Amuwo on the Neurascape.' }}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% if post.photo and post.photo.filename %}
-{% block og_image %}{{ request.host_url.rstrip('/') }}{{ get_picture_data(post.photo.filename).src }}{% endblock %}
-{% endif %}
+{% block og_image %}
+{%- if post.photo and post.photo.filename -%}
+{{ absolute_url(get_picture_data(post.photo.filename).src) }}
+{%- else -%}
+{{ super() }}
+{%- endif -%}
+{% endblock %}
 
 {% block extra_js %}
 <script type="application/ld+json">
@@ -25,7 +29,7 @@
   "description": {{ (post_excerpt(post, 300)|striptags)|tojson }},
   "url": "{{ request.url }}"
   {% if post.photo and post.photo.filename %}
-  ,"image": "{{ request.host_url.rstrip('/') }}{{ get_picture_data(post.photo.filename).src }}"
+  ,"image": {{ absolute_url(get_picture_data(post.photo.filename).src)|tojson }}
   {% endif %}
   {% if post.tags %}
   ,"keywords": {{ post.tags|map(attribute='name')|list|tojson }}

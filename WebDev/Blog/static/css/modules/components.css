@@ -149,6 +149,60 @@
 
 .post-content a:hover { color: var(--accent); }
 
+/* Markdown horizontal rule — EasyMDE's "insert horizontal rule" button.
+   The browser default is a grey inset line, effectively invisible against
+   the Neurascape background, so give it the same cyan treatment as
+   .post-navigation's divider. */
+.post-content hr {
+    border: 0;
+    height: 1px;
+    margin: 2.5em 0;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(126, 249, 255, 0.45) 15%,
+        rgba(126, 249, 255, 0.45) 85%,
+        transparent);
+}
+
+/* Markdown tables */
+.post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.8em 0;
+    font-size: 0.95em;
+}
+
+.post-content th,
+.post-content td {
+    padding: 0.6em 0.9em;
+    text-align: left;
+    border-bottom: 1px solid rgba(126, 249, 255, 0.15);
+}
+
+.post-content th {
+    color: var(--accent);
+    font-weight: 600;
+    border-bottom-color: rgba(126, 249, 255, 0.35);
+}
+
+.post-content tbody tr:hover {
+    background: rgba(126, 249, 255, 0.05);
+}
+
+/* Column alignment from Markdown's ':---' / '---:' syntax. Two classes beat
+   the `.post-content th` type selector above, so these win. */
+.post-content .ta-left   { text-align: left; }
+.post-content .ta-center { text-align: center; }
+.post-content .ta-right  { text-align: right; }
+
+/* Keep a wide table from forcing the whole page to scroll sideways. */
+@media (max-width: 600px) {
+    .post-content table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
 .post-links {
     display: flex;
     gap: 1em;
