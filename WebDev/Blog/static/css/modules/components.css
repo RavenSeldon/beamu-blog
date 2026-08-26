@@ -155,7 +155,8 @@
     margin: 2em 0;
 }
 
-.github-link {
+.github-link,
+.crosspost-link {
     display: inline-flex;
     align-items: center;
     gap: 0.5em;
@@ -168,7 +169,8 @@
     margin-top: 1.5em;
 }
 
-.github-link:hover {
+.github-link:hover,
+.crosspost-link:hover {
     background: rgba(243, 249, 157, 0.2);
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(126, 249, 255, 0.3);

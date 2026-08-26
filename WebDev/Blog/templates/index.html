@@ -34,8 +34,10 @@
           <i class="fa-solid fa-eye"></i> View Project
         </a>
         {% if featured_project.github_link %}
-        <a href="{{ featured_project.github_link }}" target="_blank" class="featured-btn featured-btn-secondary">
-          <i class="fa-brands fa-github"></i> GitHub
+        {% set cp = crosspost_meta(featured_project.github_link) %}
+        <a href="{{ featured_project.github_link }}" target="_blank" rel="noopener"
+           class="featured-btn featured-btn-secondary" aria-label="{{ cp.label }}">
+          <i class="{{ cp.icon }}" aria-hidden="true"></i> {{ cp.short }}
         </a>
         {% endif %}
       </div>

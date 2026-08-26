@@ -7,6 +7,7 @@ import json
 import time
 import base64
 from io import BytesIO
+from urllib.parse import urlparse
 from datetime import datetime, timezone
 import markdown
 import bleach
@@ -88,6 +89,59 @@ def markdown_safe(text):
         strip=True
     )
     return Markup(safe_html)
+
+
+# --- Crosspost link labelling ---
+# The stored link (historically named `github_link`) may point anywhere a piece
+# was crossposted, not just GitHub. Map the host to a human label + Font Awesome
+# icon here so every surface -- server-rendered templates and the JS feed cards
+# via /api -- renders the same thing from one definition.
+CROSSPOST_DEFAULT = {
+    'label': 'View crosspost',
+    'short': 'Crosspost',
+    'icon': 'fa-solid fa-arrow-up-right-from-square',
+}
+
+CROSSPOST_HOSTS = (
+    # (domain, {label: full button text, short: compact chip text, icon: FA class})
+    ('github.com',   {'label': 'View on GitHub',   'short': 'GitHub',   'icon': 'fa-brands fa-github'}),
+    ('gitlab.com',   {'label': 'View on GitLab',   'short': 'GitLab',   'icon': 'fa-brands fa-gitlab'}),
+    ('substack.com', {'label': 'Read on Substack', 'short': 'Substack', 'icon': 'fa-solid fa-newspaper'}),
+    ('medium.com',   {'label': 'Read on Medium',   'short': 'Medium',   'icon': 'fa-brands fa-medium'}),
+    ('dev.to',       {'label': 'Read on DEV',      'short': 'DEV',      'icon': 'fa-brands fa-dev'}),
+    ('youtube.com',  {'label': 'Watch on YouTube', 'short': 'YouTube',  'icon': 'fa-brands fa-youtube'}),
+    ('youtu.be',     {'label': 'Watch on YouTube', 'short': 'YouTube',  'icon': 'fa-brands fa-youtube'}),
+    ('linkedin.com', {'label': 'Read on LinkedIn', 'short': 'LinkedIn', 'icon': 'fa-brands fa-linkedin'}),
+    ('x.com',        {'label': 'View on X',        'short': 'X',        'icon': 'fa-brands fa-x-twitter'}),
+    ('twitter.com',  {'label': 'View on X',        'short': 'X',        'icon': 'fa-brands fa-x-twitter'}),
+)
+
+
+def crosspost_meta(url):
+    """Return {'label', 'icon'} describing where a crosspost link points.
+
+    Matches on the URL host, so a genuine github.com link still reads
+    "View on GitHub" while anything unrecognised gets a neutral fallback.
+    Never raises: a missing or malformed URL yields the default.
+    """
+    if not url:
+        return dict(CROSSPOST_DEFAULT)
+
+    try:
+        host = urlparse(str(url).strip()).netloc.lower()
+    except (ValueError, AttributeError):
+        return dict(CROSSPOST_DEFAULT)
+
+    # Strip any userinfo and port, then a leading www.
+    host = host.rsplit('@', 1)[-1].split(':', 1)[0]
+    if host.startswith('www.'):
+        host = host[4:]
+
+    for domain, meta in CROSSPOST_HOSTS:
+        if host == domain or host.endswith('.' + domain):
+            return dict(meta)
+
+    return dict(CROSSPOST_DEFAULT)
 
 
 def retry_database_operation(func, *args, **kwargs):

@@ -58,9 +58,11 @@
             </a>
         {% endif %}
         {% if item.github_link %}
-            <a href="{{ item.github_link }}" target="_blank" class="github-link">
-                <i class="fa-brands fa-github"></i> View on GitHub
-            </a>
+        {% set cp = crosspost_meta(item.github_link) %}
+        <a href="{{ item.github_link }}" target="_blank" rel="noopener"
+           class="crosspost-link github-link" aria-label="{{ cp.label }}">
+            <i class="{{ cp.icon }}" aria-hidden="true"></i> {{ cp.label }}
+        </a>
         {% endif %}
     </div>
 

@@ -531,3 +531,819 @@ FROM projects ORDER BY projects.date_posted DESC]
 2026-05-04 13:20:55,815 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
 2026-05-04 13:20:55,819 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
 2026-05-04 13:20:55,824 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-11 12:38:06,106 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-11 12:38:07,214 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-11 12:38:24,761 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-11 12:38:25,482 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-11 12:38:27,286 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-11 12:38:27,294 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-11 12:38:27,295 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-11 12:38:27,469 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-11 12:47:47,970 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-11 12:47:47,970 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-11 12:47:47,971 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-11 20:47:39,227 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-11 20:47:39,944 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-11 20:47:41,648 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-11 20:47:41,659 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-11 20:47:41,663 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-11 21:19:25,819 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-11 21:19:25,820 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-11 21:19:25,822 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-11 21:20:58,965 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-11 21:20:58,972 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-11 21:20:58,975 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-11 21:21:03,759 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-11 21:21:03,762 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-11 21:21:03,767 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-12 06:32:00,100 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-12 06:32:00,840 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-12 06:32:02,861 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-12 06:32:02,862 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-12 06:32:02,865 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-12 06:50:08,077 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-12 06:50:08,740 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-12 06:50:48,111 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-12 06:50:52,025 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-12 06:50:52,690 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-12 06:54:55,854 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-12 06:54:55,856 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-12 06:54:55,856 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-12 07:25:40,372 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-12 07:25:40,375 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-12 07:25:40,379 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-12 07:26:12,666 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-12 07:26:12,696 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-12 07:26:12,702 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-12 07:38:10,801 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-12 07:38:11,524 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-12 07:38:13,377 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-12 07:38:13,381 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-12 07:38:13,381 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-12 07:38:13,419 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-20 08:06:34,039 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 08:06:44,303 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 08:06:45,054 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 08:07:50,694 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 08:07:54,261 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 08:07:54,291 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-20 08:07:54,293 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-20 08:07:54,331 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-20 08:08:08,138 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 08:08:08,141 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-20 08:08:08,144 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-20 08:39:10,178 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 08:47:35,188 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 08:47:35,911 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 08:47:37,490 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 08:47:37,512 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-20 08:47:37,515 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-20 08:47:47,421 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 08:47:47,422 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-20 08:47:47,425 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-20 08:47:52,194 - app - INFO - Retrieved 2 projects
+2026-06-20 08:47:52,194 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-20 08:47:52,195 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-20 08:48:40,851 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 08:48:40,853 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-20 08:48:40,859 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-20 08:49:56,240 - app - INFO - Retrieved 2 projects
+2026-06-20 08:49:56,240 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-20 08:49:56,241 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-20 08:50:55,378 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 08:51:04,545 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 08:51:50,939 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 08:52:40,515 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 08:52:41,366 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 08:52:43,026 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 08:52:53,162 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-20 08:52:53,162 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 08:52:53,170 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-20 08:54:43,325 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 08:54:45,059 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 08:54:45,066 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-20 08:54:45,077 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-20 09:53:48,661 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 09:53:49,578 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 09:53:51,349 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 09:55:49,389 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 09:55:51,675 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-20 09:55:51,677 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 09:55:51,679 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-20 09:56:07,887 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 09:56:15,303 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 09:56:15,307 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-20 09:56:15,312 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-20 09:56:21,467 - app - INFO - Retrieved 2 projects
+2026-06-20 09:56:21,467 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-20 09:56:21,467 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-20 10:07:41,374 - app - INFO - Dimension warning: 204x83 < 1200px
+2026-06-20 10:07:41,487 - app - INFO - Image processed: 5e74e8fbdbf04018b4010ca3ccf3d511.png
+2026-06-20 10:07:41,491 - app - INFO - LQIP generated for 5e74e8fbdbf04018b4010ca3ccf3d511.png (479 chars)
+2026-06-20 10:08:29,993 - app - INFO - Image processed: f2121094e6d040f09efd71073c7b6e87.jpg
+2026-06-20 10:08:29,997 - app - INFO - LQIP generated for f2121094e6d040f09efd71073c7b6e87.jpg (455 chars)
+2026-06-20 10:08:49,831 - app - INFO - Image processed: 7d5401d5922b417592da9206bdb43203.jpg
+2026-06-20 10:08:49,837 - app - INFO - LQIP generated for 7d5401d5922b417592da9206bdb43203.jpg (499 chars)
+2026-06-20 10:35:16,504 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 10:53:23,268 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 10:53:24,384 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 10:54:03,944 - app - INFO - Image processed: 7a64f6d45dd84974ac5f3343e487a9c2.jpg
+2026-06-20 10:54:03,951 - app - INFO - LQIP generated for 7a64f6d45dd84974ac5f3343e487a9c2.jpg (499 chars)
+2026-06-20 11:00:57,095 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 11:04:21,384 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 11:23:31,742 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 11:23:54,404 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 11:28:07,707 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 11:28:55,329 - app - INFO - Image processed: 219de2a7f8674edf9cd96c6ee375029e.jpg
+2026-06-20 11:28:55,334 - app - INFO - LQIP generated for 219de2a7f8674edf9cd96c6ee375029e.jpg (455 chars)
+2026-06-20 11:29:43,548 - app - INFO - Image processed: fc27231bf5324ae5b4af1ff54d2b55dc.png
+2026-06-20 11:29:43,554 - app - INFO - LQIP generated for fc27231bf5324ae5b4af1ff54d2b55dc.png (431 chars)
+2026-06-20 11:30:23,699 - app - INFO - Image processed: fbf869b6f1cb4081a0cd3042145834a6.png
+2026-06-20 11:30:23,706 - app - INFO - LQIP generated for fbf869b6f1cb4081a0cd3042145834a6.png (431 chars)
+2026-06-20 14:01:59,401 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 14:04:04,792 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 14:05:41,433 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 14:05:56,954 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 17:45:15,441 - app - INFO - Image processed: 4d54262164414af0ac3b68a62ffcffa8.jpg
+2026-06-20 17:45:15,450 - app - INFO - LQIP generated for 4d54262164414af0ac3b68a62ffcffa8.jpg (511 chars)
+2026-06-20 18:32:49,849 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 18:34:01,656 - app - INFO - Image processed: fe762e650e334d0c9723e1fe4b4a4f4b.jpg
+2026-06-20 18:34:01,663 - app - INFO - LQIP generated for fe762e650e334d0c9723e1fe4b4a4f4b.jpg (495 chars)
+2026-06-20 18:34:44,345 - app - INFO - Retrieved 2 projects
+2026-06-20 18:34:44,345 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-20 18:34:44,345 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-20 18:36:22,992 - app - INFO - Image processed: d1c209065b5c473bbbe700dec6ff9e98.jpg
+2026-06-20 18:36:22,997 - app - INFO - LQIP generated for d1c209065b5c473bbbe700dec6ff9e98.jpg (511 chars)
+2026-06-20 18:38:43,515 - app - INFO - Retrieved 2 projects
+2026-06-20 18:38:43,515 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-20 18:38:43,516 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-20 18:39:18,017 - app - INFO - Retrieved 2 projects
+2026-06-20 18:39:18,018 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-20 18:39:18,018 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-20 19:34:12,416 - app - INFO - Dimension warning: 208x300 < 1200px
+2026-06-20 19:34:12,465 - app - INFO - Image processed: 52bf86b4572d481daa3f0c681a6bac7a.png
+2026-06-20 19:34:12,471 - app - INFO - LQIP generated for 52bf86b4572d481daa3f0c681a6bac7a.png (531 chars)
+2026-06-20 19:34:12,704 - app - INFO - Image processed: 050f4f943e2348818452d65f9d909a54.jpg
+2026-06-20 19:34:12,710 - app - INFO - LQIP generated for 050f4f943e2348818452d65f9d909a54.jpg (651 chars)
+2026-06-20 19:34:12,724 - app - INFO - Dimension warning: 419x610 < 1200px
+2026-06-20 19:34:12,784 - app - INFO - Image processed: b846e122a2f940e2999de3dadd4ce11c.jpg
+2026-06-20 19:34:12,789 - app - INFO - LQIP generated for b846e122a2f940e2999de3dadd4ce11c.jpg (583 chars)
+2026-06-20 19:37:44,578 - app - INFO - Dimension warning: 960x720 < 1200px
+2026-06-20 19:37:44,761 - app - INFO - Image processed: fdfc51e4e8f64b39852dfa16879b6db8.jpg
+2026-06-20 19:37:44,767 - app - INFO - LQIP generated for fdfc51e4e8f64b39852dfa16879b6db8.jpg (527 chars)
+2026-06-20 19:37:44,965 - app - INFO - Image processed: a431078a5cb64328aa81698242192af9.jpg
+2026-06-20 19:37:44,971 - app - INFO - LQIP generated for a431078a5cb64328aa81698242192af9.jpg (615 chars)
+2026-06-20 20:24:53,227 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 20:24:54,024 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-20 20:25:22,746 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 20:25:22,764 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-20 20:25:22,768 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-20 20:25:35,310 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-20 20:25:35,314 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-20 20:25:35,316 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-20 20:26:03,489 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-20 20:26:19,327 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-20 20:27:41,107 - app - INFO - Dimension warning: 770x764 < 1200px
+2026-06-20 20:27:41,295 - app - INFO - Image processed: 4389fd32cf7548df9a9c58859918c306.jpg
+2026-06-20 20:27:41,302 - app - INFO - LQIP generated for 4389fd32cf7548df9a9c58859918c306.jpg (575 chars)
+2026-06-20 20:27:42,740 - app - INFO - Image processed: c6136cfc925b4a088d6b285a2c127884.png
+2026-06-20 20:27:42,755 - app - INFO - LQIP generated for c6136cfc925b4a088d6b285a2c127884.png (683 chars)
+2026-06-20 20:27:43,184 - app - INFO - Image processed: 866f323121074369b2edceb9c8b830a2.jpg
+2026-06-20 20:27:43,190 - app - INFO - LQIP generated for 866f323121074369b2edceb9c8b830a2.jpg (691 chars)
+2026-06-20 20:27:43,301 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-20 20:27:49,579 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-20 20:39:01,295 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-20 20:39:08,838 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-20 20:40:03,480 - app - INFO - Dimension warning: 318x552 < 1200px
+2026-06-20 20:40:03,534 - app - INFO - Image processed: 7b4cae816bef4d6d988461dc5d94733b.jpg
+2026-06-20 20:40:03,537 - app - INFO - LQIP generated for 7b4cae816bef4d6d988461dc5d94733b.jpg (679 chars)
+2026-06-20 20:40:03,539 - app - INFO - Dimension warning: 904x907 < 1200px
+2026-06-20 20:40:03,958 - app - INFO - Image processed: 4b7a1e4f135f4141b5a6f5b82b74789b.png
+2026-06-20 20:40:03,971 - app - INFO - LQIP generated for 4b7a1e4f135f4141b5a6f5b82b74789b.png (519 chars)
+2026-06-20 20:40:03,978 - app - INFO - Dimension warning: 904x907 < 1200px
+2026-06-20 20:40:04,398 - app - INFO - Image processed: 1867eee2b0a24ca3b02ef1fc8659c509.png
+2026-06-20 20:40:04,411 - app - INFO - LQIP generated for 1867eee2b0a24ca3b02ef1fc8659c509.png (519 chars)
+2026-06-20 20:40:04,559 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 00:15:02,631 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 06:10:21,155 - app - WARNING - CSRF Error: 400 Bad Request: The CSRF token has expired. on /new_post from 127.0.0.1
+2026-06-21 06:10:21,263 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 06:12:08,537 - app - INFO - Image processed: bd23ca6726db405aba3d7f2a6601c05b.jpg
+2026-06-21 06:12:08,543 - app - INFO - LQIP generated for bd23ca6726db405aba3d7f2a6601c05b.jpg (519 chars)
+2026-06-21 06:12:08,544 - app - INFO - Dimension warning: 784x245 < 1200px
+2026-06-21 06:12:08,606 - app - INFO - Image processed: 700bdb056fc3440ba6f8c86c6f580ea8.jpg
+2026-06-21 06:12:08,610 - app - INFO - LQIP generated for 700bdb056fc3440ba6f8c86c6f580ea8.jpg (471 chars)
+2026-06-21 06:12:08,616 - app - INFO - Dimension warning: 401x101 < 1200px
+2026-06-21 06:12:08,638 - app - INFO - Image processed: 04dd7751b13746cb88f715bfa3ef3407.png
+2026-06-21 06:12:08,640 - app - INFO - LQIP generated for 04dd7751b13746cb88f715bfa3ef3407.png (447 chars)
+2026-06-21 06:12:08,768 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 06:18:00,419 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 06:25:27,145 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:25:42,207 - app - WARNING - INLINE DEBUG new_post form keys: ['csrf_token', 'title', 'content', 'gallery_manifest', 'project_id', 'github_link', 'published_at', 'tags']
+2026-06-21 06:25:42,207 - app - WARNING - INLINE DEBUG new_post file keys: ['gallery_1da7b2ee', 'image']
+2026-06-21 06:25:42,207 - app - WARNING - INLINE DEBUG gallery_manifest: '{"1da7b2ee":{"kind":"new","caption":"","alt_text":"","alignment":"center","position":0}}'
+2026-06-21 06:25:42,207 - app - WARNING - INLINE DEBUG gallery_1da7b2ee filename='S680zc.png' content_type='image/png'
+2026-06-21 06:25:42,886 - app - INFO - Image processed: b74f2a8f08ec46be8aa93ce5f3d78290.png
+2026-06-21 06:25:42,897 - app - INFO - LQIP generated for b74f2a8f08ec46be8aa93ce5f3d78290.png (539 chars)
+2026-06-21 06:25:43,063 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 06:26:37,012 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:32:37,800 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:32:37,801 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:32:37,801 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:33:21,956 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:33:21,956 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:33:21,958 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:33:21,958 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:33:21,958 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:34:57,371 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:34:57,371 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:34:57,371 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:34:57,372 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:34:57,372 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:34:57,372 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:34:57,372 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:06,685 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:06,685 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:06,685 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:06,685 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:06,687 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:06,687 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:06,687 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:06,687 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:06,687 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:09,717 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:09,717 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:09,717 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:09,717 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:09,717 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:09,719 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:09,719 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:09,719 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:09,719 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:09,719 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:09,719 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:18,279 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:18,279 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:18,279 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:18,279 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:18,279 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:18,279 - app - INFO - Sentry error monitoring initialized
+2026-06-21 06:35:18,281 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:18,281 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:18,281 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:18,281 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:18,281 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:18,281 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:35:18,281 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:42:20,291 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:42:21,047 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:43:13,718 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:43:23,866 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:43:24,607 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 06:43:41,622 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:43:48,979 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:43:56,808 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:44:00,936 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:44:02,764 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:44:15,260 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:51:18,868 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:51:21,606 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:54:59,977 - app - INFO - Dimension warning: 1024x680 < 1200px
+2026-06-21 06:55:00,137 - app - INFO - Image processed: 77f1741098944794a10082e0ed947263.jpg
+2026-06-21 06:55:00,143 - app - INFO - LQIP generated for 77f1741098944794a10082e0ed947263.jpg (479 chars)
+2026-06-21 06:55:00,287 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:55:04,599 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:55:12,254 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:56:03,304 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:56:07,002 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:56:10,119 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:56:17,660 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:56:29,088 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:57:32,145 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:57:35,075 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:57:38,183 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:57:43,039 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:57:47,137 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:58:49,182 - app - WARNING - INLINE DEBUG new_post form keys: ['csrf_token', 'title', 'content', 'gallery_manifest', 'project_id', 'github_link', 'published_at', 'tags']
+2026-06-21 06:58:49,183 - app - WARNING - INLINE DEBUG new_post file keys: ['gallery_d3b1cf77', 'gallery_0faed588', 'gallery_110b8fea', 'image']
+2026-06-21 06:58:49,183 - app - WARNING - INLINE DEBUG gallery_manifest: '{"d3b1cf77":{"kind":"new","caption":"","alt_text":"","alignment":"full","position":0},"0faed588":{"kind":"new","caption":"Yebba does her thing","alt_text":"","alignment":"right","position":1},"110b8fea":{"kind":"new","caption":"Yebba cooking on your momma","alt_text":"","alignment":"left","position":2}}'
+2026-06-21 06:58:49,183 - app - WARNING - INLINE DEBUG gallery_d3b1cf77 filename='YEBBA10-217932837.jpg' content_type='image/jpeg'
+2026-06-21 06:58:49,183 - app - WARNING - INLINE DEBUG gallery_0faed588 filename='OIP-3913905407.jpg' content_type='image/jpeg'
+2026-06-21 06:58:49,183 - app - WARNING - INLINE DEBUG gallery_110b8fea filename='OIP-3331074301.jpg' content_type='image/jpeg'
+2026-06-21 06:58:49,185 - app - INFO - Dimension warning: 1024x680 < 1200px
+2026-06-21 06:58:49,322 - app - INFO - Image processed: 0dad6a14fdf9463d91ebac86431147e1.jpg
+2026-06-21 06:58:49,327 - app - INFO - LQIP generated for 0dad6a14fdf9463d91ebac86431147e1.jpg (479 chars)
+2026-06-21 06:58:49,329 - app - INFO - Dimension warning: 474x474 < 1200px
+2026-06-21 06:58:49,369 - app - INFO - Image processed: 3002a578129c4c709cac0ee9ca9961f4.jpg
+2026-06-21 06:58:49,374 - app - INFO - LQIP generated for 3002a578129c4c709cac0ee9ca9961f4.jpg (487 chars)
+2026-06-21 06:58:49,375 - app - INFO - Dimension warning: 474x315 < 1200px
+2026-06-21 06:58:49,405 - app - INFO - Image processed: 103c5deaa0b942dd99dde25bb6a76fbe.jpg
+2026-06-21 06:58:49,409 - app - INFO - LQIP generated for 103c5deaa0b942dd99dde25bb6a76fbe.jpg (483 chars)
+2026-06-21 06:58:49,544 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:58:56,697 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:59:00,330 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:59:03,148 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:59:06,461 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:59:08,904 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 06:59:12,578 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:00:03,973 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:00:16,259 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:00:21,869 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:00:26,213 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:00:28,453 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:00:37,056 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:01:18,708 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:01:44,198 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:07:03,479 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:07:47,696 - app - WARNING - INLINE DEBUG new_post form keys: ['csrf_token', 'title', 'content', 'gallery_manifest', 'project_id', 'github_link', 'published_at', 'tags']
+2026-06-21 07:07:47,697 - app - WARNING - INLINE DEBUG new_post file keys: ['gallery_df58ef56', 'gallery_545a084d', 'image']
+2026-06-21 07:07:47,697 - app - WARNING - INLINE DEBUG gallery_manifest: '{"df58ef56":{"kind":"new","caption":"","alt_text":"","alignment":"full","position":0},"545a084d":{"kind":"new","caption":"sickem","alt_text":"","alignment":"right","position":1}}'
+2026-06-21 07:07:47,697 - app - WARNING - INLINE DEBUG gallery_df58ef56 filename='coffee shop.jpg' content_type='image/jpeg'
+2026-06-21 07:07:47,697 - app - WARNING - INLINE DEBUG gallery_545a084d filename='diana voldemort.jpg' content_type='image/jpeg'
+2026-06-21 07:07:47,974 - app - INFO - Image processed: 87176c31c37440da92f2f78eee349fd7.jpg
+2026-06-21 07:07:47,979 - app - INFO - LQIP generated for 87176c31c37440da92f2f78eee349fd7.jpg (535 chars)
+2026-06-21 07:07:47,980 - app - INFO - Dimension warning: 480x640 < 1200px
+2026-06-21 07:07:48,055 - app - INFO - Image processed: 2b44b569513846249d788714d6c1fb4c.jpg
+2026-06-21 07:07:48,060 - app - INFO - LQIP generated for 2b44b569513846249d788714d6c1fb4c.jpg (603 chars)
+2026-06-21 07:07:48,187 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:07:51,111 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:07:55,410 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:08:01,437 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:21:07,885 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 07:21:12,066 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 07:21:56,517 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 07:22:01,954 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 07:22:07,256 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 07:22:12,558 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 07:22:18,704 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 07:22:29,975 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 07:22:41,296 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 07:27:17,747 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 07:27:18,535 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 07:27:23,900 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:27:27,539 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:27:29,319 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:27:30,206 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:27:37,370 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:28:29,022 - app - WARNING - INLINE DEBUG new_post form keys: ['csrf_token', 'title', 'content', 'gallery_manifest', 'project_id', 'github_link', 'published_at', 'tags']
+2026-06-21 07:28:29,022 - app - WARNING - INLINE DEBUG new_post file keys: ['gallery_111f6ca5', 'gallery_91f76455', 'gallery_82f787eb', 'image']
+2026-06-21 07:28:29,023 - app - WARNING - INLINE DEBUG gallery_manifest: '{"111f6ca5":{"kind":"new","caption":"","alt_text":"","alignment":"full","position":0},"91f76455":{"kind":"new","caption":"I need another take","alt_text":"","alignment":"left","position":1},"82f787eb":{"kind":"new","caption":"yamum","alt_text":"","alignment":"right","position":2}}'
+2026-06-21 07:28:29,023 - app - WARNING - INLINE DEBUG gallery_111f6ca5 filename='YEBBA10-217932837.jpg' content_type='image/jpeg'
+2026-06-21 07:28:29,023 - app - WARNING - INLINE DEBUG gallery_91f76455 filename='OIP-3913905407.jpg' content_type='image/jpeg'
+2026-06-21 07:28:29,023 - app - WARNING - INLINE DEBUG gallery_82f787eb filename='OIP-3331074301.jpg' content_type='image/jpeg'
+2026-06-21 07:28:29,157 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:30:12,562 - app - WARNING - INLINE DEBUG new_post form keys: ['csrf_token', 'title', 'content', 'gallery_manifest', 'project_id', 'github_link', 'published_at', 'tags']
+2026-06-21 07:30:12,563 - app - WARNING - INLINE DEBUG new_post file keys: ['gallery_24d2f0b3', 'gallery_1224560b', 'gallery_29d0ad0d', 'image']
+2026-06-21 07:30:12,563 - app - WARNING - INLINE DEBUG gallery_manifest: '{"24d2f0b3":{"kind":"new","caption":"sicko mode goes crazy in the right settings","alt_text":"","alignment":"full","position":0},"1224560b":{"kind":"new","caption":"cheese grater","alt_text":"","alignment":"left","position":1},"29d0ad0d":{"kind":"new","caption":"yams bounce","alt_text":"","alignment":"right","position":2}}'
+2026-06-21 07:30:12,563 - app - WARNING - INLINE DEBUG gallery_24d2f0b3 filename='YEBBA10-217932837.jpg' content_type='image/jpeg'
+2026-06-21 07:30:12,563 - app - WARNING - INLINE DEBUG gallery_1224560b filename='OIP-3913905407.jpg' content_type='image/jpeg'
+2026-06-21 07:30:12,563 - app - WARNING - INLINE DEBUG gallery_29d0ad0d filename='OIP-3331074301.jpg' content_type='image/jpeg'
+2026-06-21 07:30:12,740 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:31:21,228 - app - WARNING - INLINE DEBUG new_post form keys: ['csrf_token', 'title', 'content', 'gallery_manifest', 'project_id', 'github_link', 'published_at', 'tags']
+2026-06-21 07:31:21,228 - app - WARNING - INLINE DEBUG new_post file keys: ['gallery_88e290e3', 'gallery_fcc3574a', 'gallery_4e24c0ce', 'image']
+2026-06-21 07:31:21,229 - app - WARNING - INLINE DEBUG gallery_manifest: '{"88e290e3":{"kind":"new","caption":"insane strats to make your girl cum","alt_text":"","alignment":"full","position":0},"fcc3574a":{"kind":"new","caption":"don\'t talk to me pls","alt_text":"","alignment":"right","position":1},"4e24c0ce":{"kind":"new","caption":"daddy chill","alt_text":"","alignment":"left","position":2}}'
+2026-06-21 07:31:21,229 - app - WARNING - INLINE DEBUG gallery_88e290e3 filename='YEBBA10-217932837.jpg' content_type='image/jpeg'
+2026-06-21 07:31:21,229 - app - WARNING - INLINE DEBUG gallery_fcc3574a filename='OIP-3913905407.jpg' content_type='image/jpeg'
+2026-06-21 07:31:21,229 - app - WARNING - INLINE DEBUG gallery_4e24c0ce filename='OIP-3331074301.jpg' content_type='image/jpeg'
+2026-06-21 07:31:21,249 - app - INFO - Dimension warning: 1024x680 < 1200px
+2026-06-21 07:31:21,408 - app - INFO - Image processed: 9b578892fe8c4b958cf0028c713c1de8.jpg
+2026-06-21 07:31:21,414 - app - INFO - LQIP generated for 9b578892fe8c4b958cf0028c713c1de8.jpg (479 chars)
+2026-06-21 07:31:21,416 - app - INFO - Dimension warning: 474x474 < 1200px
+2026-06-21 07:31:21,456 - app - INFO - Image processed: 5aeea26e205e4c0cb275c7571aaa36b0.jpg
+2026-06-21 07:31:21,460 - app - INFO - LQIP generated for 5aeea26e205e4c0cb275c7571aaa36b0.jpg (487 chars)
+2026-06-21 07:31:21,460 - app - INFO - Dimension warning: 474x315 < 1200px
+2026-06-21 07:31:21,489 - app - INFO - Image processed: 882381e4c103442699ac3156b745b1ff.jpg
+2026-06-21 07:31:21,492 - app - INFO - LQIP generated for 882381e4c103442699ac3156b745b1ff.jpg (483 chars)
+2026-06-21 07:31:21,635 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:31:24,783 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:31:27,483 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:31:28,604 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:31:31,847 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:31:33,864 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:31:45,501 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:33:31,032 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:33:43,450 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:33:54,299 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:34:01,086 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:34:25,534 - app - WARNING - INLINE DEBUG new_post form keys: ['csrf_token', 'title', 'content', 'gallery_manifest', 'project_id', 'github_link', 'published_at', 'tags']
+2026-06-21 07:34:25,535 - app - WARNING - INLINE DEBUG new_post file keys: ['gallery_e102b264', 'image']
+2026-06-21 07:34:25,535 - app - WARNING - INLINE DEBUG gallery_manifest: '{"e102b264":{"kind":"new","caption":"","alt_text":"","alignment":"center","position":0}}'
+2026-06-21 07:34:25,535 - app - WARNING - INLINE DEBUG gallery_e102b264 filename='the chap.jpg' content_type='image/jpeg'
+2026-06-21 07:34:25,537 - app - INFO - Dimension warning: 400x580 < 1200px
+2026-06-21 07:34:25,607 - app - INFO - Image processed: 6b6675f1ee1145f88cdf2e022dc0e919.jpg
+2026-06-21 07:34:25,611 - app - INFO - LQIP generated for 6b6675f1ee1145f88cdf2e022dc0e919.jpg (623 chars)
+2026-06-21 07:34:25,707 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:34:28,015 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:34:31,569 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:34:39,622 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:35:02,124 - app - WARNING - INLINE DEBUG new_post form keys: ['csrf_token', 'title', 'content', 'gallery_manifest', 'project_id', 'github_link', 'published_at', 'tags']
+2026-06-21 07:35:02,124 - app - WARNING - INLINE DEBUG new_post file keys: ['gallery_9f7e77a5', 'image']
+2026-06-21 07:35:02,125 - app - WARNING - INLINE DEBUG gallery_manifest: '{"9f7e77a5":{"kind":"new","caption":"","alt_text":"","alignment":"right","position":0}}'
+2026-06-21 07:35:02,125 - app - WARNING - INLINE DEBUG gallery_9f7e77a5 filename='matt b.jpg' content_type='image/jpeg'
+2026-06-21 07:35:02,126 - app - INFO - Dimension warning: 318x552 < 1200px
+2026-06-21 07:35:02,179 - app - INFO - Image processed: fde439d2297c44aba983e8b839b3a981.jpg
+2026-06-21 07:35:02,182 - app - INFO - LQIP generated for fde439d2297c44aba983e8b839b3a981.jpg (679 chars)
+2026-06-21 07:35:02,309 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:35:04,710 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:35:11,790 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:36:15,806 - app - WARNING - INLINE DEBUG new_post form keys: ['csrf_token', 'title', 'content', 'gallery_manifest', 'project_id', 'github_link', 'published_at', 'tags']
+2026-06-21 07:36:15,807 - app - WARNING - INLINE DEBUG new_post file keys: ['gallery_8895bc48', 'gallery_7a1dd695', 'image']
+2026-06-21 07:36:15,807 - app - WARNING - INLINE DEBUG gallery_manifest: '{"8895bc48":{"kind":"new","caption":"American girls are dating british girls","alt_text":"","alignment":"full","position":0},"7a1dd695":{"kind":"new","caption":"sexy girls love cats","alt_text":"","alignment":"center","position":1}}'
+2026-06-21 07:36:15,807 - app - WARNING - INLINE DEBUG gallery_8895bc48 filename='group camping.jpg' content_type='image/jpeg'
+2026-06-21 07:36:15,807 - app - WARNING - INLINE DEBUG gallery_7a1dd695 filename='young photo.jpg' content_type='image/jpeg'
+2026-06-21 07:36:15,808 - app - INFO - Dimension warning: 960x640 < 1200px
+2026-06-21 07:36:15,975 - app - INFO - Image processed: cd56612ec4c04ddfb4bf811ec51335fc.jpg
+2026-06-21 07:36:15,981 - app - INFO - LQIP generated for cd56612ec4c04ddfb4bf811ec51335fc.jpg (503 chars)
+2026-06-21 07:36:15,982 - app - INFO - Dimension warning: 604x403 < 1200px
+2026-06-21 07:36:16,051 - app - INFO - Image processed: 60612f8affba4ae8bb6741ed12f4fa21.jpg
+2026-06-21 07:36:16,056 - app - INFO - LQIP generated for 60612f8affba4ae8bb6741ed12f4fa21.jpg (495 chars)
+2026-06-21 07:36:16,184 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:36:18,492 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:36:34,926 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:36:38,676 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:36:40,293 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:37:04,098 - app - INFO - Dimension warning: 431x620 < 1200px
+2026-06-21 07:37:04,159 - app - INFO - Image processed: 8088dbf6ea894540942b602cbe1fb3a6.jpg
+2026-06-21 07:37:04,163 - app - INFO - LQIP generated for 8088dbf6ea894540942b602cbe1fb3a6.jpg (643 chars)
+2026-06-21 07:37:04,261 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:37:11,680 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:37:14,344 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:37:22,466 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:37:55,663 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:39:37,620 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:39:39,270 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:40:44,644 - app - INFO - Dimension warning: 1024x680 < 1200px
+2026-06-21 07:40:44,779 - app - INFO - Image processed: 48c22981928c4c0fabc80f27254a4ca2.jpg
+2026-06-21 07:40:44,784 - app - INFO - LQIP generated for 48c22981928c4c0fabc80f27254a4ca2.jpg (479 chars)
+2026-06-21 07:40:44,785 - app - INFO - Dimension warning: 474x474 < 1200px
+2026-06-21 07:40:44,826 - app - INFO - Image processed: 8df59c9a6ae146aca842c630a37a1d96.jpg
+2026-06-21 07:40:44,831 - app - INFO - LQIP generated for 8df59c9a6ae146aca842c630a37a1d96.jpg (487 chars)
+2026-06-21 07:40:44,990 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:40:47,702 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:40:57,400 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:41:24,732 - app - INFO - Dimension warning: 1024x680 < 1200px
+2026-06-21 07:41:24,867 - app - INFO - Image processed: cd3ca400037c422ba3246b6f3c0e1d76.jpg
+2026-06-21 07:41:24,873 - app - INFO - LQIP generated for cd3ca400037c422ba3246b6f3c0e1d76.jpg (479 chars)
+2026-06-21 07:41:24,975 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:45:04,058 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:45:32,459 - app - INFO - Dimension warning: 474x474 < 1200px
+2026-06-21 07:45:32,503 - app - INFO - Image processed: d8f42b4f36624267b2512daf823ae6db.jpg
+2026-06-21 07:45:32,507 - app - INFO - LQIP generated for d8f42b4f36624267b2512daf823ae6db.jpg (487 chars)
+2026-06-21 07:45:32,508 - app - INFO - Dimension warning: 474x315 < 1200px
+2026-06-21 07:45:32,538 - app - INFO - Image processed: 3cda842d5c2d43a7bbbef67ea078edbb.jpg
+2026-06-21 07:45:32,542 - app - INFO - LQIP generated for 3cda842d5c2d43a7bbbef67ea078edbb.jpg (483 chars)
+2026-06-21 07:45:32,651 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:45:36,577 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:45:38,784 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:45:40,759 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:45:42,502 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:45:46,918 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 07:58:48,407 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 08:03:41,334 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 08:03:42,173 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 08:03:51,413 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:03:59,930 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:04:38,447 - app - INFO - Dimension warning: 474x474 < 1200px
+2026-06-21 08:04:38,514 - app - INFO - Image processed: de8658a594d54b6898ca1f12d3994470.jpg
+2026-06-21 08:04:38,521 - app - INFO - LQIP generated for de8658a594d54b6898ca1f12d3994470.jpg (487 chars)
+2026-06-21 08:04:38,522 - app - INFO - Dimension warning: 474x315 < 1200px
+2026-06-21 08:04:38,552 - app - INFO - Image processed: 31f2cffa89e54ce4afd67c233a5a26db.jpg
+2026-06-21 08:04:38,556 - app - INFO - LQIP generated for 31f2cffa89e54ce4afd67c233a5a26db.jpg (483 chars)
+2026-06-21 08:04:38,780 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:04:42,696 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:04:46,090 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:04:57,864 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:05:15,861 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:05:31,454 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:05:38,808 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:05:47,372 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:05:52,779 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:05:55,435 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:06:03,925 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:06:06,090 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:07:34,088 - app - INFO - Image processed: df9cd33194bf47b4867b6af90c4bcc26.jpg
+2026-06-21 08:07:34,095 - app - INFO - LQIP generated for df9cd33194bf47b4867b6af90c4bcc26.jpg (583 chars)
+2026-06-21 08:07:34,097 - app - INFO - Dimension warning: 640x480 < 1200px
+2026-06-21 08:07:34,198 - app - INFO - Image processed: d9706b55e3a747d9957f674e569ad46b.jpeg
+2026-06-21 08:07:34,204 - app - INFO - LQIP generated for d9706b55e3a747d9957f674e569ad46b.jpeg (507 chars)
+2026-06-21 08:07:34,436 - app - INFO - Image processed: 90b8e1aba30247dba04c2d59d704c3c3.jpg
+2026-06-21 08:07:34,443 - app - INFO - LQIP generated for 90b8e1aba30247dba04c2d59d704c3c3.jpg (575 chars)
+2026-06-21 08:07:34,649 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:07:37,558 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:07:40,750 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:07:45,266 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:07:49,611 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:07:52,734 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:07:55,156 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:08:17,799 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:08:22,485 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:08:24,946 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:09:29,641 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:09:30,625 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:14:44,998 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 08:14:50,088 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 08:14:56,183 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 08:15:03,317 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 08:16:53,929 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:17:17,977 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:17:52,957 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:17:59,841 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:18:02,317 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:18:05,574 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:18:07,674 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:18:45,443 - app - INFO - Dimension warning: 904x907 < 1200px
+2026-06-21 08:18:45,886 - app - INFO - Image processed: d645f257130d48f9932348f5280b8705.png
+2026-06-21 08:18:45,898 - app - INFO - LQIP generated for d645f257130d48f9932348f5280b8705.png (519 chars)
+2026-06-21 08:18:45,900 - app - INFO - Dimension warning: 474x315 < 1200px
+2026-06-21 08:18:45,930 - app - INFO - Image processed: 58cfb29bace14b3da881d4fa5a265469.jpg
+2026-06-21 08:18:45,934 - app - INFO - LQIP generated for 58cfb29bace14b3da881d4fa5a265469.jpg (483 chars)
+2026-06-21 08:18:46,058 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:18:50,171 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:18:52,609 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:18:57,999 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:18:59,982 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:20:28,879 - app - INFO - Image processed: 5c0efe55ac394169b6a5d6b8a81c8db6.jpg
+2026-06-21 08:20:28,884 - app - INFO - LQIP generated for 5c0efe55ac394169b6a5d6b8a81c8db6.jpg (507 chars)
+2026-06-21 08:20:28,886 - app - INFO - Dimension warning: 474x474 < 1200px
+2026-06-21 08:20:28,925 - app - INFO - Image processed: cc1ca1264e9e4c85ab62be0dd732d41c.jpg
+2026-06-21 08:20:28,930 - app - INFO - LQIP generated for cc1ca1264e9e4c85ab62be0dd732d41c.jpg (487 chars)
+2026-06-21 08:20:28,945 - app - INFO - Dimension warning: 750x750 < 1200px
+2026-06-21 08:20:29,028 - app - INFO - Image processed: 24984c914336424484d4b65ee11326e0.png
+2026-06-21 08:20:29,034 - app - INFO - LQIP generated for 24984c914336424484d4b65ee11326e0.png (535 chars)
+2026-06-21 08:20:29,147 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:20:32,800 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:20:38,980 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:21:07,673 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:21:08,360 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:21:12,034 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:21:39,053 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:21:45,495 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:21:45,826 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:29:10,932 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 08:31:28,737 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:31:29,387 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 08:31:34,931 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:31:41,424 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:34:19,046 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:34:21,165 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:35:41,146 - app - INFO - Image processed: 235b4fdfed9c4f7f8a4f8dee8a105864.jpg
+2026-06-21 08:35:41,154 - app - INFO - LQIP generated for 235b4fdfed9c4f7f8a4f8dee8a105864.jpg (635 chars)
+2026-06-21 08:35:41,455 - app - INFO - Image processed: 676e26123d5e4c24b5b7c200920d750a.jpg
+2026-06-21 08:35:41,464 - app - INFO - LQIP generated for 676e26123d5e4c24b5b7c200920d750a.jpg (583 chars)
+2026-06-21 08:35:41,465 - app - INFO - Dimension warning: 540x755 < 1200px
+2026-06-21 08:35:41,584 - app - INFO - Image processed: ce134be92a21466bb4f4b02ceae1c8de.jpg
+2026-06-21 08:35:41,591 - app - INFO - LQIP generated for ce134be92a21466bb4f4b02ceae1c8de.jpg (579 chars)
+2026-06-21 08:35:41,713 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:35:51,331 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:35:58,046 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 08:39:33,600 - app - INFO - Dimension warning: 1024x680 < 1200px
+2026-06-21 08:39:33,736 - app - INFO - Image processed: 57dc8c7c65d849eba765de85018d65ec.jpg
+2026-06-21 08:39:33,741 - app - INFO - LQIP generated for 57dc8c7c65d849eba765de85018d65ec.jpg (479 chars)
+2026-06-21 08:39:33,742 - app - INFO - Dimension warning: 474x474 < 1200px
+2026-06-21 08:39:33,782 - app - INFO - Image processed: 4ec1946f933c4dadbd6fdfcf4cf19922.jpg
+2026-06-21 08:39:33,787 - app - INFO - LQIP generated for 4ec1946f933c4dadbd6fdfcf4cf19922.jpg (487 chars)
+2026-06-21 08:39:33,787 - app - INFO - Dimension warning: 474x315 < 1200px
+2026-06-21 08:39:33,817 - app - INFO - Image processed: fd9332485d5d4eb69dcb5660311836f5.jpg
+2026-06-21 08:39:33,820 - app - INFO - LQIP generated for fd9332485d5d4eb69dcb5660311836f5.jpg (483 chars)
+2026-06-21 08:41:37,241 - app - INFO - Image processed: b9561f0d76cf49a084ebabc8b4b5ddeb.jpg
+2026-06-21 08:41:37,246 - app - INFO - LQIP generated for b9561f0d76cf49a084ebabc8b4b5ddeb.jpg (511 chars)
+2026-06-21 08:41:37,598 - app - INFO - Image processed: 8d5df21bd9974a718ae4a3de453738b7.jpg
+2026-06-21 08:41:37,604 - app - INFO - LQIP generated for 8d5df21bd9974a718ae4a3de453738b7.jpg (483 chars)
+2026-06-21 08:41:37,953 - app - INFO - Image processed: 3143e9cfe25845dbbdd3ad8bbb954064.jpg
+2026-06-21 08:41:37,959 - app - INFO - LQIP generated for 3143e9cfe25845dbbdd3ad8bbb954064.jpg (487 chars)
+2026-06-21 08:41:37,960 - app - INFO - Dimension warning: 904x907 < 1200px
+2026-06-21 08:41:38,380 - app - INFO - Image processed: 62fc99fe24dc4460add0955e762d97d1.png
+2026-06-21 08:41:38,392 - app - INFO - LQIP generated for 62fc99fe24dc4460add0955e762d97d1.png (519 chars)
+2026-06-21 08:43:21,993 - app - INFO - Dimension warning: 431x620 < 1200px
+2026-06-21 08:43:22,056 - app - INFO - Image processed: a2b6ae8e4edd4144bdf3e9ce32f7532b.jpg
+2026-06-21 08:43:22,059 - app - INFO - LQIP generated for a2b6ae8e4edd4144bdf3e9ce32f7532b.jpg (643 chars)
+2026-06-21 08:43:22,378 - app - INFO - Image processed: a86010db3df24e8396510455ef0dcb3d.jpg
+2026-06-21 08:43:22,385 - app - INFO - LQIP generated for a86010db3df24e8396510455ef0dcb3d.jpg (483 chars)
+2026-06-21 08:44:10,825 - app - INFO - Dimension warning: 474x474 < 1200px
+2026-06-21 08:44:10,870 - app - INFO - Image processed: d6ae2bdbbe4849e0ba3170081ca6625b.jpg
+2026-06-21 08:44:10,874 - app - INFO - LQIP generated for d6ae2bdbbe4849e0ba3170081ca6625b.jpg (487 chars)
+2026-06-21 08:44:40,905 - app - INFO - Retrieved 2 projects
+2026-06-21 08:44:40,905 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-21 08:44:40,905 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-21 08:46:02,429 - app - INFO - Processing new project submission
+2026-06-21 08:46:02,435 - app - INFO - Dimension warning: 300x187 < 1200px
+2026-06-21 08:46:02,462 - app - INFO - Image processed: 2269cb8543af45c5a1b6310a71259d01.jpg
+2026-06-21 08:46:02,464 - app - INFO - LQIP generated for 2269cb8543af45c5a1b6310a71259d01.jpg (523 chars)
+2026-06-21 08:46:02,465 - app - INFO - Dimension warning: 208x300 < 1200px
+2026-06-21 08:46:02,499 - app - INFO - Image processed: 1cb162e03baa430f944eda04caee4c1b.png
+2026-06-21 08:46:02,502 - app - INFO - LQIP generated for 1cb162e03baa430f944eda04caee4c1b.png (531 chars)
+2026-06-21 08:46:02,502 - app - INFO - Dimension warning: 904x907 < 1200px
+2026-06-21 08:46:02,909 - app - INFO - Image processed: 7b0f74374a4c46c6bdc880c0c96f3716.png
+2026-06-21 08:46:02,921 - app - INFO - LQIP generated for 7b0f74374a4c46c6bdc880c0c96f3716.png (519 chars)
+2026-06-21 08:46:02,922 - app - INFO - Dimension warning: 1000x1000 < 1200px
+2026-06-21 08:46:03,116 - app - INFO - Image processed: 950caf7d0c4e435e9720caf9b8de06af.png
+2026-06-21 08:46:03,126 - app - INFO - LQIP generated for 950caf7d0c4e435e9720caf9b8de06af.png (587 chars)
+2026-06-21 08:46:03,138 - app - INFO - Retrieved 3 projects
+2026-06-21 08:46:03,138 - app - INFO - Project ID: 3, Title: Keeps Track of Business, Image: 63
+2026-06-21 08:46:03,138 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-21 08:46:03,138 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-21 08:52:08,438 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 08:55:37,842 - app - INFO - Retrieved 3 projects
+2026-06-21 08:55:37,843 - app - INFO - Project ID: 3, Title: Keeps Track of Business, Image: 63
+2026-06-21 08:55:37,843 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-21 08:55:37,843 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-21 09:08:34,281 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 09:08:35,127 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 09:17:03,259 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 09:17:52,964 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 09:18:15,475 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 09:18:42,119 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 09:20:02,963 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 09:45:42,865 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 09:46:19,478 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-21 09:46:19,494 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-21 09:46:19,507 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-21 09:46:32,116 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 09:47:44,362 - app - INFO - Retrieved 3 projects
+2026-06-21 09:47:44,362 - app - INFO - Project ID: 3, Title: Keeps Track of Business, Image: 63
+2026-06-21 09:47:44,362 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-21 09:47:44,362 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-21 09:47:44,485 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 09:47:49,227 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 09:47:56,040 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 09:47:59,027 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 09:48:09,826 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 09:48:11,499 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 09:48:35,289 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 09:56:27,443 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 09:56:35,357 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 09:56:36,190 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 09:56:38,036 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:01:37,780 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 10:07:50,640 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 10:08:03,267 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 10:08:05,896 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 10:08:11,668 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 10:08:16,873 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 10:08:27,997 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 10:08:31,594 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 10:10:55,255 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 10:11:14,489 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 10:15:41,810 - app - WARNING - 404 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+2026-06-21 10:22:24,737 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 10:22:25,555 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 10:22:40,546 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:22:49,858 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:22:53,041 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:22:54,749 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:22:58,592 - app - INFO - Retrieved 3 projects
+2026-06-21 10:22:58,592 - app - INFO - Project ID: 3, Title: Keeps Track of Business, Image: 63
+2026-06-21 10:22:58,593 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-21 10:22:58,593 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-21 10:22:58,712 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:23:03,190 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:24:49,375 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:24:54,420 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:25:17,728 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:25:22,888 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:25:26,125 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:31:29,841 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 10:32:20,208 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 10:32:32,881 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:32:41,553 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-21 10:32:41,559 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-21 10:32:41,563 - app - WARNING - 404 Not Found: /static/img/bed/sleeve_anchor.jpg
+2026-06-21 10:32:41,567 - app - WARNING - 404 Not Found: /static/img/bed/wood_hole.jpg
+2026-06-21 10:32:41,567 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-21 10:33:29,633 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:33:36,519 - app - INFO - Retrieved 3 projects
+2026-06-21 10:33:36,520 - app - INFO - Project ID: 3, Title: Keeps Track of Business, Image: 63
+2026-06-21 10:33:36,520 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-21 10:33:36,520 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-21 10:33:36,629 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:33:38,927 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:33:50,527 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:33:56,573 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:36:25,090 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:36:35,724 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:36:37,743 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:37:34,304 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:37:38,091 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:37:54,852 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:38:03,660 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:38:07,855 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:38:14,153 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:38:16,838 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:38:22,939 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:38:25,456 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:38:28,134 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:38:31,261 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:38:46,268 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:38:54,170 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:38:59,380 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:39:04,988 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:39:11,066 - app - INFO - Retrieved 3 projects
+2026-06-21 10:39:11,066 - app - INFO - Project ID: 3, Title: Keeps Track of Business, Image: 63
+2026-06-21 10:39:11,066 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-21 10:39:11,066 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-21 10:39:11,159 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:39:13,910 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:39:20,288 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:39:30,360 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:39:33,402 - app - INFO - Retrieved 3 projects
+2026-06-21 10:39:33,403 - app - INFO - Project ID: 3, Title: Keeps Track of Business, Image: 63
+2026-06-21 10:39:33,405 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-21 10:39:33,406 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-21 10:39:33,493 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:39:35,037 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:39:43,883 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:39:48,815 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:39:57,754 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:40:01,746 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:40:11,360 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:40:17,768 - app - INFO - Retrieved 3 projects
+2026-06-21 10:40:17,768 - app - INFO - Project ID: 3, Title: Keeps Track of Business, Image: 63
+2026-06-21 10:40:17,769 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-06-21 10:40:17,769 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-06-21 10:40:17,868 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:40:21,039 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:40:30,102 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-21 10:55:31,966 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 10:55:36,631 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 12:05:50,707 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 12:05:51,573 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-21 12:05:53,263 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-22 07:37:42,102 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-22 07:37:42,922 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-06-22 07:37:44,888 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-22 07:37:58,856 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-22 07:37:58,869 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-22 07:37:58,872 - app - WARNING - 404 Not Found: /static/img/bed/wood_hole.jpg
+2026-06-22 07:37:58,873 - app - WARNING - 404 Not Found: /static/img/bed/sleeve_anchor.jpg
+2026-06-22 07:37:58,874 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-22 07:43:56,192 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-22 07:43:56,207 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-22 07:43:56,208 - app - WARNING - 404 Not Found: /static/img/bed/sleeve_anchor.jpg
+2026-06-22 07:43:56,210 - app - WARNING - 404 Not Found: /static/img/bed/wood_hole.jpg
+2026-06-22 07:43:56,211 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-22 07:45:16,732 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-22 07:45:16,759 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-22 07:45:16,762 - app - WARNING - 404 Not Found: /static/img/bed/sleeve_anchor.jpg
+2026-06-22 07:45:16,763 - app - WARNING - 404 Not Found: /static/img/bed/wood_hole.jpg
+2026-06-22 07:45:16,767 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-22 07:45:25,092 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-22 07:45:37,079 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-22 07:45:37,079 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-22 07:45:37,080 - app - WARNING - 404 Not Found: /static/img/bed/sleeve_anchor.jpg
+2026-06-22 07:45:37,083 - app - WARNING - 404 Not Found: /static/img/bed/wood_hole.jpg
+2026-06-22 07:45:37,086 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-22 07:46:14,558 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-22 07:46:14,587 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-22 07:46:14,590 - app - WARNING - 404 Not Found: /static/img/bed/sleeve_anchor.jpg
+2026-06-22 07:46:14,591 - app - WARNING - 404 Not Found: /static/img/bed/wood_hole.jpg
+2026-06-22 07:46:14,595 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-22 07:46:24,991 - app - WARNING - 404 Not Found: /favicon.ico
+2026-06-22 07:46:34,810 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-22 07:46:34,811 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-22 07:46:34,814 - app - WARNING - 404 Not Found: /static/img/bed/sleeve_anchor.jpg
+2026-06-22 07:46:34,815 - app - WARNING - 404 Not Found: /static/img/bed/wood_hole.jpg
+2026-06-22 07:46:34,816 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-06-22 07:49:25,001 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-06-22 07:49:25,012 - app - WARNING - 404 Not Found: /static/img/bed/sleeve_anchor.jpg
+2026-06-22 07:49:25,012 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-06-22 07:49:25,012 - app - WARNING - 404 Not Found: /static/img/bed/wood_hole.jpg
+2026-06-22 07:49:25,016 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg
+2026-07-09 08:24:03,359 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:24:04,311 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:24:14,381 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:24:21,566 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:24:45,715 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:24:59,929 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:25:23,949 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:25:47,221 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:26:04,983 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:27:56,181 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:27:56,389 - app - WARNING - 404 Not Found: /definitely-not-a-page
+2026-07-09 08:28:16,409 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:28:33,021 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:28:52,611 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:29:07,169 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:29:08,143 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:29:09,166 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:29:26,159 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:29:27,104 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:29:28,036 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:29:36,101 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:36:33,377 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-07-09 08:36:34,361 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-07-09 08:36:42,675 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-07-09 08:36:43,471 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-07-09 08:36:45,292 - app - WARNING - 404 Not Found: /favicon.ico
+2026-07-09 08:40:15,378 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-07-09 08:40:59,315 - app - INFO - Retrieved 3 projects
+2026-07-09 08:40:59,315 - app - INFO - Project ID: 3, Title: Keeps Track of Business, Image: 63
+2026-07-09 08:40:59,315 - app - INFO - Project ID: 2, Title: Test2, Image: 3
+2026-07-09 08:40:59,315 - app - INFO - Project ID: 1, Title: Test1, Image: 2
+2026-07-09 08:52:22,291 - app - INFO - Flask application startup - logs going to /sessions/wizardly-bold-bohr/mnt/Blog/debug.log
+2026-08-26 11:14:11,987 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-08-26 11:14:13,246 - app - INFO - Flask application startup - logs going to /Users/theda/PycharmProjects/PythonProject/WebDev/Blog/debug.log
+2026-08-26 11:14:15,453 - app - WARNING - 404 Not Found: /favicon.ico
+2026-08-26 11:14:30,271 - app - WARNING - 404 Not Found: /static/img/bed/bottom_anchor.jpg
+2026-08-26 11:14:30,275 - app - WARNING - 404 Not Found: /static/img/bed/flex.jpg
+2026-08-26 11:14:30,278 - app - WARNING - 404 Not Found: /static/img/bed/sleeve_anchor.jpg
+2026-08-26 11:14:30,284 - app - WARNING - 404 Not Found: /static/img/bed/wood_hole.jpg
+2026-08-26 11:14:30,296 - app - WARNING - 404 Not Found: /static/img/bed/bed_anchor.jpg

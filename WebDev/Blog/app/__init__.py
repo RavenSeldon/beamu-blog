@@ -17,7 +17,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from datetime import datetime, timezone
 
 from app.extensions import db, migrate, login_manager, csrf, cache, limiter, mail, compress
-from app.helpers import markdown_safe, render_body, strip_gallery_tokens, post_excerpt
+from app.helpers import markdown_safe, render_body, strip_gallery_tokens, post_excerpt, crosspost_meta
 
 
 def create_app(config_filename='config.py'):
@@ -137,6 +137,7 @@ def create_app(config_filename='config.py'):
     def inject_template_helpers():
         return {
             'render_body': render_body,
+            'crosspost_meta': crosspost_meta,
         }
 
     # --- Shell Context ---

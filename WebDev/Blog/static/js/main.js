@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="post-excerpt">${post.content}</div>
                             <div class="post-footer">
                                 <a href="/post/${post.id}" class="read-more-link">Read More <i class="fa-solid fa-angles-right"></i></a>
-                                ${post.github_link ? `<a href="${post.github_link}" target="_blank" class="github-link"><i class="fa-brands fa-github"></i> View on GitHub</a>` : ''}
+                                ${post.github_link ? `<a href="${post.github_link}" target="_blank" rel="noopener" class="crosspost-link github-link" aria-label="${(post.crosspost && post.crosspost.label) || 'View crosspost'}"><i class="${(post.crosspost && post.crosspost.icon) || 'fa-solid fa-arrow-up-right-from-square'}" aria-hidden="true"></i> ${(post.crosspost && post.crosspost.label) || 'View crosspost'}</a>` : ''}
                             </div>`;
 
                         postsContainer.appendChild(article);

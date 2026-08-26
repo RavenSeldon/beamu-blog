@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify
 from app.extensions import db, cache
 from app.models import Post, Photo, PostImage
 from app.utils.image_utils import get_srcset
-from app.helpers import published_filter, markdown_safe, strip_gallery_tokens, post_excerpt
+from app.helpers import published_filter, markdown_safe, strip_gallery_tokens, post_excerpt, crosspost_meta
 from app.search import search_query, SEARCHABLE_ENTITY_TYPES, QUERY_MIN_CHARS
 
 api_bp = Blueprint('api', __name__)
@@ -62,6 +62,9 @@ def api_posts():
             'photo_filename': card_photo.filename if card_photo else None,
             'photo_is_inline_fallback': bool(card_photo and post_item.photo is None),
             'github_link': post_item.github_link,
+            # Label/icon resolved server-side so the feed cards and the
+            # server-rendered templates always agree (see crosspost_meta).
+            'crosspost': crosspost_meta(post_item.github_link) if post_item.github_link else None,
             'project_id': post_item.project_id,
             'project_title': post_item.project.title if post_item.project else None,
             'tags': [tag.name for tag in post_item.tags] if post_item.tags else []
