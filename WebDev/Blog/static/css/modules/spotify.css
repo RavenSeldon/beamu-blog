@@ -42,19 +42,30 @@
     flex-direction: column;
     align-items: center;
     margin-bottom: 1em;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    transition: box-shadow 0.3s ease;
+    /* QoL: wrapper is layout-only now — the rounded box AND the hover glow
+       live on the iframe itself so the glow maps to the player's edge. */
 }
 
 .spotify-embed-compact iframe {
     display: block;
     border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
 }
 
-.spotify-embed-compact:hover {
+.spotify-embed-compact:hover iframe {
     box-shadow: 0 6px 25px rgba(29, 185, 84, 0.3);
+}
+
+/* Don't reserve vertical space under the player when the web-player
+   button is hidden (the default, before Spotify connect). */
+.spotify-embed-compact .spotify-player-controls {
+    padding: 0;
+    margin: 0;
+}
+
+.spotify-embed-compact .quick-play-btn {
+    margin-top: 0.8em;
 }
 
 .spotify-embed-wrapper {

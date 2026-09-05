@@ -404,9 +404,10 @@
 .photo-card img {
     width: 100%;
     height: auto;
-    min-height: 300px;
-    max-height: 350px;
-    object-fit: contain;
+    /* QoL: shrink-wrap to the image's true aspect ratio so the glow and
+       border hug the real picture — no letterbox, no floating shadow.
+       (Overrides the shared object-fit: cover above; inert at height:auto.) */
+    object-fit: initial;
     margin-bottom: 1em;
     border-radius: 8px;
 }
@@ -414,7 +415,9 @@
 .photo-card .photo-link {
     display: block;
     width: 100%;
-    overflow: hidden;
+    /* QoL: let the image's glow render around the picture (the .photo-card
+       still clips at its padded edge, so the halo stays inside the card). */
+    overflow: visible;
     border-radius: 8px;
     margin-bottom: 1em;
     text-align: center;
@@ -1093,4 +1096,200 @@ button:hover::before {
     .post-title { font-size: 1.8rem; }
     .post-content { font-size: 1rem; }
     .post-feature-img { max-height: 350px; }
+}
+
+/* =============================================
+   QoL: Detail-page feature image (no-crop hero)
+   Show the whole image (contain, never cropped); a blurred copy of the
+   image fills the letterbox gutters. --hero is set by gallery-enhance.js
+   from the image's own src; with no JS it falls back to a glass panel.
+   Scoped to detail heroes only (.single-post / .project-detail) so that
+   list-card thumbnails and the home-page featured-project insert are
+   left exactly as they are.
+   ============================================= */
+
+.single-post .post-image,
+.project-detail .post-image {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-surface);
+}
+
+.single-post .post-image::before,
+.project-detail .post-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--hero, none);
+    background-size: cover;
+    background-position: center;
+    filter: blur(34px) brightness(0.5) saturate(1.2);
+    transform: scale(1.25);
+    z-index: 0;
+}
+
+.single-post .post-image > *,
+.project-detail .post-image > * {
+    position: relative;
+    z-index: 1;
+}
+
+.single-post .post-feature-img,
+.project-detail .post-feature-img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .single-post .post-image::before,
+    .project-detail .post-image::before { filter: blur(34px) brightness(0.5); }
+}
+
+/* =============================================
+   QoL: Gallery lightbox / carousel
+   Injected + driven by gallery-enhance.js. Matches the glass/neon system
+   and the existing search-overlay idiom (display:none -> .open = flex).
+   Progressive enhancement: the underlying <a class="photo-link"> links
+   still open the full image in a new tab with JS off / on modmeta-click.
+   ============================================= */
+
+.photo-grid .photo-link,
+.post-content .gallery-figure { cursor: zoom-in; }
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 4vh 4vw;
+    background: rgba(5, 5, 24, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.lightbox.open {
+    display: flex;
+    animation: lightboxIn 0.25s cubic-bezier(.4, 2, .6, 1);
+}
+
+@keyframes lightboxIn { from { opacity: 0; } to { opacity: 1; } }
+
+.lightbox-figure {
+    margin: 0;
+    max-width: 92vw;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.lightbox-img {
+    max-width: 92vw;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 48px rgba(126, 249, 255, 0.25), 0 0 16px rgba(243, 249, 157, 0.12);
+    background: rgba(8, 8, 25, 0.5);
+}
+
+.lightbox-caption {
+    color: var(--text);
+    opacity: 0.85;
+    font-size: 0.95rem;
+    text-align: center;
+    max-width: 60ch;
+    text-shadow: var(--text-glow);
+}
+
+.lightbox-nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--primary);
+    background: rgba(8, 8, 25, 0.55);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background 0.3s, color 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+.lightbox-prev { left: max(1rem, 2vw); }
+.lightbox-next { right: max(1rem, 2vw); }
+
+.lightbox-nav:hover,
+.lightbox-nav:focus-visible {
+    color: var(--accent);
+    background: rgba(16, 16, 44, 0.7);
+    box-shadow: 0 0 18px rgba(126, 249, 255, 0.4);
+    transform: translateY(-50%) scale(1.08);
+}
+
+.lightbox-close {
+    position: fixed;
+    top: max(1rem, 2vh);
+    right: max(1rem, 2vw);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--primary);
+    background: rgba(8, 8, 25, 0.55);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background 0.3s, color 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus-visible {
+    color: var(--accent);
+    background: rgba(16, 16, 44, 0.7);
+    box-shadow: 0 0 18px rgba(243, 249, 157, 0.4);
+    transform: rotate(90deg);
+}
+
+.lightbox-counter {
+    position: fixed;
+    bottom: max(1rem, 2vh);
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text);
+    opacity: 0.7;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    font-family: var(--font-serif);
+}
+
+.lightbox.lightbox-loading .lightbox-img { opacity: 0.35; }
+
+@media (prefers-reduced-motion: reduce) {
+    .lightbox.open { animation: none; }
+    .lightbox-nav,
+    .lightbox-close { transition: none; }
 }
