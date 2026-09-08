@@ -27,6 +27,14 @@
     <!-- SEO: Canonical URL -->
     <link rel="canonical" href="{{ request.url }}">
 
+    <!-- Favicons & Web App Manifest -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/favicon-32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='img/favicon-16.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='img/site.webmanifest') }}">
+    <meta name="theme-color" content="#0a0a0a">
+
     <!-- Use minified CSS in production -->
     {% if config.ENV == 'production' %}
     <link rel="stylesheet" href="{{ asset_url('css/style.css') }}">
